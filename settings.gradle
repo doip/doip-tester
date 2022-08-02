@@ -1,4 +1,4 @@
 rootProject.name = 'doip-tester'
 
-includeBuild '../doip-tester-toolkit'
-includeBuild '../doip-junit'
+// includeBuild '../doip-tester-toolkit'
+// includeBuild '../doip-junit'
