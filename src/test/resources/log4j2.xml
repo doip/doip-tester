@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Configuration>
+	<Appenders>
+		<Console name="Console" target="SYSTEM_OUT">
+			<!-- 
+				The first section defines logging of current time.
+				%t stands for the thread name
+				%level will print the log level (INFO, WARN, TRACE, ...)
+				%logger will print the name of the logger (e.g. doip.simulation)
+				%m is the log message.
+				%n is a new line character.			
+			 -->
+			<PatternLayout pattern="%d{HH:mm:ss.SSS} [%-16t]  %-6level %-56logger - %msg%n" />
+		</Console>
+		<File name="File" fileName="doip-simulation.log" append="false">
+			<PatternLayout pattern="%d{HH:mm:ss.SSS} [%-16t]  %-6level %-56logger - %msg%n" />
+		</File>
+	</Appenders>
+	<Loggers>
+		<Root level="info">
+			<AppenderRef ref="Console" />
+			<AppenderRef ref="File" />
+		</Root>
+		
+		<Logger name="doip" level="info" additivity="false">
+			<AppenderRef ref="Console" />
+			<AppenderRef ref="File" level="info"/>
+		</Logger>
+		
+		
+		
+		<Logger name="doip.library.comm.DoipTcpStreamBuffer" level="warn" additivity="false">
+			<AppenderRef ref="Console" />
+		</Logger>
+		
+		<Logger name="doip.library.util.StreamBuffer" level="warn" additivity="false">
+			<AppenderRef ref="Console" />
+		</Logger>
+
+		
+		<Logger name="doip.tester" level="info" additivity="false">
+			<AppenderRef ref="Console" />
+ 			<AppenderRef ref="File" level="info" />
+		</Logger>
+		
+	</Loggers>
+</Configuration>
