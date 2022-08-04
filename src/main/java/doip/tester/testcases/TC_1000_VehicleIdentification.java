@@ -26,9 +26,9 @@ import doip.tester.toolkit.TesterUdpCommModule;
 import doip.tester.toolkit.event.DoipEvent;
 import doip.tester.toolkit.event.DoipEventUdpVehicleAnnouncementMessage;
 
-public class TC1000_VehicleIdentification {
+public class TC_1000_VehicleIdentification {
 	
-	private static Logger logger = LogManager.getLogger(TC1000_VehicleIdentification.class);
+	private static Logger logger = LogManager.getLogger(TC_1000_VehicleIdentification.class);
 	
 	private static TestSetup testSetup = null;
 
