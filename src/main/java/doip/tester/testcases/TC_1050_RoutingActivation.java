@@ -19,9 +19,9 @@ import doip.tester.toolkit.TestSetup;
 import doip.tester.toolkit.TesterTcpConnection;
 import doip.tester.toolkit.exception.RoutingActivationFailed;
 
-public class TC1050_RoutingActivation {
+public class TC_1050_RoutingActivation {
 	
-	private static Logger logger = LogManager.getLogger(TC1050_RoutingActivation.class);
+	private static Logger logger = LogManager.getLogger(TC_1050_RoutingActivation.class);
 	
 	private static TestSetup testSetup = null;
 	

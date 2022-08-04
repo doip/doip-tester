@@ -1,4 +1,4 @@
-package doip.tester.testcases.usecase.diagnosticmessage;
+package doip.tester.testcases;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -8,24 +8,26 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import doip.logging.LogManager;
 import doip.logging.Logger;
-import doip.tester.testcases.TC1000_VehicleIdentification;
 import doip.tester.toolkit.TestSetup;
 import doip.tester.toolkit.TesterTcpConnection;
 import doip.tester.toolkit.exception.DiagnosticServiceExecutionFailed;
 import doip.tester.toolkit.exception.RoutingActivationFailed;
 import doip.junit.Assertions;
 import doip.junit.SetUpBeforeClassFailed;
+import doip.junit.TestCaseDescription;
 import doip.library.properties.EmptyPropertyValue;
 import doip.library.properties.MissingProperty;
 import doip.library.util.Helper;
 
-class TC1002_DiagnosticMessage {
+public class TC_1070_DiagnosticMessage {
 
-	private static Logger logger = LogManager.getLogger(TC1000_VehicleIdentification.class);
+	private static Logger logger = LogManager.getLogger(TC_1000_VehicleIdentification.class);
 	
 	private static TestSetup testSetup = null;
 
@@ -55,6 +57,7 @@ class TC1002_DiagnosticMessage {
 			logger.info(">>> " + function);
 			if (testSetup != null) {
 				testSetup.uninitialize();
+				testSetup = null;
 			}
 		} finally {
 			logger.info("<<< " + function);
@@ -70,10 +73,19 @@ class TC1002_DiagnosticMessage {
 	}
 
 	@Test
+	@DisplayName("TC-1070-01")
 	void testDiagnosticMessage() throws IOException, DiagnosticServiceExecutionFailed, InterruptedException, RoutingActivationFailed {
 		String function = "void testDiagnosticMessage()";
 		try {
 			logger.info(">>> " + function);
+			
+			new TestCaseDescription(
+					"TC-1070-01", 
+					"Send diagnostic mesage after successful routing activation", 
+					"1. Send routing activation 2. Send diagnostic message 0x10 0x03", 
+					"1. Routing activation was successful 2. Response from DoIP server is 0x50 0x03 ...")
+				.log();
+			
 			TesterTcpConnection conn = testSetup.createTesterTcpConnection();
 			conn.performRoutingActivation(0);
 			conn.executeDiagnosticService(new byte[] {0x10, 0x03}, true);
@@ -89,6 +101,7 @@ class TC1002_DiagnosticMessage {
 	}
 	
 	@Test
+	@Disabled
 	 void testDiagnosticessageWithoutRoutingActivation() throws IOException, InterruptedException{
 		String function  = "void testDiagnosticessageWithoutRoutingActivation()";
 		try {
