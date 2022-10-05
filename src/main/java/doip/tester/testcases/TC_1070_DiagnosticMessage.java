@@ -19,10 +19,9 @@ import doip.tester.toolkit.TesterTcpConnection;
 import doip.tester.toolkit.exception.DiagnosticServiceExecutionFailed;
 import doip.tester.toolkit.exception.RoutingActivationFailed;
 import doip.junit.Assertions;
-import doip.junit.SetUpBeforeClassFailed;
+import doip.junit.InitializationError;
 import doip.junit.TestCaseDescription;
-import doip.library.properties.EmptyPropertyValue;
-import doip.library.properties.MissingProperty;
+import doip.junit.TestResult;
 import doip.library.util.Helper;
 
 public class TC_1070_DiagnosticMessage {
@@ -33,39 +32,34 @@ public class TC_1070_DiagnosticMessage {
 
 
 	@BeforeAll
-	static void setUpBeforeClass() throws SetUpBeforeClassFailed {
+	static void setUpBeforeClass() throws InitializationError {
 		String function = "static void setUpBeforeClass()"; 
 		try {
-			logger.info(">>> " + function);
+			logger.trace(">>> " + function);
 			testSetup = new TestSetup();
-			testSetup.initialize("src/test/resources/tester.properties");
-		} catch (IOException e) {
-			throw new SetUpBeforeClassFailed("Unexpected IOException had been thrown.", e);
-		} catch (MissingProperty e) {
-			throw new SetUpBeforeClassFailed("Unexpected MissingProperty had been thrown.", e); 
-		} catch (EmptyPropertyValue e) {
-			throw new SetUpBeforeClassFailed("Unexpected EmptyPropertyValue had been thrown.", e); 
+			testSetup.initialize();
+	
 		} finally {
-			logger.info("<<< " + function);
+			logger.trace("<<< " + function);
 		}
 	}
 
 	@AfterAll
-	static void tearDownAfterClass() throws Exception {
+	static void tearDownAfterClass() {
 		String function = "static void tearDownAfterClass()";
 		try {
-			logger.info(">>> " + function);
+			logger.trace(">>> " + function);
 			if (testSetup != null) {
 				testSetup.uninitialize();
 				testSetup = null;
 			}
 		} finally {
-			logger.info("<<< " + function);
+			logger.trace("<<< " + function);
 		}
 	}
 
 	@BeforeEach
-	void setUp() throws Exception {
+	void setUp() {
 	}
 
 	@AfterEach
@@ -76,24 +70,25 @@ public class TC_1070_DiagnosticMessage {
 	@DisplayName("TC-1070-01")
 	void testDiagnosticMessage() throws IOException, DiagnosticServiceExecutionFailed, InterruptedException, RoutingActivationFailed {
 		String function = "void testDiagnosticMessage()";
+		TestCaseDescription desc = null;
 		try {
 			logger.info(">>> " + function);
 			
-			new TestCaseDescription(
+			desc = new TestCaseDescription(
 					"TC-1070-01", 
 					"Send diagnostic mesage after successful routing activation", 
 					"1. Send routing activation 2. Send diagnostic message 0x10 0x03", 
-					"1. Routing activation was successful 2. Response from DoIP server is 0x50 0x03 ...")
-				.log();
+					"1. Routing activation was successful 2. Response from DoIP server is 0x50 0x03 ...");
+			desc.logHeader();
 			
 			TesterTcpConnection conn = testSetup.createTesterTcpConnection();
 			conn.performRoutingActivation(0);
 			conn.executeDiagnosticService(new byte[] {0x10, 0x03}, true);
-			logger.info("TEST PASSED");
+			desc.logFooter(TestResult.PASSED);
 		} catch (IOException | DiagnosticServiceExecutionFailed e) {
 			logger.error("Unexpected " + e.getClass().getName());
 			logger.error(Helper.getExceptionAsString(e));
-			logger.error("TEST FAILED");
+			desc.logFooter(TestResult.FAILED);
 			throw e;
 		} finally { 
 			logger.info("<<< " + function);
