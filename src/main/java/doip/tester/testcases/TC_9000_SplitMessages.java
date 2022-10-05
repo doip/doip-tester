@@ -1,29 +1,31 @@
-package doip.tester.testcases.tcp.segmentation;
+package doip.tester.testcases;
 
 import static doip.junit.Assertions.*;
 
 import java.io.IOException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.opentest4j.AssertionFailedError;
 
-import doip.junit.SetUpBeforeClassFailed;
-import doip.junit.SetUpFailed;
+import doip.junit.InitializationError;
+import doip.junit.TestCaseDescription;
+import doip.junit.TestExecutionError;
+import doip.junit.TestResult;
 import doip.library.message.DoipTcpDiagnosticMessage;
-import doip.library.properties.EmptyPropertyValue;
-import doip.library.properties.MissingProperty;
 import doip.library.util.Conversion;
 import doip.library.util.Helper;
 import doip.library.util.StringConstants;
-import doip.logging.LogManager;
-import doip.logging.Logger;
 import doip.tester.toolkit.TestConfig;
 import doip.tester.toolkit.TestSetup;
 import doip.tester.toolkit.TesterTcpConnection;
+import doip.tester.toolkit.event.DoipEvent;
 import doip.tester.toolkit.exception.RoutingActivationFailed;
 
 public class TC_9000_SplitMessages {
@@ -33,31 +35,28 @@ public class TC_9000_SplitMessages {
 	private static TestSetup testSetup = null;
 	
 	private static TesterTcpConnection conn = null;
+	
+	private static TestConfig config = null;
 
 	@BeforeAll
-	public static void setUpBeforeClass() throws SetUpBeforeClassFailed {
+	public static void setUpBeforeClass() throws InitializationError {
 		
 		try {
 			if (logger.isInfoEnabled()) {
-				logger.info(StringConstants.LINE);
+				logger.info(StringConstants.SINGLE_LINE);
 				logger.info(">>> public static void setUpBeforeClass()");
 			}
 
 			// --- SET UP BEFORE CLASS BEGIN --------------------------------
 			testSetup = new TestSetup();
-			testSetup.initialize("src/test/resources/tester.properties");
+			testSetup.initialize();
+			config = testSetup.getConfig();
 			// --- SET UP BEFORE CLASS END ----------------------------------
 			
-		} catch (IOException e) {
-			throw new SetUpBeforeClassFailed("Unexpected IOException had been thrown.", e);
-		} catch (MissingProperty e) {
-			throw new SetUpBeforeClassFailed("Unexpected MissingProperty had been thrown.", e); 
-		} catch (EmptyPropertyValue e) {
-			throw new SetUpBeforeClassFailed("Unexpected EmptyPropertyValue had been thrown.", e); 
 		} finally {
 			if (logger.isInfoEnabled()) {
 				logger.info("<<< public static void setUpBeforeClass()");
-				logger.info(StringConstants.LINE);
+				logger.info(StringConstants.SINGLE_LINE);
 			}
 		}
 	}
@@ -66,7 +65,7 @@ public class TC_9000_SplitMessages {
 	public static void tearDownAfterClass() {
 		try {
 			if (logger.isInfoEnabled()) {
-				logger.info(StringConstants.LINE);
+				logger.info(StringConstants.SINGLE_LINE);
 				logger.info(">>> public static void tearDownAfterClass()");
 			}
 			
@@ -80,33 +79,31 @@ public class TC_9000_SplitMessages {
 		} finally {
 			if (logger.isInfoEnabled()) {
 				logger.info("<<< public static void tearDownAfterClass()");
-				logger.info(StringConstants.LINE);
 			}
 		}
 	}
 
 	@BeforeEach
-	public void setUp() throws SetUpFailed {
+	public void setUp() throws InitializationError {
 		try {
 			if (logger.isInfoEnabled()) {
-				logger.info(StringConstants.LINE);
+				logger.info(StringConstants.SINGLE_LINE);
 				logger.info(">>> public void setUp()");
 			}
 			
 			// --- SET UP CODE BEGIN ----------------------------------------
-			this.conn = this.testSetup.createTesterTcpConnection();
+			conn = this.testSetup.createTesterTcpConnection();
 			conn.performRoutingActivation(0);
 			// --- SET UP CODE END ------------------------------------------
 			
 		} catch (IOException | RoutingActivationFailed | InterruptedException e) {
-			String error = "Unexpected " + e.getClass().getName();
+			String error = "Unexpected " + e.getClass().getName() + ": " + e.getMessage();
 			logger.error(error);
 			logger.error(Helper.getExceptionAsString(e));
-			throw new SetUpFailed(error);
+			throw logger.throwing(new InitializationError(error, e));
 		} finally {
 			if (logger.isInfoEnabled()) {
 				logger.info("<<< public void setUp()");
-				logger.info(StringConstants.LINE);
 			}	
 		}
 	}
@@ -115,12 +112,12 @@ public class TC_9000_SplitMessages {
 	public void tearDown() {
 		try {
 			if (logger.isInfoEnabled()) {
-				logger.info(StringConstants.LINE);
+				logger.info(StringConstants.SINGLE_LINE);
 				logger.info(">>> public void tearDown()");
 			}
 			
 			// --- TEAR DOWN CODE BEGIN --------------------------------------
-			if (this.conn != null) {
+			if (conn != null) {
 				testSetup.removeDoipTcpConnectionTest(conn);
 				conn = null;
 			}
@@ -129,41 +126,49 @@ public class TC_9000_SplitMessages {
 		} finally {
 			if (logger.isInfoEnabled()) {
 				logger.info("<<< public void tearDown()");
-				logger.info(StringConstants.LINE);
+				logger.info(StringConstants.SINGLE_LINE);
 			}
 		}
 	}
 
 	@Test
 	@DisplayName("TC-9000-01")
-	public void test() {
+	public void test() throws TestExecutionError {
 		String function = "public void test()";
+		TestCaseDescription desc = null;
 		try {
-			if (logger.isInfoEnabled()) {
-				logger.info(StringConstants.WALL);
-				logger.info(">>> " + function);
-			}
-		
-			// --- TEST CODE BEGIN --------------------------------------------
-			conn.clearEvents();
-			TestConfig conf = testSetup.getConfig();
+			logger.trace(">>> " + function);
 			
+			desc = new TestCaseDescription(
+					"TC-9000-01",
+					"Send diagnostic message splitted into two messages",
+					"Send a diagnostic message, but don't transmit all data at once. "
+					+ "First send the header and then send the payload in a second message.",
+					"The ECU sends a positive acknowledge after second message and then "
+					+ "it sends the diagnostic response message.");
+			desc.logHeader();
+			
+			// --- TEST CODE BEGIN --------------------------------------------
+			
+			conn.clearEvents();
 			logger.info("Create a message object for sending a diagnostic message");
 			DoipTcpDiagnosticMessage msg = new DoipTcpDiagnosticMessage(
-					conf.getTesterAddress(), conf.getEcuAddressPhysical(),
+					config.getTesterAddress(), config.getEcuAddressPhysical(),
 					new byte[] {0x10, 0x03});
 			byte[] raw = msg.getMessage();
 			testSplitMessage(raw, 8);
+			
 			// --- TEST CODE END ----------------------------------------------
 			
+			desc.logFooter(TestResult.PASSED);
+		} catch (AssertionFailedError e) {
+			throw e;
 		} catch (InterruptedException e) {
-			String error = "Unexpected " + e.getClass().getName();
-			fail(error);
+			logger.fatal("Unexpected "+ e.getClass().getName() +": " + e.getMessage());
+			desc.logFooter(TestResult.ERROR);
+			throw logger.throwing(new TestExecutionError(e));
 		} finally {
-			if (logger.isInfoEnabled()) {
-				logger.info("<<< " + function);
-				logger.info(StringConstants.WALL);
-			}
+			logger.trace("<<< " + function);
 		}
 	}
 	
@@ -180,12 +185,12 @@ public class TC_9000_SplitMessages {
 			logger.info("First part: " + Conversion.byteArrayToHexString(first));
 			logger.info("Second part: " + Conversion.byteArrayToHexString(second));
 			conn.send(first);
-			boolean result = conn.waitForEvents(1, 10);
+			DoipEvent event = conn.waitForEvents(1, 10);
 
-			assertFalse(result, "Did receive a event, but no event was expected");
+			assertNull(event, "Did receive a event, but no event was expected");
 			conn.send(second);
-			result = conn.waitForEvents(2, 10);
-			assertTrue(result, "Didn't receive two events on sending a diagnostic message splitted in two parts");
+			event = conn.waitForEvents(2, 10);
+			assertNotNull(event, "Didn't receive two events on sending a diagnostic message splitted in two parts");
 
 		} finally {
 			logger.info("<<< " + function);

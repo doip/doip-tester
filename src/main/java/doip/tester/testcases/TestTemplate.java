@@ -19,7 +19,7 @@ public class TestTemplate {
 		
 		try {
 			if (logger.isInfoEnabled()) {
-				logger.info(StringConstants.LINE);
+				logger.info(StringConstants.SINGLE_LINE);
 				logger.info(">>> public static void setUpBeforeClass()");
 			}
 
@@ -30,7 +30,7 @@ public class TestTemplate {
 		} finally {
 			if (logger.isInfoEnabled()) {
 				logger.info("<<< public static void setUpBeforeClass()");
-				logger.info(StringConstants.LINE);
+				logger.info(StringConstants.SINGLE_LINE);
 			}
 		}
 	}
@@ -39,7 +39,7 @@ public class TestTemplate {
 	public static void tearDownAfterClass() {
 		try {
 			if (logger.isInfoEnabled()) {
-				logger.info(StringConstants.LINE);
+				logger.info(StringConstants.SINGLE_LINE);
 				logger.info(">>> public static void tearDownAfterClass()");
 			}
 			
@@ -50,7 +50,7 @@ public class TestTemplate {
 		} finally {
 			if (logger.isInfoEnabled()) {
 				logger.info("<<< public static void tearDownAfterClass()");
-				logger.info(StringConstants.LINE);
+				logger.info(StringConstants.SINGLE_LINE);
 			}
 		}
 	}
@@ -59,7 +59,7 @@ public class TestTemplate {
 	public void setUp() {
 		try {
 			if (logger.isInfoEnabled()) {
-				logger.info(StringConstants.LINE);
+				logger.info(StringConstants.SINGLE_LINE);
 				logger.info(">>> public void setUp()");
 			}
 			
@@ -70,7 +70,7 @@ public class TestTemplate {
 		} finally {
 			if (logger.isInfoEnabled()) {
 				logger.info("<<< public void setUp()");
-				logger.info(StringConstants.LINE);
+				logger.info(StringConstants.SINGLE_LINE);
 			}	
 		}
 	}
@@ -79,7 +79,7 @@ public class TestTemplate {
 	public void tearDown() {
 		try {
 			if (logger.isInfoEnabled()) {
-				logger.info(StringConstants.LINE);
+				logger.info(StringConstants.SINGLE_LINE);
 				logger.info(">>> public void tearDown()");
 			}
 			
@@ -90,7 +90,7 @@ public class TestTemplate {
 		} finally {
 			if (logger.isInfoEnabled()) {
 				logger.info("<<< public void tearDown()");
-				logger.info(StringConstants.LINE);
+				logger.info(StringConstants.SINGLE_LINE);
 			}
 		}
 	}
@@ -101,7 +101,7 @@ public class TestTemplate {
 		String function = "public void test()";
 		try {
 			if (logger.isInfoEnabled()) {
-				logger.info(StringConstants.WALL);
+				logger.info(StringConstants.DOUBLE_LINE);
 				logger.info(">>> " + function);
 			}
 			
@@ -112,7 +112,7 @@ public class TestTemplate {
 		} finally {
 			if (logger.isInfoEnabled()) {
 				logger.info("<<< " + function);
-				logger.info(StringConstants.WALL);
+				logger.info(StringConstants.DOUBLE_LINE);
 			}
 		}
 	}
