@@ -47,8 +47,8 @@ public class DoipUdpVehicleAnnouncementMessage extends DoipUdpMessage {
 	@Override
 	public byte[] getMessage() {
 		byte[] msg = new byte[41];
-		msg[0] = 0x02;
-		msg[1] = (byte) 0xFD;
+		msg[0] = 0x03;
+		msg[1] = (byte) 0xFC;
 		msg[2] = 0x00;
 		msg[3] = 0x04;
 		msg[4] = 0x00;

@@ -21,7 +21,7 @@ public class Wait {
 	 * @param numberOfEvents The minimum number of events that shall be available
 	 *                       in the event list.
 	 *                        
-	 * @param timeout Timeout in milliseconds
+	 * @param timeoutms Timeout in milliseconds
 	 * 
 	 * @return Returns true if the list contains at least the specific number of
 	 *         of events. If the list does not contain the specific number of
@@ -30,29 +30,31 @@ public class Wait {
 	 * @throws InterruptedException Will be thrown if sleep function will
 	 *                              get interrupted.
 	 */
-	public static DoipEvent waitForEvents(List<DoipEvent> events, int numberOfEvents, long timeout) throws InterruptedException {
-		logger.trace(">>> public boolean waitForEvents(List<DoipEvent> events, int numberOfEvents, long timeout)");
+	public static DoipEvent waitForEvents(List<DoipEvent> events, int numberOfEvents, long timeoutms) throws InterruptedException {
 		DoipEvent event = null;
-		
-		logger.debug("Number of events at function entry: " + events.size());
-		NanoTimer timer = new NanoTimer();
-		long targetTime = timeout * 1000000;
-		timer.reset();
-		while (timer.getElapsedTime() < targetTime && events.size() < numberOfEvents) {
-			try {
-				Thread.sleep(0, 1000);
-			} catch (InterruptedException e) {
-				logger.error("Unexpected " + e.getClass().getName() + " in waitForEvents(...)");
-				throw logger.throwing(e);
+		try {
+			logger.trace(">>> public boolean waitForEvents(List<DoipEvent> events, int numberOfEvents, long timeout)");
+			
+			logger.debug("Number of events at function entry: " + events.size());
+			NanoTimer timer = new NanoTimer();
+			long targetTime = timeoutms * 1000000;
+			timer.reset();
+			while (timer.getElapsedTime() < targetTime && events.size() < numberOfEvents) {
+				try {
+					Thread.sleep(0, 1000);
+				} catch (InterruptedException e) {
+					logger.error("Unexpected " + e.getClass().getName() + " in waitForEvents(...)");
+					throw logger.throwing(e);
+				}
 			}
+			
+			logger.debug("Number of events at function exit: " + events.size());
+			if (events.size() >= numberOfEvents) {
+				event =  events.get(numberOfEvents - 1);
+			} 
+		} finally {
+			logger.trace("<<< public boolean waitForEvents(List<DoipEvent> events, int numberOfEvents, long timeout)");
 		}
-		
-		logger.debug("Number of events at function exit: " + events.size());
-		if (events.size() >= numberOfEvents) {
-			event =  events.get(numberOfEvents - 1);
-		} 
-
-		logger.trace("<<< public boolean waitForEvents(List<DoipEvent> events, int numberOfEvents, long timeout)");
 		return event;
 	}
 }

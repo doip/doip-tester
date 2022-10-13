@@ -46,7 +46,7 @@ public class DoipTcpAliveCheckResponse extends DoipTcpMessage {
 
 	@Override
 	public byte[] getMessage() {
-		byte[] message = new byte[] { 0x02, (byte) 0xFD, 0x00, 0x08, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00 };
+		byte[] message = new byte[] { 0x03, (byte) 0xFC, 0x00, 0x08, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00 };
 		message[8] = (byte) (sourceAddress >> 8);
 		message[9] = (byte) sourceAddress;
 		return message;

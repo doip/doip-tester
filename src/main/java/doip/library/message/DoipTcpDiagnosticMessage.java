@@ -65,8 +65,8 @@ public class DoipTcpDiagnosticMessage extends DoipTcpMessage {
 	public byte[] getMessage() {
 
 		byte[] data = new byte[8 + 4 + diagnosticMessage.length];
-		data[0] = 0x02;
-		data[1] = (byte) 0xFD;
+		data[0] = 0x03;
+		data[1] = (byte) 0xFC;
 		data[2] = (byte) 0x80;
 		data[3] = 0x01;
 		data[4] = (byte) ((diagnosticMessage.length + 4) >> 24);

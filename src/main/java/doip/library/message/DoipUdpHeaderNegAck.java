@@ -28,7 +28,7 @@ public class DoipUdpHeaderNegAck extends DoipUdpMessage implements DoipHeaderNeg
 
 	@Override
 	public byte[] getMessage() {
-		byte[] message = new byte[] { 0x02, (byte) 0xFD, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00 };
+		byte[] message = new byte[] { 0x03, (byte) 0xFC, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00 };
 		message[8] = (byte) (code & 0xFF);
 		return message;
 	}

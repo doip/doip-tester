@@ -6,6 +6,7 @@ import static doip.junit.Assertions.assertTrue;
 import java.io.IOException;
 import java.net.InetAddress;
 
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterAll;
@@ -22,7 +23,9 @@ import doip.library.util.Helper;
 import doip.library.util.StringConstants;
 import doip.tester.toolkit.TestConfig;
 import doip.tester.toolkit.TestSetup;
+import doip.tester.toolkit.TestUtils;
 import doip.tester.toolkit.TesterUdpCommModule;
+import doip.tester.toolkit.TextBuilder;
 import doip.tester.toolkit.event.DoipEvent;
 import doip.tester.toolkit.event.DoipEventUdpVehicleAnnouncementMessage;
 
@@ -55,8 +58,6 @@ public class TC_1000_VehicleIdentification {
 				testSetup.uninitialize();
 				testSetup = null;
 			}
-
-
 		} finally {
 			logger.info(StringConstants.SINGLE_LINE);
 			logger.trace("<<< public static void tearDownAfterClass()");
@@ -92,9 +93,9 @@ public class TC_1000_VehicleIdentification {
 			desc.logFooter(TestResult.FAILED);
 			throw e;
 		} catch (Exception e) {
-			logger.fatal("Unexpected " + e.getClass().getName() + ": " + e.getMessage());
 			desc.logFooter(TestResult.ERROR);
-			throw logger.throwing(new TestExecutionError(e));
+			throw logger.throwing(Level.FATAL, 
+					new TestExecutionError(TextBuilder.unexpectedException(e),e));
 		} finally {
 			logger.trace("<<< " + function);
 		}
@@ -128,8 +129,7 @@ public class TC_1000_VehicleIdentification {
 	public void testValidVir(InetAddress address) {
 		String method = "public void testValidVir(InetAddress address)";
 		try {
-			logger.info(StringConstants.DOUBLE_LINE);
-			logger.info(">>> " + method);
+			logger.trace(">>> " + method);
 			TesterUdpCommModule testerUdpCommModule = testSetup.getTesterUdpCommModule();
 			testerUdpCommModule.clearEvents();
 			TestConfig config = testSetup.getConfig();

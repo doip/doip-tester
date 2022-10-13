@@ -2,6 +2,7 @@ package doip.tester.selftests;
 
 import java.io.IOException;
 
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -10,61 +11,63 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.opentest4j.AssertionFailedError;
 
+import static doip.junit.Assertions.*;
 import doip.junit.InitializationError;
-import doip.junit.TestCaseDescription;
 import doip.junit.TestExecutionError;
-import doip.junit.TestResult;
-import doip.tester.testcases.TC_1030_DoipEntityStatus;
+import doip.tester.testcases.TC_1010_VehicleIdentificationWithEid;
+import doip.tester.toolkit.TextBuilder;
 import doip.tester.toolkit.server4unittest.DoipServer4UnitTest;
 
-public class ST_1030_DoipEntityStatus {
-
-	private static Logger logger = LogManager.getLogger(ST_1030_DoipEntityStatus.class);
+public class ST_1010_VehicleIdentificationWithEid {
+	
+	private static Logger logger = LogManager.getLogger(ST_1010_VehicleIdentificationWithEid.class);
 	private static Marker markerEnter = MarkerManager.getMarker("ENTER");
 	private static Marker markerExit = MarkerManager.getMarker("EXIT");
 	
+	private TC_1010_VehicleIdentificationWithEid testcase = null;
+	
 	private static DoipServer4UnitTest server = null;
-	
-	private TC_1030_DoipEntityStatus testcase = null;
-	
+
 	@BeforeAll
 	public static void setUpBeforeAll() throws InitializationError {
 		try {
 			logger.trace(markerEnter, ">>> public static void setUpBeforeAll()");
+			
 			server = new DoipServer4UnitTest();
-			TC_1030_DoipEntityStatus.setUpBeforeAll();
+			server.start();
+			
+			TC_1010_VehicleIdentificationWithEid.setUpBeforeAll();
+			
+		} catch (IOException e) {
+			throw logger.throwing(Level.FATAL, new InitializationError(TextBuilder.unexpectedException(e), e));
 		} finally {
 			logger.trace(markerExit, "<<< public static void setUpBeforeAll()");
 		}
-		
 	}
 	
 	@AfterAll
 	public static void tearDownAfterAll() {
 		try {
 			logger.trace(markerEnter, ">>> public static void tearDownAfterAll()");
-			TC_1030_DoipEntityStatus.tearDownAfterAll();
-			server = null;
+			if (server != null) {
+				server .stop();
+				server = null;
+			}
 		} finally {
 			logger.trace(markerExit, "<<< public static void tearDownAfterAll()");
 		}
 	}
 	
 	@BeforeEach
-	public void setUp() throws InitializationError {
+	public void setUp() {
 		try {
 			logger.trace(markerEnter, ">>> public void setUp()");
-			server.start();
-			testcase = new TC_1030_DoipEntityStatus();
 			
-		} catch (IOException e) {
-			throw logger.throwing(new InitializationError(
-					"Failed to prepare test setup for next test case in class "
-							+ this.getClass().getName(), e));
+			testcase = new TC_1010_VehicleIdentificationWithEid();
+			
 		} finally {
 			logger.trace(markerExit, "<<< public void setUp()");
 		}
@@ -74,48 +77,35 @@ public class ST_1030_DoipEntityStatus {
 	public void tearDown() {
 		try {
 			logger.trace(markerEnter, ">>> public void tearDown()");
-			server.stop();
+			
+			testcase = null;
+			
 		} finally {
 			logger.trace(markerExit, "<<< public void tearDown()");
 		}
 	}
 	
 	@Test
-	@DisplayName("ST_1030-01-01")
 	public void testGoodCase() throws TestExecutionError {
-		logger.trace(markerEnter, ">>> public void testGoodCase()");
-		TestCaseDescription desc = null;
 		try {
+			logger.trace(markerEnter, ">>> public void testGoodCase()");
 			
-			desc = new TestCaseDescription(
-					"ST-1030-01-01",
-					"Test test case TC-1030-01",
-					"Execute test case TC-1030-01",
-					"Test case succeeds");
-			desc.emphasize().logHeader();
-		
+			server.setSilent(false);
 			testcase.test();
-
-			desc.logFooter(TestResult.PASSED);
-		} catch (AssertionFailedError e) {
-			desc.logFooter(TestResult.FAILED);
-			throw e;
+			
 		} catch (TestExecutionError e) {
-			desc.logFooter(TestResult.ERROR);
 			throw e;
-		} catch (Throwable e) {
-			desc.logFooter(TestResult.ERROR);
-			throw logger.throwing(new TestExecutionError(e));
 		} finally {
 			logger.trace(markerExit, "<<< public void testGoodCase()");
 		}
 	}
 	
 	@Test
-	@DisplayName("ST_1030-01-02")
 	public void testNoResponse() {
 		try {
 			logger.trace(markerEnter, ">>> public void testNoResponse()");
+			server.setSilent(true);
+			assertThrows(AssertionFailedError.class, () -> testcase.test());
 		} finally {
 			logger.trace(markerExit, "<<< public void testNoResponse()");
 		}

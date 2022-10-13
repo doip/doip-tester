@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import doip.logging.LogManager;
 import doip.logging.Logger;
+import doip.tester.toolkit.TestConfig;
 import doip.tester.toolkit.TestSetup;
 import doip.tester.toolkit.TesterTcpConnection;
 import doip.tester.toolkit.exception.DiagnosticServiceExecutionFailed;
@@ -29,6 +30,7 @@ public class TC_1070_DiagnosticMessage {
 	private static Logger logger = LogManager.getLogger(TC_1000_VehicleIdentification.class);
 	
 	private static TestSetup testSetup = null;
+	private static TestConfig config = null;
 
 
 	@BeforeAll
@@ -38,7 +40,7 @@ public class TC_1070_DiagnosticMessage {
 			logger.trace(">>> " + function);
 			testSetup = new TestSetup();
 			testSetup.initialize();
-	
+			config = testSetup.getConfig();
 		} finally {
 			logger.trace("<<< " + function);
 		}
@@ -82,8 +84,8 @@ public class TC_1070_DiagnosticMessage {
 			desc.logHeader();
 			
 			TesterTcpConnection conn = testSetup.createTesterTcpConnection();
-			conn.performRoutingActivation(0);
-			conn.executeDiagnosticService(new byte[] {0x10, 0x03}, true);
+			conn.performRoutingActivation(config.getTesterAddress(), 0);
+			conn.executeDiagnosticService(new byte[] {0x10, 0x03});
 			desc.logFooter(TestResult.PASSED);
 		} catch (IOException | DiagnosticServiceExecutionFailed e) {
 			logger.error("Unexpected " + e.getClass().getName());
@@ -104,7 +106,7 @@ public class TC_1070_DiagnosticMessage {
 			TesterTcpConnection conn = testSetup.createTesterTcpConnection();
 			
 			Assertions.assertThrows(DiagnosticServiceExecutionFailed.class, () -> {
-				conn.executeDiagnosticService(new byte[] {0x10, 0x03}, true);
+				conn.executeDiagnosticService(new byte[] {0x10, 0x03});
 			});
 			
 			

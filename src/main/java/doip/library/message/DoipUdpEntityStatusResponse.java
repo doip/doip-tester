@@ -42,8 +42,8 @@ public class DoipUdpEntityStatusResponse extends DoipUdpMessage {
 	@Override
 	public byte[] getMessage() {
 		byte[] msg = new byte[15];
-		msg[0] = 0x02;
-		msg[1] = (byte) 0xFD;
+		msg[0] = 0x03;
+		msg[1] = (byte) 0xFC;
 		msg[2] = 0x40;
 		msg[3] = 0x02;
 		msg[4] = 0x00;

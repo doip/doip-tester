@@ -1,7 +1,10 @@
 package doip.tester.testcases;
 
+import static doip.junit.Assertions.fail;
+
 import java.io.IOException;
 
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterAll;
@@ -12,9 +15,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import doip.junit.InitializationError;
+import doip.junit.TestCaseDescription;
+import doip.junit.TestExecutionError;
+import doip.junit.TestResult;
 import doip.library.util.StringConstants;
+import doip.tester.toolkit.TestConfig;
 import doip.tester.toolkit.TestSetup;
 import doip.tester.toolkit.TesterTcpConnection;
+import doip.tester.toolkit.TextBuilder;
 import doip.tester.toolkit.exception.RoutingActivationFailed;
 
 public class TC_1050_RoutingActivation {
@@ -22,6 +30,7 @@ public class TC_1050_RoutingActivation {
 	private static Logger logger = LogManager.getLogger(TC_1050_RoutingActivation.class);
 	
 	private static TestSetup testSetup = null;
+	private static TestConfig config = null;
 	
 	private TesterTcpConnection conn = null;
 
@@ -29,31 +38,25 @@ public class TC_1050_RoutingActivation {
 	public static void setUpBeforeClass() throws InitializationError {
 		
 		try {
-			if (logger.isInfoEnabled()) {
+				logger.trace(">>> public static void setUpBeforeClass()");
 				logger.info(StringConstants.SINGLE_LINE);
-				logger.info(">>> public static void setUpBeforeClass()");
-			}
 
 			// --- SET UP BEFORE CLASS BEGIN --------------------------------
 			testSetup = new TestSetup();
 			testSetup.initialize();
+			config = testSetup.getConfig();
 			// --- SET UP BEFORE CLASS END ----------------------------------
 			
 		} finally {
-			if (logger.isInfoEnabled()) {
-				logger.info("<<< public static void setUpBeforeClass()");
-				logger.info(StringConstants.SINGLE_LINE);
-			}
+			logger.trace("<<< public static void setUpBeforeClass()");
 		}
 	}
 
 	@AfterAll
 	public static void tearDownAfterClass() {
 		try {
-			if (logger.isInfoEnabled()) {
-				logger.info(StringConstants.SINGLE_LINE);
-				logger.info(">>> public static void tearDownAfterClass()");
-			}
+			logger.info(StringConstants.SINGLE_LINE);
+			logger.trace(">>> public static void tearDownAfterClass()");
 			
 			// --- TEAR DOWN AFTER CLASS BEGIN ------------------------------
 			if (testSetup != null) {
@@ -62,20 +65,16 @@ public class TC_1050_RoutingActivation {
 			// --- TEAR DOWN AFTER CLASS END --------------------------------
 			
 		} finally {
-			if (logger.isInfoEnabled()) {
-				logger.info("<<< public static void tearDownAfterClass()");
-				logger.info(StringConstants.SINGLE_LINE);
-			}
+			logger.trace("<<< public static void tearDownAfterClass()");
+			logger.info(StringConstants.SINGLE_LINE);
 		}
 	}
 
 	@BeforeEach
 	public void setUp() throws InitializationError {
 		try {
-			if (logger.isInfoEnabled()) {
-				logger.info(StringConstants.SINGLE_LINE);
-				logger.info(">>> public void setUp()");
-			}
+			logger.trace(">>> public void setUp()");
+			logger.info(StringConstants.SINGLE_LINE);
 			
 			// --- SET UP CODE BEGIN ----------------------------------------
 			conn = testSetup.createTesterTcpConnection();
@@ -85,20 +84,14 @@ public class TC_1050_RoutingActivation {
 			logger.fatal("Unexpected " + e.getClass().getName() + ": " + e.getMessage());
 			throw logger.throwing(new InitializationError(e));
 		} finally {
-			if (logger.isInfoEnabled()) {
-				logger.info("<<< public void setUp()");
-				logger.info(StringConstants.SINGLE_LINE);
-			}	
+			logger.trace("<<< public void setUp()");
 		}
 	}
 
 	@AfterEach
 	public void tearDown() {
 		try {
-			if (logger.isInfoEnabled()) {
-				logger.info(StringConstants.SINGLE_LINE);
-				logger.info(">>> public void tearDown()");
-			}
+			logger.trace(">>> public void tearDown()");
 			
 			// --- TEAR DOWN CODE BEGIN --------------------------------------
 			if (conn != null) {
@@ -108,30 +101,35 @@ public class TC_1050_RoutingActivation {
 			// --- TEAR DOWN CODE END ----------------------------------------
 			
 		} finally {
-			if (logger.isInfoEnabled()) {
-				logger.info("<<< public void tearDown()");
-				logger.info(StringConstants.SINGLE_LINE);
-			}
+			logger.trace("<<< public void tearDown()");
+			logger.info(StringConstants.SINGLE_LINE);
 		}
 	}
 
 	@Test
 	@DisplayName("TC-1050-01")
-	public void testRoutingActivation() throws RoutingActivationFailed {
+	public void testRoutingActivation() throws TestExecutionError {
 		String function = "public void testRoutingActivation()";
+		TestCaseDescription desc = null;
 		try {
-			if (logger.isInfoEnabled()) {
-				logger.info(StringConstants.DOUBLE_LINE);
-				logger.info(">>> " + function);
-			}
+			logger.info(">>> " + function);
 			
 			// --- TEST CODE BEGIN --------------------------------------------
+			desc = new TestCaseDescription(
+					"TC-1050-01",
+					"Perform Routing Activation",
+					"Send a routing activation request",
+					"ECU sends a routing activation response");
+			desc.logHeader();
 			try {
-				conn.performRoutingActivation(0);
+				conn.performRoutingActivation(config.getTesterAddress(), 0);
 			} catch (InterruptedException e) {
+				desc.logFooter(TestResult.ERROR);
+				throw logger.throwing(Level.FATAL, new TestExecutionError(TextBuilder.unexpectedException(e), e));
+			} catch (RoutingActivationFailed e) {
+				fail("Routing activation failed: " + e.getMessage());
 			}
 			// --- TEST CODE END ----------------------------------------------
-			
 		} finally {
 			if (logger.isInfoEnabled()) {
 				logger.info("<<< " + function);
