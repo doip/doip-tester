@@ -18,7 +18,7 @@ public class TestCaseDescription {
 	private String action;
 	private String expectedResult;
 	private String additionalInfo;
-	private int maxLength = 78;
+	private int maxLength = 72;
 	private String separator = DOUBLE_LINE;
 
 	private static Logger logger = LogManager.getLogger(TestCaseDescription.class);
@@ -92,6 +92,34 @@ public class TestCaseDescription {
 			break;
 		}
 		logger.info(getSeparator());
+	}
+	
+	public static void logFooter(TestResult result, boolean emphasize) {
+		
+		if (emphasize) {
+			logger.info(HASH_LINE);
+		} else {
+			logger.info(DOUBLE_LINE);
+		}
+		
+		switch (result) {
+		case PASSED:
+			logger.info("TEST " + result);
+			break;
+		case FAILED:
+		case ERROR:
+			logger.error("TEST " + result);
+			break;
+		default:
+			logger.fatal("TEST " + result);
+			break;
+		}
+		
+		if (emphasize) {
+			logger.info(HASH_LINE);
+		} else {
+			logger.info(DOUBLE_LINE);
+		}
 	}
 	
 	

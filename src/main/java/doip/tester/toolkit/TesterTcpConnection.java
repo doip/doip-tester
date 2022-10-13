@@ -1,12 +1,16 @@
 package doip.tester.toolkit;
 
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
+
 import doip.library.message.DoipTcpDiagnosticMessage;
 import doip.library.message.DoipTcpDiagnosticMessagePosAck;
 import doip.library.message.DoipTcpRoutingActivationRequest;
 import doip.library.message.DoipTcpRoutingActivationResponse;
 import doip.library.util.Helper;
-import doip.logging.LogManager;
-import doip.logging.Logger;
 import doip.tester.toolkit.event.DoipEvent;
 import doip.tester.toolkit.event.DoipEventTcpDiagnosticMessage;
 import doip.tester.toolkit.event.DoipEventTcpDiagnosticMessagePosAck;
@@ -17,6 +21,8 @@ import doip.tester.toolkit.exception.RoutingActivationFailed;
 public class TesterTcpConnection extends DoipTcpConnectionWithEventCollection {
 
 	private static Logger logger = LogManager.getLogger(TesterTcpConnection.class);
+	private static Marker enter = MarkerManager.getMarker("ENTER");
+	private static Marker exit = MarkerManager.getMarker("EXIT");
 
 	private static int connectionCounter = 1;
 
@@ -40,16 +46,14 @@ public class TesterTcpConnection extends DoipTcpConnectionWithEventCollection {
 	public void sendRoutingActivationRequest(
 			int sourceAddress, int activationType, long oemData) {
 
-		if (logger.isTraceEnabled()) {
-			logger.trace(">>> public void sendRoutingActivationRequest(int sourceAddress, int activationType, long oemData)");
-		}
-
-		DoipTcpRoutingActivationRequest request = new DoipTcpRoutingActivationRequest(sourceAddress, activationType, oemData);
-		logger.info("Send routing activation request");
-		this.send(request);
-
-		if (logger.isTraceEnabled()) {
-			logger.trace("<<< public void sendRoutingActivationRequest(int sourceAddress, int activationType, long oemData)");
+		try {
+			logger.trace(enter, ">>> public void sendRoutingActivationRequest(int sourceAddress, int activationType, long oemData)");
+	
+			DoipTcpRoutingActivationRequest request = new DoipTcpRoutingActivationRequest(sourceAddress, activationType, oemData);
+			logger.info("Send routing activation request");
+			this.send(request);
+		} finally {
+			logger.trace(exit, "<<< public void sendRoutingActivationRequest(int sourceAddress, int activationType, long oemData)");
 		}
 	}
 
@@ -63,15 +67,15 @@ public class TesterTcpConnection extends DoipTcpConnectionWithEventCollection {
 	 * @throws InterruptedException
 	 * @throws RoutingActivationFailed
 	 */
-	public DoipEventTcpRoutingActivationResponse performRoutingActivation(int activationType) throws InterruptedException, RoutingActivationFailed {
+	public DoipEventTcpRoutingActivationResponse performRoutingActivation(int address, int activationType) throws InterruptedException, RoutingActivationFailed {
 		String function = "public DoipEventTcpRoutingActivationResponse performRoutingActivation(int activationType, int expectedResponseCode)";
 		try {
-			logger.trace(">>> " + function);
+			logger.trace(enter, ">>> " + function);
 
 			// Clear the event queue
 			this.clearEvents();
 
-			this.sendRoutingActivationRequest(config.getTesterAddress(), activationType, -1);
+			this.sendRoutingActivationRequest(address, activationType, -1);
 
 			// Wait for incoming TCP message
 			DoipEvent event = null;
@@ -100,7 +104,7 @@ public class TesterTcpConnection extends DoipTcpConnectionWithEventCollection {
 					(DoipEventTcpRoutingActivationResponse) event;
 			return eventRoutingActivationResponse;
 		} finally {
-			logger.trace("<<< " + function);
+			logger.trace(exit, "<<< " + function);
 		}
 	}
 
@@ -112,10 +116,8 @@ public class TesterTcpConnection extends DoipTcpConnectionWithEventCollection {
 	@Override
 	public void onHeaderIncorrectPatternFormat() {
 		String function = "public void onHeaderIncorrectPatternFormat()";
-		if (logger.isTraceEnabled()) {
 			logger.trace(">>> " + function);
 			logger.trace("<<< " + function);
-		}
 	}
 	
 	/*
@@ -135,13 +137,10 @@ public class TesterTcpConnection extends DoipTcpConnectionWithEventCollection {
 	 * @throws DiagnosticServiceExecutionFailed
 	 */
 
-	public byte[] executeDiagnosticService(byte[] request, boolean responseExpected) throws DiagnosticServiceExecutionFailed {
-
-		if (logger.isTraceEnabled()) {
-			logger.trace(">>> public byte[] executeDiagnosticService(byte[] request, boolean responseExpected)");
-		}
+	public byte[] executeDiagnosticService(byte[] request) throws DiagnosticServiceExecutionFailed {
 
 		try {
+			logger.trace(enter, ">>> public byte[] executeDiagnosticService(byte[] request)");
 			this.clearEvents();
 			this.sendDiagnosticMessage(config.getTesterAddress(), config.getEcuAddressPhysical(), request);
 			DoipEvent event = this.waitForEvents(1, config.get_A_DoIP_Diagnostic_Message());
@@ -150,8 +149,7 @@ public class TesterTcpConnection extends DoipTcpConnectionWithEventCollection {
 						new DiagnosticServiceExecutionFailed(
 								DiagnosticServiceExecutionFailed.NO_DIAG_MESSAGE_POS_ACK_RECEIVED,
 								"No DoIP message received after sending diagnostic request");
-				logger.error(Helper.getExceptionAsString(ex));
-				throw ex;
+				throw logger.throwing(Level.INFO, ex);
 			}
 
 			if (!(event instanceof DoipEventTcpDiagnosticMessagePosAck)) {
@@ -159,17 +157,11 @@ public class TesterTcpConnection extends DoipTcpConnectionWithEventCollection {
 						new DiagnosticServiceExecutionFailed(
 								DiagnosticServiceExecutionFailed.NO_DIAG_MESSAGE_POS_ACK_RECEIVED,
 								"Received Event was not of type DoipEventTcpDiagnosticMessagePosAck");
-				logger.error(Helper.getExceptionAsString(ex));
-				throw ex;
+				throw logger.throwing(Level.INFO, ex);
 			}
 
 			DoipEventTcpDiagnosticMessagePosAck posAckEvent = (DoipEventTcpDiagnosticMessagePosAck) event;
 			DoipTcpDiagnosticMessagePosAck posAckMsg = (DoipTcpDiagnosticMessagePosAck) posAckEvent.getDoipMessage();
-			if (posAckMsg == null) {
-				RuntimeException ex = new RuntimeException("DoipEventTcpDiagnosticMessagePosAck.getDoipMessage() returned null");
-				logger.fatal(Helper.getExceptionAsString(ex));
-				throw ex;
-			}
 
 			event = this.waitForEvents(2, config.get_A_DoIP_Diagnostic_Message());
 			if (event == null) {
@@ -177,8 +169,7 @@ public class TesterTcpConnection extends DoipTcpConnectionWithEventCollection {
 						new DiagnosticServiceExecutionFailed(
 								DiagnosticServiceExecutionFailed.NO_DIAG_MESSAGE_RECEIVED,
 								"No event received after receiving the event DoipEventTcpDiagnosticMessagePosAck");
-				logger.error(Helper.getExceptionAsString(ex));
-				throw ex;
+				throw logger.throwing(Level.INFO, ex);
 			}
 
 			if (!(event instanceof DoipEventTcpDiagnosticMessage)) {
@@ -186,38 +177,31 @@ public class TesterTcpConnection extends DoipTcpConnectionWithEventCollection {
 						new DiagnosticServiceExecutionFailed(
 								DiagnosticServiceExecutionFailed.NO_DIAG_MESSAGE_RECEIVED,
 								"Received Event was not of type DoipEventTcpDiagnosticMessage");
-				logger.error(Helper.getExceptionAsString(ex));
-				throw ex;
+				throw logger.throwing(Level.INFO, ex);
 			}
 
 			DoipEventTcpDiagnosticMessage doipEventTcpDiagnosticMessage = (DoipEventTcpDiagnosticMessage) event;
 			DoipTcpDiagnosticMessage doipTcpDiagnosticMessage = (DoipTcpDiagnosticMessage) doipEventTcpDiagnosticMessage.getDoipMessage();
-			if (doipTcpDiagnosticMessage == null) {
-				RuntimeException ex = new RuntimeException("DoipEventTcpDiagnosticMessage.getDoipMessage() returned null");
-			}
 			return doipTcpDiagnosticMessage.getDiagnosticMessage();
 
 		} catch (InterruptedException e) {
 			DiagnosticServiceExecutionFailed ex =
 					new DiagnosticServiceExecutionFailed(
-							DiagnosticServiceExecutionFailed.UNSPECIFIC_ERROR,
-							"Unexpected InterruptedException", e);
-			logger.fatal(Helper.getExceptionAsString(ex));
-			throw ex;
-
+							DiagnosticServiceExecutionFailed.GENERAL_ERROR,
+							TextBuilder.unexpectedException(e), e);
+			throw logger.throwing(Level.FATAL, ex);
+		} finally {
+			logger.trace(exit, "<<< public byte[] executeDiagnosticService(byte[] request, boolean responseExpected)");
 		}
 	}
 
 	public void sendDiagnosticMessage(int sourceAddress, int targetAddress, byte[] message) {
-		if (logger.isTraceEnabled()) {
-			logger.trace(">>> public void sendDiagnosticMessage()");
-		}
-
-		DoipTcpDiagnosticMessage request = new DoipTcpDiagnosticMessage(sourceAddress, targetAddress, message);
-		this.send(request);
-
-		if (logger.isTraceEnabled()) {
-			logger.trace("<<< public void sendDiagnosticMessage()");
+		try {
+			logger.trace(enter, ">>> public void sendDiagnosticMessage(int sourceAddress, int targetAddress, byte[] message)");
+			DoipTcpDiagnosticMessage request = new DoipTcpDiagnosticMessage(sourceAddress, targetAddress, message);
+			this.send(request);
+		} finally {
+			logger.trace(exit, "<<< public void sendDiagnosticMessage(int sourceAddress, int targetAddress, byte[] message)");
 		}
 	}
 

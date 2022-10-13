@@ -1,21 +1,21 @@
 package doip.junit;
 
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.function.Executable;
 import org.opentest4j.AssertionFailedError;
-
-import doip.logging.LogManager;
-import doip.logging.Logger;
 
 public class Assertions {
 
 	private static Logger logger = LogManager.getLogger(Assertions.class);
+	public static Level assertionFailed = Level.getLevel("ASSERTION_FAILED");
 
 	public static void assertTrue(boolean condition) {
 		try {
 			org.junit.jupiter.api.Assertions.assertTrue(condition);
 		}  catch (AssertionFailedError e) {
-			logger.error(getExceptionAsString(e));
-			throw e;
+			throw logger.throwing(assertionFailed, e);
 		}
 	}
 
@@ -23,8 +23,7 @@ public class Assertions {
 		try {
 			org.junit.jupiter.api.Assertions.assertTrue(condition, message);
 		}  catch (AssertionFailedError e) {
-			logger.error(getExceptionAsString(e));
-			throw e;
+			throw logger.throwing(assertionFailed, e);
 		}
 	}
 
@@ -32,8 +31,7 @@ public class Assertions {
 		try {
 			org.junit.jupiter.api.Assertions.assertFalse(condition);
 		}  catch (AssertionFailedError e) {
-			logger.error(getExceptionAsString(e));
-			throw e;
+			throw logger.throwing(assertionFailed, e);
 		}
 	}
 
@@ -41,8 +39,7 @@ public class Assertions {
 		try {
 			org.junit.jupiter.api.Assertions.assertFalse(condition, message);
 		}  catch (AssertionFailedError e) {
-			logger.error(getExceptionAsString(e));
-			throw e;
+			throw logger.throwing(assertionFailed, e);
 		}
 	}
 
@@ -50,8 +47,7 @@ public class Assertions {
 		try {
 			org.junit.jupiter.api.Assertions.assertEquals(expected, actual);
 		} catch (AssertionFailedError e) {
-			logger.error(getExceptionAsString(e));
-			throw e;
+			throw logger.throwing(assertionFailed, e);
 		}
 	}
 
@@ -59,8 +55,7 @@ public class Assertions {
 		try {
 			org.junit.jupiter.api.Assertions.assertEquals(expected, actual, message);
 		} catch (AssertionFailedError e) {
-			logger.error(getExceptionAsString(e));
-			throw e;
+			throw logger.throwing(assertionFailed, e);
 		}
 	}
 
@@ -68,8 +63,7 @@ public class Assertions {
 		try {
 			org.junit.jupiter.api.Assertions.assertArrayEquals(expecteds, actuals);
 		} catch (AssertionFailedError e) {
-			logger.error(getExceptionAsString(e));
-			throw e;
+			throw logger.throwing(assertionFailed, e);
 		}
 	}
 
@@ -77,8 +71,7 @@ public class Assertions {
 		try {
 			org.junit.jupiter.api.Assertions.assertArrayEquals(expecteds, actuals, message);
 		} catch (AssertionFailedError e) {
-			logger.error(getExceptionAsString(e));
-			throw e;
+			throw logger.throwing(assertionFailed, e);
 		}
 	}
 
@@ -86,8 +79,7 @@ public class Assertions {
 		try {
 			org.junit.jupiter.api.Assertions.assertEquals(expected, actual, message);
 		} catch (AssertionFailedError e) {
-			logger.error(getExceptionAsString(e));
-			throw e;
+			throw logger.throwing(assertionFailed, e);
 		}
 	}
 
@@ -95,8 +87,7 @@ public class Assertions {
 		try {
 			org.junit.jupiter.api.Assertions.assertEquals(expected, actual);
 		} catch (AssertionFailedError e) {
-			logger.error(getExceptionAsString(e));
-			throw e;
+			throw logger.throwing(assertionFailed, e);
 		}
 	}
 
@@ -104,8 +95,7 @@ public class Assertions {
 		try {
 			org.junit.jupiter.api.Assertions.assertNotNull(obj);
 		} catch (AssertionFailedError e) {
-			logger.error(getExceptionAsString(e));
-			throw e;
+			throw logger.throwing(assertionFailed, e);
 		}
 	}
 
@@ -113,8 +103,7 @@ public class Assertions {
 		try {
 			org.junit.jupiter.api.Assertions.assertNotNull(obj, message);
 		} catch (AssertionFailedError e) {
-			logger.error(getExceptionAsString(e));
-			throw e;
+			throw logger.throwing(assertionFailed, e);
 		}
 	}
 
@@ -122,8 +111,7 @@ public class Assertions {
 		try {
 			org.junit.jupiter.api.Assertions.assertNull(obj);
 		} catch (AssertionFailedError e) {
-			logger.error(getExceptionAsString(e));
-			throw e;
+			throw logger.throwing(assertionFailed, e);
 		}
 	}
 
@@ -131,8 +119,7 @@ public class Assertions {
 		try {
 			org.junit.jupiter.api.Assertions.assertNull(obj, message);
 		} catch (AssertionFailedError e) {
-			logger.error(getExceptionAsString(e));
-			throw e;
+			throw logger.throwing(assertionFailed, e);
 		}
 	}
 
@@ -140,8 +127,7 @@ public class Assertions {
 		try {
 			org.junit.jupiter.api.Assertions.assertEquals(expected, actual);
 		} catch (AssertionFailedError e) {
-			logger.error(getExceptionAsString(e));
-			throw e;
+			throw logger.throwing(assertionFailed, e);
 		}
 	}
 
@@ -149,8 +135,7 @@ public class Assertions {
 		try {
 			org.junit.jupiter.api.Assertions.assertEquals(expected, actual, message);
 		} catch (AssertionFailedError e) {
-			logger.error(getExceptionAsString(e));
-			throw e;
+			throw logger.throwing(assertionFailed, e);
 		}
 	}
 	
@@ -158,8 +143,7 @@ public class Assertions {
 		try {
 			return org.junit.jupiter.api.Assertions.assertThrows(expectedType, executable);
 		} catch (AssertionFailedError e) {
-			logger.error(getExceptionAsString(e));
-			throw e;
+			throw logger.throwing(assertionFailed, e);
 		}
 	}
 	
@@ -168,8 +152,7 @@ public class Assertions {
 		try {
 			return org.junit.jupiter.api.Assertions.assertThrows(expectedType, executable, message);
 		} catch (AssertionFailedError e) {
-			logger.error(getExceptionAsString(e));
-			throw e;
+			throw logger.throwing(assertionFailed, e);
 		}
 	}
 	
@@ -178,8 +161,7 @@ public class Assertions {
 		try {
 			return org.junit.jupiter.api.Assertions.fail();
 		} catch (AssertionFailedError e) {
-			logger.error(getExceptionAsString(e));
-			throw e;
+			throw logger.throwing(assertionFailed, e);
 		}
 	}
 
@@ -188,8 +170,7 @@ public class Assertions {
 			return org.junit.jupiter.api.Assertions.fail(message);
 		}
 		 catch (AssertionFailedError e) {
-			logger.error(getExceptionAsString(e));
-			throw e;
+			throw logger.throwing(assertionFailed, e);
 		}
 	}
 

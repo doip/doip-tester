@@ -1,42 +1,78 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Configuration>
-	<Appenders>
-		<Console name="Console" target="SYSTEM_OUT">
+	<Properties>
 			<!--
-				The first section defines logging of current time.
+				%d defines logging of current time.
 				%t stands for the thread name
 				%level will print the log level (INFO, WARN, TRACE, ...)
 				%logger will print the name of the logger (e.g. doip.simulation)
 				%m is the log message.
+				%ex is the exception
 				%n is a new line character.
 			 -->
-			<PatternLayout pattern="%d{HH:mm:ss.SSS} [%-16t]  %-6level %-56logger %-16marker - %msg%n" />
+		<Property name="layout">%d{HH:mm:ss.SSS} [%-16t]  %-60logger %-16level - %msg%ex{15}%n</Property>
+	</Properties>
+	<CustomLevels>
+             <!--
+                    OFF   =   0
+                    FATAL = 100
+                    ERROR = 200
+                    WARN  = 300
+                    INFO  = 400
+                    DEBUG = 500
+                    TRACE = 600
+                    ALL   = Integer.MAX_VALUE
+             -->	
+         <!-- Assertions should always be visible, so we set them to level "FATAL" -->
+		<CustomLevel name="ASSERTION_FAILED" intLevel="100" />
+	</CustomLevels>
+	<Appenders>
+		<Console name="console" target="SYSTEM_OUT">
+			<PatternLayout pattern="${layout}" />
 		</Console>
-		<File name="File" fileName="doip-tester.log" append="false">
-			<PatternLayout pattern="%d{HH:mm:ss.SSS} [%-16t]  %-6level %-56logger %-16marker - %msg%n" />
+		<File name="doip" fileName="doip-tester.log" append="false">
+			<PatternLayout pattern="${layout}" />
+		</File>
+		<File name="trace" fileName="trace.log" append="false">
+			<PatternLayout pattern="${layout}" />
+		</File>
+		<File name="info" fileName="info.log" append="false">
+			<PatternLayout pattern="${layout}" />
+		</File>
+		<File name="error" fileName="error.log" append="false">
+			<PatternLayout pattern="${layout}" />
 		</File>
 	</Appenders>
 	<Loggers>
-		<Root level="trace">
-			<AppenderRef ref="Console" />
-			<AppenderRef ref="File" />
+		<Root level="TRACE">
+			<AppenderRef ref="console" level="INFO"/>
+			<AppenderRef ref="doip" level="INFO"/>
+			<AppenderRef ref="trace" level="TRACE"/>
+			<AppenderRef ref="info" level="INFO"/>
+			<AppenderRef ref="error" level="ERROR"/>
 		</Root>
 
-		<Logger name="doip" level="trace" additivity="false">
-			<AppenderRef ref="Console" />
-			<AppenderRef ref="File"/>
+		<Logger name="doip.junit" level="INFO" additivity="false">
+			<AppenderRef ref="console" />
+			<AppenderRef ref="doip"/>
+			<AppenderRef ref="trace" />
+			<AppenderRef ref="info" />
+			<AppenderRef ref="error" />
 		</Logger>
-		<Logger name="doip.library.comm.DoipTcpStreamBuffer" level="warn" additivity="false">
-			<AppenderRef ref="Console" />
- 			<AppenderRef ref="File"/>
+		<!-- Following two classes are very verbose, we wet them to level "WARN" -->
+		<Logger name="doip.library.comm.DoipTcpStreamBuffer" level="WARN" additivity="false">
+			<AppenderRef ref="console" />
+ 			<AppenderRef ref="doip"/>
+			<AppenderRef ref="trace" />
+			<AppenderRef ref="info" />
+			<AppenderRef ref="error" />
 		</Logger>
-		<Logger name="doip.library.util.StreamBuffer" level="warn" additivity="false">
-			<AppenderRef ref="Console" />
- 			<AppenderRef ref="File"/>
-		</Logger>
-		<Logger name="doip.tester" level="trace" additivity="false">
-			<AppenderRef ref="Console" />
- 			<AppenderRef ref="File"/>
+		<Logger name="doip.library.util.StreamBuffer" level="WARN" additivity="false">
+			<AppenderRef ref="console" />
+ 			<AppenderRef ref="doip"/>
+			<AppenderRef ref="trace" />
+			<AppenderRef ref="info" />
+			<AppenderRef ref="error" />
 		</Logger>
 	</Loggers>
 </Configuration>

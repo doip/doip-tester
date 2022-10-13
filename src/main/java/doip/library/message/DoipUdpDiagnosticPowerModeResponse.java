@@ -27,7 +27,7 @@ public class DoipUdpDiagnosticPowerModeResponse extends DoipUdpMessage {
 
 	@Override
 	public byte[] getMessage() {
-		byte[] message = new byte[] { 0x02, (byte) 0xFD, 0x40, 0x04, 0x00, 0x00, 0x00, 0x01, 0x00 };
+		byte[] message = new byte[] { 0x03, (byte) 0xFC, 0x40, 0x04, 0x00, 0x00, 0x00, 0x01, 0x00 };
 		message[8] = (byte) this.diagnsoticPowerMode;
 		return message;
 	}

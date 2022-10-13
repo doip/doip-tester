@@ -7,6 +7,8 @@ import java.util.Vector;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 import doip.junit.InitializationError;
 import doip.library.properties.EmptyPropertyValue;
@@ -23,6 +25,8 @@ public class TestSetup {
 	 * log4j logger
 	 */
 	private static Logger logger = LogManager.getLogger(TestSetup.class);
+	private static Marker enter = MarkerManager.getMarker("ENTER");
+	private static Marker exit = MarkerManager.getMarker("EXIT");
 	
 	/**
 	 * Test configuration with parameters for all tests.
@@ -53,12 +57,9 @@ public class TestSetup {
 	 * @throws MissingProperty 
 	 * @throws IOException 
 	 */
-	public boolean initialize() throws InitializationError {
-		String function = "public boolean initialize(String filename)";
+	public void initialize() throws InitializationError {
 		try {
-			if (logger.isTraceEnabled()) {
-				logger.trace(">>> " + function);
-			}
+			logger.trace(enter, ">>> public void initialize()");
 			
 			logger.debug("Initialize the test setup");
 	
@@ -70,8 +71,6 @@ public class TestSetup {
 			this.testerUdpCommModule.start(socket);
 			
 			logger.debug("Test setup has been completely initialized.");
-			return true;
-			
 	
 		} catch (IOException e) {
 			throw logger.throwing(new InitializationError(e));
@@ -82,9 +81,7 @@ public class TestSetup {
 		} catch (MissingSystemProperty e) {
 			throw logger.throwing(new InitializationError(e));
 		} finally {
-			if (logger.isTraceEnabled()) {
-				logger.trace("<<< public boolean initialize(String filename)");
-			}
+				logger.trace(exit, ">>> public void initialize()");
 		}
 	}
 	
@@ -95,9 +92,7 @@ public class TestSetup {
 	public boolean uninitialize() {
 		String function = "public boolean uninitialize()";
 		try {
-			if (logger.isTraceEnabled()) {
-				logger.trace(">>> public boolean uninitialize()");
-			}
+			logger.trace(enter, ">>> public boolean uninitialize()");
 	
 			if (this.tcpConnections != null) {
 				for (DoipTcpConnectionWithEventCollection conn : this.tcpConnections) {
@@ -116,9 +111,7 @@ public class TestSetup {
 			return true;
 
 		} finally {
-			if (logger.isTraceEnabled()) {
-				logger.trace("<<< public boolean uninitialize()");
-			}
+			logger.trace(exit, "<<< public boolean uninitialize()");
 		}
 	}
 	
@@ -129,9 +122,7 @@ public class TestSetup {
 	 */
 	public TesterTcpConnection createTesterTcpConnection() throws IOException {
 		try {
-			if (logger.isTraceEnabled()) {
-				logger.trace(">>> public DoipTcpConnectionWithEventCollection createDoipTcpConnectionWithEventCollection()");
-			}
+			logger.trace(enter, "public TesterTcpConnection createTesterTcpConnection()");
 		
 			TesterTcpConnection conn = new TesterTcpConnection(config);
 			this.tcpConnections.add(conn);
@@ -146,9 +137,7 @@ public class TestSetup {
 			return conn;
 		
 		} finally {
-			if (logger.isTraceEnabled()) {
-				logger.trace("<<< public DoipTcpConnectionWithEventCollection createDoipTcpConnectionWithEventCollection()");
-			}
+			logger.trace(exit, "public TesterTcpConnection createTesterTcpConnection()");
 		}
 	}
 	
@@ -158,17 +147,13 @@ public class TestSetup {
 	 */
 	public void removeDoipTcpConnectionTest(DoipTcpConnectionWithEventCollection conn) {
 		try {
-			if (logger.isTraceEnabled()) {
-				logger.trace(">>> public void removeDoipTcpConnectionTest(TestDoipTcpConnection conn)");
-			}
+			logger.trace(enter, ">>> public void removeDoipTcpConnectionTest(TestDoipTcpConnection conn)");
 			
 			conn.stop();
 			this.tcpConnections.remove(conn);
 		
 		} finally {
-			if (logger.isTraceEnabled()) {
-				logger.trace("<<< public void removeDoipTcpConnectionTest(TestDoipTcpConnection conn)");
-			}
+			logger.trace(exit, "<<< public void removeDoipTcpConnectionTest(TestDoipTcpConnection conn)");
 		}
 	}
 	

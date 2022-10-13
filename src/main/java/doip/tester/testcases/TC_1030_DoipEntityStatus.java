@@ -4,11 +4,13 @@ import static doip.junit.Assertions.*;
 import java.io.IOException;
 import java.net.InetAddress;
 
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.lookup.SystemPropertiesLookup;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.opentest4j.AssertionFailedError;
 
@@ -20,7 +22,9 @@ import doip.library.message.DoipMessage;
 import doip.library.message.DoipUdpEntityStatusRequest;
 import doip.tester.toolkit.TestConfig;
 import doip.tester.toolkit.TestSetup;
+import doip.tester.toolkit.TestUtils;
 import doip.tester.toolkit.TesterUdpCommModule;
+import doip.tester.toolkit.TextBuilder;
 import doip.tester.toolkit.event.DoipEvent;
 import doip.tester.toolkit.event.DoipEventMessage;
 import doip.tester.toolkit.event.DoipEventUdpEntityStatusResponse;
@@ -62,6 +66,7 @@ public class TC_1030_DoipEntityStatus {
 	}
 	
 	@Test
+	@DisplayName("TC-1030-01")
 	public void test() throws TestExecutionError {
 		logger.trace(">>> public void test()");
 		TestCaseDescription desc = null;
@@ -97,9 +102,8 @@ public class TC_1030_DoipEntityStatus {
 			desc.logFooter(TestResult.FAILED);
 			throw e;
 		} catch (IOException | InterruptedException e) {
-			logger.fatal("Unexpected "+ e.getClass().getName() +": " + e.getMessage());
-			desc.logFooter(TestResult.ERROR);
-			throw logger.throwing(new TestExecutionError(e));
+			throw logger.throwing(Level.FATAL, 
+					new TestExecutionError(TextBuilder.unexpectedException(e), e));
 		} finally {
 			logger.trace("<<< public void test()");
 		}

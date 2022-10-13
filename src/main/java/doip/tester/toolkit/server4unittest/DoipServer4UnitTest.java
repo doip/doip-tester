@@ -2,11 +2,13 @@ package doip.tester.toolkit.server4unittest;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
+import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.LinkedList;
 
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -88,6 +90,7 @@ public class DoipServer4UnitTest implements TcpServerListener, DoipTcpConnection
 		
 		try {
 			logger.debug("Address of DoipServer4UnitTest: " + this.toString());
+			this.isSilent = false;
 			logger.info("Create UDP socket");
 			this.udpSocket = Helper.createUdpSocket(null, 13400, null); 
 			udpMessageHandler = new DoipUdpMessageHandler("GW-UDP", null);
@@ -177,11 +180,22 @@ public class DoipServer4UnitTest implements TcpServerListener, DoipTcpConnection
 				new DoipTcpDiagnosticMessagePosAck(targetAddress, sourceAddress, 0, new byte[0]);
 		doipTcpConnection.send(posAck);
 		
-		DoipTcpDiagnosticMessage response = 
-				new DoipTcpDiagnosticMessage(
-						targetAddress, sourceAddress, new byte[] {0x7F, 0x10, 0x10});
+		byte[] request = doipMessage.getDiagnosticMessage();
+		byte[] response = null;
+		switch (request[0]) {
+		case 0x10:
+			response = new byte[] {0x50, 0x03, 0x00, 0x32, 0x01, (byte) 0xF4};
+			break;
+		default:
+			response = new byte[] {0x7F, request[0], 0x10};
+			break;
+		}
 		
-		doipTcpConnection.send(response);
+		DoipTcpDiagnosticMessage doipResponse = 
+				new DoipTcpDiagnosticMessage(
+						targetAddress, sourceAddress, response);
+		
+		doipTcpConnection.send(doipResponse);
 	}
 
 	@Override
@@ -258,9 +272,13 @@ public class DoipServer4UnitTest implements TcpServerListener, DoipTcpConnection
 			} else {
 				// nextUdpResponse == null
 				if (doipMessage instanceof DoipUdpVehicleIdentRequest) {
-					sendDoipUdVehicleIdentResponse((DoipUdpVehicleIdentRequest) doipMessage, packet);
+					sendDoipUdpVehicleIdentResponse(packet.getAddress(), packet.getPort());
+				} else if (doipMessage instanceof DoipUdpVehicleIdentRequestWithEid) {
+					sendDoipUdpVehicleIdentResponse(packet.getAddress(), packet.getPort());
+				} else if (doipMessage instanceof DoipUdpVehicleIdentRequestWithVin) {
+					sendDoipUdpVehicleIdentResponse(packet.getAddress(), packet.getPort());
 				} else if (doipMessage instanceof DoipUdpEntityStatusRequest) {
-					sendDoipUdpEntityStatusResponse((DoipUdpEntityStatusRequest) doipMessage, packet);
+					sendDoipUdpEntityStatusResponse(packet.getAddress(), packet.getPort());
 				} else {
 					logger.fatal("Received a unknown DoIP UDP messsage");
 				}
@@ -284,29 +302,26 @@ public class DoipServer4UnitTest implements TcpServerListener, DoipTcpConnection
 	 * @param doipRequest
 	 * @param packet
 	 */
-	private void sendDoipUdVehicleIdentResponse(DoipUdpVehicleIdentRequest doipRequest, DatagramPacket packet) {
+	private void sendDoipUdpVehicleIdentResponse(InetAddress address, int port) {
 		try {
-			logger.trace(">>> private void handleDoipUdVehicleIdentRequest(DoipUdpVehicleIdentRequest doipMessage, DatagramPacket packet)");
+			logger.trace(markerEnter, ">>> private void sendDoipUdpVehicleIdentResponse(DoipUdpVehicleIdentRequestWithEid doipRequest, DatagramPacket packet)");
 			DoipUdpVehicleAnnouncementMessage doipResponse =
 					new DoipUdpVehicleAnnouncementMessage(vin, entityAddress, eid, gid, 0, 0);					
-			this.udpMessageHandler.send(doipResponse, packet.getAddress(), packet.getPort());
+			this.udpMessageHandler.send(doipResponse, address, port);
 		} catch (IOException e) {
-			logger.fatal("Unexpected " + e.getClass().getName() + ": " +e.getMessage());
-			logger.catching(e);
-		} finally {
-			logger.trace("<<< private void handleDoipUdVehicleIdentRequest(DoipUdpVehicleIdentRequest doipMessage, DatagramPacket packet)");
+			logger.catching(Level.FATAL, e);
+			logger.trace(markerExit, "<<< private void sendDoipUdpVehicleIdentResponse(DoipUdpVehicleIdentRequestWithEid doipRequest, DatagramPacket packet)");
 		}
 	}
-
-	private void sendDoipUdpEntityStatusResponse(DoipUdpEntityStatusRequest request, DatagramPacket packet) { 
+	
+	private void sendDoipUdpEntityStatusResponse(InetAddress address, int port) { 
 		try {
 			logger.trace(markerEnter, ">>> private void sendDoipEntityStatusResponse(DoipUdpEntityStatusRequest request, DatagramPacket packet)");
 			DoipUdpEntityStatusResponse response =
 					new DoipUdpEntityStatusResponse(0, 8, this.tcpConnectionList.size(), 0x1000000);
-			this.udpMessageHandler.send(response, packet.getAddress(), packet.getPort());
+			this.udpMessageHandler.send(response, address, port);
 		} catch (IOException e) {
-			logger.fatal("Unexpected " + e.getClass().getName() + ": " +e.getMessage());
-			logger.catching(e);
+			logger.catching(Level.FATAL, e);
 		} finally {
 			logger.trace(markerExit,  "<<< private void sendDoipEntityStatusResponse(DoipUdpEntityStatusRequest request, DatagramPacket packet)");
 		}
@@ -330,13 +345,14 @@ public class DoipServer4UnitTest implements TcpServerListener, DoipTcpConnection
 	@Override
 	public void onDoipUdpVehicleIdentRequestWithEid(DoipUdpVehicleIdentRequestWithEid doipMessage,
 			DatagramPacket packet) {
+		this.handleDoipUdpMessage(doipMessage, packet);
 		
 	}
 
 	@Override
 	public void onDoipUdpVehicleIdentRequestWithVin(DoipUdpVehicleIdentRequestWithVin doipMessage,
 			DatagramPacket packet) {
-		
+		this.handleDoipUdpMessage(doipMessage, packet);
 	}
 
 	@Override

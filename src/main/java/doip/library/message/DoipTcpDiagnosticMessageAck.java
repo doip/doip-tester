@@ -41,8 +41,8 @@ public abstract class DoipTcpDiagnosticMessageAck extends DoipTcpMessage {
 	@Override
 	public byte[] getMessage() {
 		byte[] data = new byte[8 + 4 + 1 + diagnosticMessage.length];
-		data[0] = 0x02;
-		data[1] = (byte) 0xFD;
+		data[0] = 0x03;
+		data[1] = (byte) 0xFC;
 		data[2] = (byte) 0x80;
 		if (this.ackCode == 0) {
 			data[3] = 0x02;

@@ -9,7 +9,7 @@ public class InitializationError extends Exception {
 		super(message, e);
 	}
 
-	public InitializationError(Exception e) {
+	public InitializationError(Throwable e) {
 		super(e);
 	}
 

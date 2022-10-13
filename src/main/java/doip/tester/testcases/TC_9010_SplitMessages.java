@@ -6,6 +6,8 @@ import java.io.IOException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -25,12 +27,15 @@ import doip.library.util.StringConstants;
 import doip.tester.toolkit.TestConfig;
 import doip.tester.toolkit.TestSetup;
 import doip.tester.toolkit.TesterTcpConnection;
+import doip.tester.toolkit.TextBuilder;
 import doip.tester.toolkit.event.DoipEvent;
 import doip.tester.toolkit.exception.RoutingActivationFailed;
 
-public class TC_9000_SplitMessages {
+public class TC_9010_SplitMessages {
 	
-	private static Logger logger = LogManager.getLogger(TC_9000_SplitMessages.class);
+	private static Logger logger = LogManager.getLogger(TC_9010_SplitMessages.class);
+	private static Marker markerEnter = MarkerManager.getMarker("ENTER");
+	private static Marker markerExit  = MarkerManager.getMarker("EXIT");
 	
 	private static TestSetup testSetup = null;
 	
@@ -42,10 +47,8 @@ public class TC_9000_SplitMessages {
 	public static void setUpBeforeClass() throws InitializationError {
 		
 		try {
-			if (logger.isInfoEnabled()) {
-				logger.info(StringConstants.SINGLE_LINE);
-				logger.info(">>> public static void setUpBeforeClass()");
-			}
+			logger.trace(markerEnter, ">>> public static void setUpBeforeClass()");
+			logger.info(StringConstants.SINGLE_LINE);
 
 			// --- SET UP BEFORE CLASS BEGIN --------------------------------
 			testSetup = new TestSetup();
@@ -54,20 +57,14 @@ public class TC_9000_SplitMessages {
 			// --- SET UP BEFORE CLASS END ----------------------------------
 			
 		} finally {
-			if (logger.isInfoEnabled()) {
-				logger.info("<<< public static void setUpBeforeClass()");
-				logger.info(StringConstants.SINGLE_LINE);
-			}
+			logger.trace(markerExit, "<<< public static void setUpBeforeClass()");
 		}
 	}
 
 	@AfterAll
 	public static void tearDownAfterClass() {
 		try {
-			if (logger.isInfoEnabled()) {
-				logger.info(StringConstants.SINGLE_LINE);
-				logger.info(">>> public static void tearDownAfterClass()");
-			}
+			logger.trace(markerEnter, ">>> public static void tearDownAfterClass()");
 			
 			// --- TEAR DOWN AFTER CLASS BEGIN ------------------------------
 			if (testSetup != null) {
@@ -77,44 +74,36 @@ public class TC_9000_SplitMessages {
 			// --- TEAR DOWN AFTER CLASS END --------------------------------
 			
 		} finally {
-			if (logger.isInfoEnabled()) {
-				logger.info("<<< public static void tearDownAfterClass()");
-			}
+			logger.info(StringConstants.SINGLE_LINE);
+			logger.trace(markerExit, "<<< public static void tearDownAfterClass()");
 		}
 	}
 
 	@BeforeEach
 	public void setUp() throws InitializationError {
 		try {
-			if (logger.isInfoEnabled()) {
-				logger.info(StringConstants.SINGLE_LINE);
-				logger.info(">>> public void setUp()");
-			}
+			logger.trace(markerEnter, ">>> public void setUp()");
+			logger.info(StringConstants.SINGLE_LINE);
 			
 			// --- SET UP CODE BEGIN ----------------------------------------
 			conn = this.testSetup.createTesterTcpConnection();
-			conn.performRoutingActivation(0);
+			conn.performRoutingActivation(config.getTesterAddress(), 0);
 			// --- SET UP CODE END ------------------------------------------
 			
 		} catch (IOException | RoutingActivationFailed | InterruptedException e) {
-			String error = "Unexpected " + e.getClass().getName() + ": " + e.getMessage();
+			String error = TextBuilder.unexpectedException(e);
 			logger.error(error);
 			logger.error(Helper.getExceptionAsString(e));
 			throw logger.throwing(new InitializationError(error, e));
 		} finally {
-			if (logger.isInfoEnabled()) {
-				logger.info("<<< public void setUp()");
-			}	
+			logger.trace(markerExit, "<<< public void setUp()");
 		}
 	}
 
 	@AfterEach
 	public void tearDown() {
 		try {
-			if (logger.isInfoEnabled()) {
-				logger.info(StringConstants.SINGLE_LINE);
-				logger.info(">>> public void tearDown()");
-			}
+			logger.trace(markerEnter, ">>> public void tearDown()");
 			
 			// --- TEAR DOWN CODE BEGIN --------------------------------------
 			if (conn != null) {
@@ -124,10 +113,8 @@ public class TC_9000_SplitMessages {
 			// --- TEAR DOWN CODE END ----------------------------------------
 			
 		} finally {
-			if (logger.isInfoEnabled()) {
-				logger.info("<<< public void tearDown()");
-				logger.info(StringConstants.SINGLE_LINE);
-			}
+			logger.info(StringConstants.SINGLE_LINE);
+			logger.trace(markerExit, "<<< public void tearDown()");
 		}
 	}
 
@@ -137,7 +124,7 @@ public class TC_9000_SplitMessages {
 		String function = "public void test()";
 		TestCaseDescription desc = null;
 		try {
-			logger.trace(">>> " + function);
+			logger.trace(markerEnter, ">>> " + function);
 			
 			desc = new TestCaseDescription(
 					"TC-9000-01",
@@ -168,14 +155,14 @@ public class TC_9000_SplitMessages {
 			desc.logFooter(TestResult.ERROR);
 			throw logger.throwing(new TestExecutionError(e));
 		} finally {
-			logger.trace("<<< " + function);
+			logger.trace(markerExit, "<<< " + function);
 		}
 	}
 	
 	public void testSplitMessage(byte[] message, int splitIndex) throws InterruptedException {
 		String function = "public void testSplitMessage(byte[] message, int splitIndex)";
 		try {
-			logger.info(">>> " + function);
+			logger.info(markerEnter, ">>> " + function);
 			int totalSize = message.length;
 			byte[] first = new byte[splitIndex];
 			byte[] second = new byte[totalSize - splitIndex];
@@ -193,7 +180,7 @@ public class TC_9000_SplitMessages {
 			assertNotNull(event, "Didn't receive two events on sending a diagnostic message splitted in two parts");
 
 		} finally {
-			logger.info("<<< " + function);
+			logger.info(markerExit, "<<< " + function);
 		}
 	}
 }

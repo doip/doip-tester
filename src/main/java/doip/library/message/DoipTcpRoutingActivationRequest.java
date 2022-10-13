@@ -72,8 +72,8 @@ public class DoipTcpRoutingActivationRequest extends DoipTcpMessage {
 			message[18] = (byte) (this.oemData);
 		}
 
-		message[0] = 0x02;
-		message[1] = (byte) 0xFD;
+		message[0] = 0x03;
+		message[1] = (byte) 0xFC;
 		message[2] = 0x00;
 		message[3] = 0x05;
 		message[4] = 0x00;
