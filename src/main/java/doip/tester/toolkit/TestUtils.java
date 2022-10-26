@@ -1,5 +1,6 @@
 package doip.tester.toolkit;
 
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -62,7 +63,7 @@ public class TestUtils {
 		}		
 	}
 	
-	public static CheckResult checkEventIsNotNullAndClassIsNull(DoipEvent event) {
+	private static CheckResult checkEventIsNotNullAndClassIsNull(DoipEvent event) {
 		if (event instanceof DoipEventMessage) {
 			DoipEventMessage eventMessage = (DoipEventMessage) event;
 			String text = "It was expected to receive no response, but instead a '" + eventMessage.getDoipMessage().getMessageName() + "' has been received"; 
@@ -74,8 +75,7 @@ public class TestUtils {
 			return new CheckResult(CheckResult.UNEXPECTED_SOCKET_CLOSED, text);
 		} else {
 			String text = "A unknown event did occur, class = " + event.getClass().getName();
-			logger.fatal(text);
-			return new CheckResult(CheckResult.UNKNOWN_EVENT, text);
+			throw logger.throwing(Level.FATAL, new IllegalArgumentException(text));
 		}		
 	}
 	
@@ -96,8 +96,7 @@ public class TestUtils {
 				return new CheckResult(CheckResult.SOCKET_NOT_CLOSED, text);
 			} else {
 				String text = "An unknown event class has been passed"; 
-				logger.fatal(text);
-				return new CheckResult(CheckResult.UNKOWN_EVENT_CLASS, text);
+				throw logger.throwing(Level.FATAL, new IllegalArgumentException(text));
 			}
 		} else {
 			String text = "No event did occur which is the expected result"; 

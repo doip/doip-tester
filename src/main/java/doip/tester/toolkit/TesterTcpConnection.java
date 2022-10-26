@@ -126,7 +126,7 @@ public class TesterTcpConnection extends DoipTcpConnectionWithEventCollection {
 	 * @return
 	 * @throws DiagnosticServiceExecutionFailed
 	 */
-	public byte[] executeDiagnosticService(byte[] request) throws DiagnosticServiceExecutionFailed {
+	public byte[] executeDiagnosticServicePosAck(byte[] request) throws DiagnosticServiceExecutionFailed {
 
 		try {
 			logger.trace(enter, ">>> public byte[] executeDiagnosticService(byte[] request)");
