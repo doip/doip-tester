@@ -24,6 +24,7 @@ import doip.junit.InitializationError;
 import doip.junit.TestCaseDescription;
 import doip.junit.TestResult;
 import doip.library.util.Helper;
+import doip.library.util.StringConstants;
 
 public class TC_1070_DiagnosticMessage {
 
@@ -37,6 +38,7 @@ public class TC_1070_DiagnosticMessage {
 	static void setUpBeforeClass() throws InitializationError {
 		String function = "static void setUpBeforeClass()"; 
 		try {
+			logger.info(StringConstants.SINGLE_LINE);
 			logger.trace(">>> " + function);
 			testSetup = new TestSetup();
 			testSetup.initialize();
@@ -57,6 +59,7 @@ public class TC_1070_DiagnosticMessage {
 			}
 		} finally {
 			logger.trace("<<< " + function);
+			logger.info(StringConstants.SINGLE_LINE);
 		}
 	}
 
@@ -65,7 +68,7 @@ public class TC_1070_DiagnosticMessage {
 	}
 
 	@AfterEach
-	void tearDown() throws Exception {
+	void tearDown() {
 	}
 
 	@Test

@@ -22,7 +22,7 @@ public class DoipTcpRoutingActivationRequest extends DoipTcpMessage {
 	private DoipTcpRoutingActivationRequest() {
 	}
 	
-	public String getName() {
+	public String getMessageName() {
 		return getPayloadTypeAsString(0x0005);
 	}
 

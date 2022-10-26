@@ -28,7 +28,7 @@ public class DoipUdpVehicleAnnouncementMessage extends DoipUdpMessage {
 		log(Level.INFO);
 	}
 	
-	public String getName() {
+	public String getMessageName() {
 		return getPayloadTypeAsString(0x0004);
 	}
 
@@ -40,13 +40,18 @@ public class DoipUdpVehicleAnnouncementMessage extends DoipUdpMessage {
 		logger.log(level, "    EID = " + Conversion.byteArrayToHexString(eid));
 		logger.log(level, "    GID = " + Conversion.byteArrayToHexString(gid));
 		logger.log(level, "    Further action required = " + furtherActionRequired);
-		logger.log(level, "    Sync status = " + syncStatus);
+		if (syncStatus == -1)  {
+			logger.log(level, "    Sync status not available");
+		} else {
+			logger.log(level, "    Sync status = " + syncStatus);
+		}
 		logger.log(level, "----------------------------------------");		
 	}
 
 	@Override
 	public byte[] getMessage() {
 		byte[] msg = new byte[41];
+		if (syncStatus == -1) msg = new byte[40];
 		msg[0] = 0x03;
 		msg[1] = (byte) 0xFC;
 		msg[2] = 0x00;
@@ -63,7 +68,7 @@ public class DoipUdpVehicleAnnouncementMessage extends DoipUdpMessage {
 		System.arraycopy(this.eid, 0, msg, 27, 6);
 		System.arraycopy(this.gid, 0, msg, 33, 6);
 		msg[39] = (byte) this.furtherActionRequired;
-		msg[40] = (byte) this.syncStatus;
+		if (syncStatus != -1) msg[40] = (byte) this.syncStatus;
 		return msg;
 	}
 

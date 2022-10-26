@@ -25,7 +25,7 @@ public class DoipTcpHeaderNegAck extends DoipTcpMessage implements DoipHeaderNeg
 		return doipHeaderNegAck;
 	}
 	
-	public String getName() {
+	public String getMessageName() {
 		return getPayloadTypeAsString(0x0000);
 	}
 
@@ -33,7 +33,6 @@ public class DoipTcpHeaderNegAck extends DoipTcpMessage implements DoipHeaderNeg
 		logger.log(level, "----------------------------------------");
 		logger.log(level, "DoIP header negative acknowledgement (TCP):");
 		logger.log(level, "    Code = " + String.format("0x%02X (", code) + getCodeAsString() + ")");
-		logger.log(level, "");
 		logger.log(level, "----------------------------------------");
 	}
 	

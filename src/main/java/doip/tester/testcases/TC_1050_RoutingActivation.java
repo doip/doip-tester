@@ -13,6 +13,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.opentest4j.AssertionFailedError;
 
 import doip.junit.InitializationError;
 import doip.junit.TestCaseDescription;
@@ -38,8 +39,8 @@ public class TC_1050_RoutingActivation {
 	public static void setUpBeforeClass() throws InitializationError {
 		
 		try {
-				logger.trace(">>> public static void setUpBeforeClass()");
 				logger.info(StringConstants.SINGLE_LINE);
+				logger.trace(">>> public static void setUpBeforeClass()");
 
 			// --- SET UP BEFORE CLASS BEGIN --------------------------------
 			testSetup = new TestSetup();
@@ -55,7 +56,6 @@ public class TC_1050_RoutingActivation {
 	@AfterAll
 	public static void tearDownAfterClass() {
 		try {
-			logger.info(StringConstants.SINGLE_LINE);
 			logger.trace(">>> public static void tearDownAfterClass()");
 			
 			// --- TEAR DOWN AFTER CLASS BEGIN ------------------------------
@@ -73,8 +73,8 @@ public class TC_1050_RoutingActivation {
 	@BeforeEach
 	public void setUp() throws InitializationError {
 		try {
-			logger.trace(">>> public void setUp()");
 			logger.info(StringConstants.SINGLE_LINE);
+			logger.trace(">>> public void setUp()");
 			
 			// --- SET UP CODE BEGIN ----------------------------------------
 			conn = testSetup.createTesterTcpConnection();
@@ -121,20 +121,20 @@ public class TC_1050_RoutingActivation {
 					"Send a routing activation request",
 					"ECU sends a routing activation response");
 			desc.logHeader();
-			try {
-				conn.performRoutingActivation(config.getTesterAddress(), 0);
-			} catch (InterruptedException e) {
-				desc.logFooter(TestResult.ERROR);
-				throw logger.throwing(Level.FATAL, new TestExecutionError(TextBuilder.unexpectedException(e), e));
-			} catch (RoutingActivationFailed e) {
-				fail("Routing activation failed: " + e.getMessage());
-			}
+			conn.performRoutingActivation(config.getTesterAddress(), 0);
+			desc.logFooter(TestResult.PASSED);
 			// --- TEST CODE END ----------------------------------------------
+		} catch (AssertionFailedError e) {
+			desc.logFooter(TestResult.FAILED);
+			throw e;
+		} catch (RoutingActivationFailed e) {
+			desc.logFooter(TestResult.FAILED);
+			fail(e.getMessage());
+		} catch (InterruptedException e) {
+			desc.logFooter(TestResult.ERROR);
+			throw logger.throwing(new TestExecutionError(TextBuilder.unexpectedException(e), e));
 		} finally {
-			if (logger.isInfoEnabled()) {
-				logger.info("<<< " + function);
-				logger.info(StringConstants.DOUBLE_LINE);
-			}
+			logger.info("<<< " + function);
 		}
 	}
 }

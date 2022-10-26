@@ -38,8 +38,8 @@ public class TC_1000_VehicleIdentification {
 	@BeforeAll
 	public static void setUpBeforeClass() throws InitializationError {
 		try {
-			logger.trace(">>> public static void setUpBeforeClass()");
 			logger.info(StringConstants.SINGLE_LINE);
+			logger.trace(">>> public static void setUpBeforeClass()");
 			
 			testSetup = new TestSetup();
 			testSetup.initialize();
@@ -59,8 +59,8 @@ public class TC_1000_VehicleIdentification {
 				testSetup = null;
 			}
 		} finally {
-			logger.info(StringConstants.SINGLE_LINE);
 			logger.trace("<<< public static void tearDownAfterClass()");
+			logger.info(StringConstants.SINGLE_LINE);
 		}
 	}
 
@@ -104,12 +104,11 @@ public class TC_1000_VehicleIdentification {
 	
 	@Test
 	@DisplayName("TC-1000-02")
-	public void testBroadcast() {
+	public void testBroadcast() throws TestExecutionError {
 		String function = "public void testBroadcast()";
 		TestCaseDescription desc = null;
 		try {
-			logger.info(StringConstants.DOUBLE_LINE);
-			logger.info(">>> " + function);
+			logger.trace(">>> " + function);
 			desc = new TestCaseDescription(
 					"TC-1000-02", 
 					"Testing vehicle identification with broadcast address.",
@@ -119,10 +118,17 @@ public class TC_1000_VehicleIdentification {
 			desc.logHeader();
 			
 			testValidVir(testSetup.getConfig().getBroadcastAddress());
+			desc.logFooter(TestResult.PASSED);
 			
+		} catch (AssertionFailedError e) {
+			desc.logFooter(TestResult.FAILED);
+			throw e;
+		} catch (Exception e) {
+			desc.logFooter(TestResult.ERROR);
+			throw logger.throwing(Level.FATAL, 
+					new TestExecutionError(TextBuilder.unexpectedException(e),e));			
 		} finally {
-			logger.info("<<< " + function);
-			logger.info(StringConstants.DOUBLE_LINE);
+			logger.trace("<<< " + function);
 		}
 	}
 	
@@ -139,14 +145,12 @@ public class TC_1000_VehicleIdentification {
 			
 			logger.info("Wait for incoming response");
 			DoipEvent event = testerUdpCommModule.waitForEvents(1, config.get_A_DoIP_Ctrl());
-			
-			assertNotNull(event, "Did not receive a response on DoIP vehicle identification request");
-			assertTrue(event instanceof DoipEventUdpVehicleAnnouncementMessage,"The received response is not of type DoIP vehicle identification response message");
-			logger.info("Received response as expected");
-			logger.info("TEST PASSED");
+			assertNotNull(event, "Did not receive a valid DoIP response on DoIP vehicle identification request");
+			assertTrue(event instanceof DoipEventUdpVehicleAnnouncementMessage,
+					"Did not receive a valid DoIP vehicle identification response message");
+			logger.info("Received a valid DoIP vehicle identification response message as expected");
 		} catch (IOException e) {
 			logger.error("Unexpected " + e.getClass().getName() + " in testValidVir()");
-			logger.error(Helper.getExceptionAsString(e));
 			throw new AssertionFailedError("Test failed due to previous " + e.getClass().getName());
 		} catch (InterruptedException e) {
 			logger.error("Unexpected " + e.getClass().getName() + " in testValidVir()");
@@ -154,7 +158,6 @@ public class TC_1000_VehicleIdentification {
 			throw new AssertionFailedError("Test failed due to previous " + e.getClass().getName());
 		} finally {
 			logger.trace("<<< " + method);
-			logger.info(StringConstants.DOUBLE_LINE);
 		}
 	}
 }

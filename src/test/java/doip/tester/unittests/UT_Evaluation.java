@@ -32,7 +32,6 @@ public class UT_Evaluation {
 	public void test2() {
 		try {
 			logger.trace(markerEnter, ">>> public void test2()");
-			assertTrue(false, "This line of code will throw an AssertionFailedError");
 		} catch (Exception e) {
 			logger.info("Assertion has been caught");
 		} finally {

@@ -18,7 +18,7 @@ public class DoipUdpDiagnosticPowerModeRequest extends DoipUdpMessage {
 		logger.log(level, "----------------------------------------");
 	}
 	
-	public String getName() {
+	public String getMessageName() {
 		return getPayloadTypeAsString(0x4003);
 	}
 	

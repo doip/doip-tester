@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.opentest4j.AssertionFailedError;
 
@@ -44,8 +45,8 @@ public class TC_1010_VehicleIdentificationWithEid {
 	@BeforeAll
 	public static void setUpBeforeAll() throws InitializationError {
 		try {
-			logger.trace(markerEnter, ">>> public static void setUpBeforeAll()");
 			logger.info(StringConstants.SINGLE_LINE);
+			logger.trace(markerEnter, ">>> public static void setUpBeforeAll()");
 			setup = new TestSetup();
 			setup.initialize();
 			config = setup.getConfig();
@@ -74,6 +75,7 @@ public class TC_1010_VehicleIdentificationWithEid {
 	}
 	
 	@Test
+	@Disabled
 	public void test() throws TestExecutionError {
 		TestCaseDescription desc = null;
 		try {

@@ -14,7 +14,7 @@ public class DoipUdpDiagnosticPowerModeResponse extends DoipUdpMessage {
 		this.diagnsoticPowerMode = diagnosticPowerMode;
 	}
 	
-	public String getName() {
+	public String getMessageName() {
 		return getPayloadTypeAsString(0x4004);
 	}
 

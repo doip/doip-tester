@@ -68,8 +68,8 @@ public class DoipTcpConnectionWithEventCollection extends DoipTcpConnection impl
 	 *         timeout time.
 	 * @throws InterruptedException 
 	 */
-	public DoipEvent waitForEvents(int numberOfEvents, long timeout) throws InterruptedException {
-		return  Wait.waitForEvents(events, numberOfEvents, timeout);
+	public DoipEvent waitForEvents(int numberOfEvents, long timeoutms) throws InterruptedException {
+		return  Wait.waitForEvents(events, numberOfEvents, timeoutms);
 	}
 	
 	
