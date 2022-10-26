@@ -88,7 +88,7 @@ public class TC_1070_DiagnosticMessage {
 			
 			TesterTcpConnection conn = testSetup.createTesterTcpConnection();
 			conn.performRoutingActivation(config.getTesterAddress(), 0);
-			conn.executeDiagnosticService(new byte[] {0x10, 0x03});
+			conn.executeDiagnosticServicePosAck(new byte[] {0x10, 0x03});
 			desc.logFooter(TestResult.PASSED);
 		} catch (IOException | DiagnosticServiceExecutionFailed e) {
 			logger.error("Unexpected " + e.getClass().getName());
@@ -109,7 +109,7 @@ public class TC_1070_DiagnosticMessage {
 			TesterTcpConnection conn = testSetup.createTesterTcpConnection();
 			
 			Assertions.assertThrows(DiagnosticServiceExecutionFailed.class, () -> {
-				conn.executeDiagnosticService(new byte[] {0x10, 0x03});
+				conn.executeDiagnosticServicePosAck(new byte[] {0x10, 0x03});
 			});
 			
 			
