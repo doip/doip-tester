@@ -2,6 +2,7 @@ package doip.tester.toolkit;
 
 import java.util.List;
 
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -35,23 +36,22 @@ public class Wait {
 		try {
 			logger.trace(">>> public boolean waitForEvents(List<DoipEvent> events, int numberOfEvents, long timeout)");
 			
-			logger.debug("Number of events at function entry: " + events.size());
+			logger.debug("Number of events in event queue at function entry: " + events.size());
 			NanoTimer timer = new NanoTimer();
 			long targetTime = timeoutms * 1000000;
 			timer.reset();
+			logger.debug("Wait for incoming events until " + numberOfEvents + " are in event queue, timeout is " + timeoutms + " ms");
 			while (timer.getElapsedTime() < targetTime && events.size() < numberOfEvents) {
-				try {
-					Thread.sleep(0, 1000);
-				} catch (InterruptedException e) {
-					logger.error("Unexpected " + e.getClass().getName() + " in waitForEvents(...)");
-					throw logger.throwing(e);
-				}
+				Thread.sleep(0, 1000);
 			}
 			
-			logger.debug("Number of events at function exit: " + events.size());
+			logger.debug("Number of events in event queue at function exit: " + events.size());
 			if (events.size() >= numberOfEvents) {
 				event =  events.get(numberOfEvents - 1);
 			} 
+		} catch (InterruptedException e) {
+			logger.fatal(TextBuilder.unexpectedException(e));
+			throw logger.throwing(Level.FATAL, e);
 		} finally {
 			logger.trace("<<< public boolean waitForEvents(List<DoipEvent> events, int numberOfEvents, long timeout)");
 		}

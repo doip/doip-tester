@@ -14,16 +14,32 @@ public class DoipUdpHeaderNegAck extends DoipUdpMessage implements DoipHeaderNeg
 		this.log(Level.INFO);
 	}
 	
-	public String getName() {
+	public String getMessageName() {
 		return getPayloadTypeAsString(0x0000);
 	}
 
 	public void log(Level level) {
 		logger.log(level, "----------------------------------------");
 		logger.log(level, "DoIP header negative acknowledgement (UDP):");
-		logger.log(level, "    Code = " + this.code);
-		logger.log(level, "");
+		logger.log(level, "    Code = " + String.format("0x%02X (", code) + getCodeAsString() + ")");
 		logger.log(level, "----------------------------------------");
+	}
+	
+	public String getCodeAsString() {
+		switch (code) {
+		case 0x00:
+			return "incorrect pattern format";
+		case 0x01:
+			return "unknown payload type";
+		case 0x02:
+			return "message too large";
+		case 0x03:
+			return "out of memory";
+		case 0x04:
+			return "invalid payload length";
+		default:
+			return "reserved by this document";
+		}
 	}
 
 	@Override

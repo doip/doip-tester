@@ -28,7 +28,7 @@ public class DoipTcpDiagnosticMessage extends DoipTcpMessage {
 		}
 	}
 	
-	public String getName() {
+	public String getMessageName() {
 		return getPayloadTypeAsString(0x8001); 
 	}
 

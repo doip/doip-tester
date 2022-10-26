@@ -98,14 +98,34 @@ public class TesterUdpCommModule extends DoipUdpMessageHandlerWithEventCollectio
 	
 	@Override
 	public void onHeaderTooShort(DatagramPacket packet) {
-		String function = "public void onHeaderTooShort(DatagramPacket packet)";
-		logger.trace(">>> " + function);
-		try {
-			logger.info("Received UDP message which was too short, but there is nothing to do " +
+		logger.trace(">>> public void onHeaderTooShort(DatagramPacket packet)");
+		logger.info("Received UDP message which was too short, but there is nothing to do " +
 				"because a diagnostic tester shall not send a negative acknowledge message.");
-		} finally {
-			logger.trace("<<< " + function);
-		}
+		logger.trace("<<< public void onHeaderTooShort(DatagramPacket packet)");
+	}
+	
+	@Override
+	public void onInvalidPayloadLength(DatagramPacket packet) {
+		logger.trace(">>> public void onInvalidPayloadLength(DatagramPacket packet)");
+		logger.info("Received UPD message with invalid payload length, but there is nothing to do " +
+				"because a diagnostic tester shall not send a negative acknowledge message.");
+		logger.trace("<<< public void onInvalidPayloadLength(DatagramPacket packet)");
+	}
+
+	@Override
+	public void onInvalidPayloadType(DatagramPacket packet) {
+		logger.trace(">>> public void onInvalidPayloadType(DatagramPacket packet)");
+		logger.info("Received UPD message with invalid payload type, but there is nothing to do " +
+				"because a diagnostic tester shall not send a negative acknowledge message.");
+		logger.trace("<<< public void onInvalidPayloadType(DatagramPacket packet)");
+	}
+	
+	@Override
+	public void onHeaderIncorrectPatternFormat(DatagramPacket packet) {
+		logger.trace(">>> 	public void onHeaderIncorrectPatternFormat(DatagramPacket packet)");
+		logger.info("Received UPD message with incorrect pattern format, but there is nothing to do " +
+				"because a diagnostic tester shall not send a negative acknowledge message.");
+		logger.trace("<<< 	public void onHeaderIncorrectPatternFormat(DatagramPacket packet)");
 	}
 	
 }

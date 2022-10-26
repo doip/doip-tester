@@ -2,8 +2,8 @@ package doip.tester.toolkit;
 
 public class TextBuilder {
 	
-	public static String noMessageReceived(String message) {
-		return "It was expected to receive a " + message + ", but no message has been received.";
+	public static String noValidDoipMessageReceived(String message) {
+		return "It was expected to receive a " + message + ", but no valid DoIP message has been received.";
 	}
 	
 	public static String wrongMessageReceived(String expected, String actual) {

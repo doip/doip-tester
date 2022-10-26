@@ -149,11 +149,11 @@ public class TC_9010_SplitMessages {
 			
 			desc.logFooter(TestResult.PASSED);
 		} catch (AssertionFailedError e) {
+			desc.logFooter(TestResult.FAILED);
 			throw e;
 		} catch (InterruptedException e) {
-			logger.fatal("Unexpected "+ e.getClass().getName() +": " + e.getMessage());
 			desc.logFooter(TestResult.ERROR);
-			throw logger.throwing(new TestExecutionError(e));
+			throw logger.throwing(new TestExecutionError(TextBuilder.unexpectedException(e), e));
 		} finally {
 			logger.trace(markerExit, "<<< " + function);
 		}
@@ -174,6 +174,7 @@ public class TC_9010_SplitMessages {
 			conn.send(first);
 			DoipEvent event = conn.waitForEvents(1, 10);
 
+			// TODO: Make better analyis of error and implement self test for this test case
 			assertNull(event, "Did receive a event, but no event was expected");
 			conn.send(second);
 			event = conn.waitForEvents(2, 10);

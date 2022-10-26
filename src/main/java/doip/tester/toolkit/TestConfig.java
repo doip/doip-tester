@@ -38,12 +38,12 @@ public class TestConfig {
 	/**
 	 * Expected VIN of the gateway
 	 */
-	byte[] vin = null;
+	//byte[] vin = null;
 	
 	/**
 	 * Expected EID of the gateway
 	 */
-	byte[] eid = null;
+	//byte[] eid = null;
 	
 	/**
 	 * Random class is used to generate random numbers
@@ -92,7 +92,7 @@ public class TestConfig {
 				throw logger.throwing(new MissingSystemProperty(TestConfig.TESTER_CONFIG));
 			}
 			
-			logger.info("Reading the test configuration from file '" + filename + "'.");
+			logger.info("Reading the test configuration from file '" + filename + "'...");
 			
 			PropertyFile file = new PropertyFile(filename);
 			
@@ -100,13 +100,27 @@ public class TestConfig {
 			logger.info("target.address = " + targetAddress.getHostAddress());
 			
 			targetPort = file.getMandatoryPropertyAsInt("target.port");
+			logger.info("target.port = " + targetPort);
+			
 			broadcastAddress = file.getMandatoryPropertyAsInetAddress("broadcast.address");
+			logger.info("broadcast.address = " + broadcastAddress.getHostAddress());
+			
 			maxByteArraySizeLogging = file.getMandatoryPropertyAsInt("maxByteArraySizeLogging");
-			vin = file.getMandatoryPropertyAsByteArray("vin.hex");
-			eid = file.getMandatoryPropertyAsByteArray("eid");
+			logger.info("maxByteArraySizeLogging = " + maxByteArraySizeLogging);
+			
+			//vin = file.getMandatoryPropertyAsByteArray("vin.hex");
+			//eid = file.getMandatoryPropertyAsByteArray("eid");
+			
 			testerAddress = file.getMandatoryPropertyAsInt("tester.address");
+			logger.info("tester.Address = 0x" + Integer.toHexString(testerAddress).toUpperCase()); 
+			
 			ecuAddressPhysical = file.getMandatoryPropertyAsInt("ecu.address.physical");
+			logger.info("ecu.address.physical = 0x" + Integer.toHexString(ecuAddressPhysical).toUpperCase()); 
+			
 			ecuAddressFunctional = file.getMandatoryPropertyAsInt("ecu.address.functional");
+			logger.info("ecu.address.functional = 0x" + Integer.toHexString(ecuAddressFunctional).toUpperCase());
+			
+			logger.info("Reading configuration file finished.");
 		} finally {
 			logger.trace(markerExit, "<<< public TestConfig()");
 		}
@@ -176,13 +190,14 @@ public class TestConfig {
 		return 5000;
 	}
 	
+	/*
 	public byte[] getVin() {
 		return this.vin;
 	}
 	
 	public byte[] getEid() {
 		return this.eid;
-	}
+	}*/
 
 	public int getTesterAddress() {
 		return testerAddress;

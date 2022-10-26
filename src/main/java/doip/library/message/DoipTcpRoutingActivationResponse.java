@@ -23,7 +23,7 @@ public class DoipTcpRoutingActivationResponse extends DoipTcpMessage {
 		this.log(Level.INFO);
 	}
 	
-	public String getName() {
+	public String getMessageName() {
 		return getPayloadTypeAsString(0x0006);
 	}
 

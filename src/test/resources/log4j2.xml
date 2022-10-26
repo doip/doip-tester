@@ -30,18 +30,21 @@
 		<Console name="console" target="SYSTEM_OUT">
 			<PatternLayout pattern="${layout}" />
 		</Console>
-		<File name="doip" fileName="doip-tester.log" append="false">
+		<File name="doip" fileName="./logs/doip-tester.log" append="false">
 			<PatternLayout pattern="${layout}" />
 		</File>
-		<File name="trace" fileName="trace.log" append="false">
+		<File name="trace" fileName="./logs/trace.log" append="false">
 			<PatternLayout pattern="${layout}" />
 		</File>
-		<File name="info" fileName="info.log" append="false">
+		<File name="info" fileName="./logs/info.log" append="false">
 			<PatternLayout pattern="${layout}" />
 		</File>
-		<File name="error" fileName="error.log" append="false">
+		<File name="error" fileName="./logs/error.log" append="false">
 			<PatternLayout pattern="${layout}" />
 		</File>
+		<Socket name="socket" host="localhost" port="13500" protocol="UDP">
+			<PatternLayout pattern="%d{HH:mm:ss.SSS} %-16level - %msg%ex{10}%n"/>
+		</Socket>
 	</Appenders>
 	<Loggers>
 		<Root level="TRACE">
@@ -50,6 +53,7 @@
 			<AppenderRef ref="trace" level="TRACE"/>
 			<AppenderRef ref="info" level="INFO"/>
 			<AppenderRef ref="error" level="ERROR"/>
+	 		<AppenderRef ref="socket" level="INFO"/>
 		</Root>
 
 		<Logger name="doip.junit" level="INFO" additivity="false">
@@ -58,6 +62,7 @@
 			<AppenderRef ref="trace" />
 			<AppenderRef ref="info" />
 			<AppenderRef ref="error" />
+	 		<AppenderRef ref="socket" level="INFO"/>
 		</Logger>
 		<!-- Following two classes are very verbose, we wet them to level "WARN" -->
 		<Logger name="doip.library.comm.DoipTcpStreamBuffer" level="WARN" additivity="false">
@@ -66,6 +71,7 @@
 			<AppenderRef ref="trace" />
 			<AppenderRef ref="info" />
 			<AppenderRef ref="error" />
+	 		<AppenderRef ref="socket" level="INFO"/>
 		</Logger>
 		<Logger name="doip.library.util.StreamBuffer" level="WARN" additivity="false">
 			<AppenderRef ref="console" />
@@ -73,6 +79,7 @@
 			<AppenderRef ref="trace" />
 			<AppenderRef ref="info" />
 			<AppenderRef ref="error" />
+	 		<AppenderRef ref="socket" level="INFO"/>
 		</Logger>
 	</Loggers>
 </Configuration>

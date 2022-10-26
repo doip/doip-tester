@@ -18,6 +18,7 @@ import doip.junit.InitializationError;
 import doip.junit.TestCaseDescription;
 import doip.junit.TestExecutionError;
 import doip.junit.TestResult;
+import doip.library.util.StringConstants;
 import doip.tester.testcases.TC_1030_DoipEntityStatus;
 import doip.tester.toolkit.server4unittest.DoipServer4UnitTest;
 
@@ -34,6 +35,7 @@ public class ST_1030_DoipEntityStatus {
 	@BeforeAll
 	public static void setUpBeforeAll() throws InitializationError {
 		try {
+			logger.info(StringConstants.SINGLE_LINE);
 			logger.trace(markerEnter, ">>> public static void setUpBeforeAll()");
 			server = new DoipServer4UnitTest();
 			TC_1030_DoipEntityStatus.setUpBeforeAll();
@@ -51,12 +53,14 @@ public class ST_1030_DoipEntityStatus {
 			server = null;
 		} finally {
 			logger.trace(markerExit, "<<< public static void tearDownAfterAll()");
+			logger.info(StringConstants.SINGLE_LINE);
 		}
 	}
 	
 	@BeforeEach
 	public void setUp() throws InitializationError {
 		try {
+			logger.info(StringConstants.SINGLE_LINE);
 			logger.trace(markerEnter, ">>> public void setUp()");
 			server.start();
 			testcase = new TC_1030_DoipEntityStatus();
@@ -77,6 +81,7 @@ public class ST_1030_DoipEntityStatus {
 			server.stop();
 		} finally {
 			logger.trace(markerExit, "<<< public void tearDown()");
+			logger.info(StringConstants.SINGLE_LINE);
 		}
 	}
 	
@@ -103,7 +108,7 @@ public class ST_1030_DoipEntityStatus {
 		} catch (TestExecutionError e) {
 			desc.logFooter(TestResult.ERROR);
 			throw e;
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			desc.logFooter(TestResult.ERROR);
 			throw logger.throwing(new TestExecutionError(e));
 		} finally {

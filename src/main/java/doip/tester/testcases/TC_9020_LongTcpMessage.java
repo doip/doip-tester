@@ -13,6 +13,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.opentest4j.AssertionFailedError;
 
@@ -89,9 +91,10 @@ public class TC_9020_LongTcpMessage {
 	}
 	
 	@Test
+	@DisplayName("TC-9020-01")
+	@Disabled
 	public void test() throws TestExecutionError {
 		TestCaseDescription desc = null;
-		byte[] response = null;
 		try {
 			logger.trace(enter, ">>> public void test()");
 			
@@ -104,33 +107,46 @@ public class TC_9020_LongTcpMessage {
 					"will be send.",
 					"At the end the session change will be answered with a positive response.");
 			desc.logHeader();
-			
-			conn.performRoutingActivation(config.getTesterAddress(), 0);
-			byte[] largeMessage = new byte[10000000];
-			largeMessage[0] = 0x22;
-			
-			assertThrows(DiagnosticServiceExecutionFailed.class, () -> conn.executeDiagnosticService(largeMessage));
-	
-			try {
-				response = conn.executeDiagnosticService(new byte[] {0x10, 0x03});
-				
-			} catch (DiagnosticServiceExecutionFailed e) {
-				throw logger.throwing(new AssertionFailedError("Didn't receive a valid response from ECU on diagnostic request message 0x10 03.", e));
-			}
-			
-			assertNotNull(response, "The response was null.");
-			assertTrue(response.length >= 2, "The response was too short. There should be at least two bytes.");
-			assertEquals(0x50, response[0], "Didn't receive a positive response.");
-			assertEquals(0x03, response[1], "The diagnostic session in the response is wrong.");
+		
+			testImpl();
 			desc.logFooter(TestResult.PASSED);
-		} catch (RoutingActivationFailed | InterruptedException e) {
-			desc.logFooter(TestResult.ERROR);
-			throw logger.throwing(Level.FATAL, new TestExecutionError(TextBuilder.unexpectedException(e), e));
 		} catch (AssertionFailedError e) {
 			desc.logFooter(TestResult.FAILED);
+			throw e;
+		} catch (TestExecutionError e) {
+			desc.logFooter(TestResult.ERROR);
 			throw e;
 		} finally {
 			logger.trace(exit, "<<< public void test()");
 		}
+	}
+	
+	public void testImpl() throws TestExecutionError {
+		byte[] response = null;
+		try {
+			conn.performRoutingActivation(config.getTesterAddress(), 0);
+		} catch (RoutingActivationFailed e) {
+			throw logger.throwing(new TestExecutionError("Routing activation failed", e));
+		} catch (InterruptedException e) {
+			throw logger.throwing(new TestExecutionError(TextBuilder.unexpectedException(e), e));
+		}
+		byte[] largeMessage = new byte[10000000];
+		largeMessage[0] = 0x22;
+		
+		// Follow linge is wrong because we expect a neg. ack.
+		assertThrows(DiagnosticServiceExecutionFailed.class, () -> conn.executeDiagnosticService(largeMessage));
+
+		try {
+			response = conn.executeDiagnosticService(new byte[] {0x10, 0x03});
+			
+		} catch (DiagnosticServiceExecutionFailed e) {
+			throw logger.throwing(new AssertionFailedError("Didn't receive a valid response from ECU on diagnostic request message 0x10 03.", e));
+		}
+		
+		assertNotNull(response, "The response was null.");
+		assertTrue(response.length >= 2, "The response was too short. There should be at least two bytes.");
+		assertEquals(0x50, response[0], "Didn't receive a positive response.");
+		assertEquals(0x03, response[1], "The diagnostic session in the response is wrong.");
+		
 	}
 }

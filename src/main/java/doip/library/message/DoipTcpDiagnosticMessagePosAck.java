@@ -17,8 +17,12 @@ public class DoipTcpDiagnosticMessagePosAck extends DoipTcpDiagnosticMessageAck 
 		log(Level.INFO);
 	}
 	
-	public String getName() {
-		return getPayloadTypeAsString(0x8002);
+	public String getMessageName() {
+		return getPayloadTypeAsString(DoipMessage.TYPE_TCP_DIAG_MESSAGE_POS_ACK);
+	}
+	
+	public static String getMessageNameOfClass() {
+		return getPayloadTypeAsString(DoipMessage.TYPE_TCP_DIAG_MESSAGE_POS_ACK);
 	}
 	
 	public void log(Level level) {
