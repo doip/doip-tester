@@ -134,10 +134,10 @@ public class TC_9020_LongTcpMessage {
 		largeMessage[0] = 0x22;
 		
 		// Follow linge is wrong because we expect a neg. ack.
-		assertThrows(DiagnosticServiceExecutionFailed.class, () -> conn.executeDiagnosticService(largeMessage));
+		assertThrows(DiagnosticServiceExecutionFailed.class, () -> conn.executeDiagnosticServicePosAck(largeMessage));
 
 		try {
-			response = conn.executeDiagnosticService(new byte[] {0x10, 0x03});
+			response = conn.executeDiagnosticServicePosAck(new byte[] {0x10, 0x03});
 			
 		} catch (DiagnosticServiceExecutionFailed e) {
 			throw logger.throwing(new AssertionFailedError("Didn't receive a valid response from ECU on diagnostic request message 0x10 03.", e));
