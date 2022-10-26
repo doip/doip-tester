@@ -173,6 +173,11 @@ public class TcpReceiverThread extends TcpReceiver implements Runnable {
 				logger.debug("No more data to receive. Thread will terminate.");
 			}
 		} catch (IOException e) {
+			logger.info("An IOException occured while reading data from the socket.");
+			logger.info("This might be because");
+			logger.info("    - the TCP connection has been closed by the remote host,");
+			logger.info("    - the connection has been closed by the local host or");
+			logger.info("    - a TCP communication error did occur.");
 			logger.info(Helper.getExceptionAsString(e));
 		}
 		this.onSocketClosed();

@@ -36,7 +36,7 @@ public abstract class DoipMessage {
 
 	public abstract void log(Level level);
 	
-	public abstract String getName();
+	public abstract String getMessageName();
 	
 	public static String getPayloadTypeAsString(int type) { 
 		switch (type) {

@@ -20,7 +20,7 @@ public class DoipTcpAliveCheckResponse extends DoipTcpMessage {
 		}
 	}
 	
-	public String getName() {
+	public String getMessageName() {
 		return getPayloadTypeAsString(0x0008);
 	}
 

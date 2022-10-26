@@ -20,7 +20,7 @@ public class DoipTcpAliveCheckRequest extends DoipTcpMessage {
 		logger.log(level, "----------------------------------------");
 	}
 	
-	public String getName() {
+	public String getMessageName() {
 		return getPayloadTypeAsString(0x0007);
 	}
 

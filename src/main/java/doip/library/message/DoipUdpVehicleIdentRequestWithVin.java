@@ -24,7 +24,7 @@ public class DoipUdpVehicleIdentRequestWithVin extends DoipUdpMessage {
 		logger.log(level, "----------------------------------------");
 	}
 	
-	public String getName() {
+	public String getMessageName() {
 		return getPayloadTypeAsString(0x0003);
 	}
 

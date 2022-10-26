@@ -34,20 +34,13 @@ public class ST_1000_VehicleIdentification {
 	public static Marker markerEnter = MarkerManager.getMarker("ENTER");
 	public static Marker markerExit  = MarkerManager.getMarker("EXIT");
 	
-	private static TestSetup setup = null;
-	private static TestConfig config = null;
-	
 	private static DoipServer4UnitTest server = null;
-	
 	private TC_1000_VehicleIdentification testcase = null;
 	
 	@BeforeAll
 	public static void setUpBeforeAll() throws InitializationError {
 		try {
 			logger.trace(markerEnter, ">>> public void setUpBeforeAll()");
-			setup = new TestSetup();
-			setup.initialize();
-			config = setup.getConfig();
 			server = new DoipServer4UnitTest();
 			
 			TC_1000_VehicleIdentification.setUpBeforeClass();
@@ -68,17 +61,8 @@ public class ST_1000_VehicleIdentification {
 			logger.trace(markerEnter, ">>> public void tearDownAfterAll()");
 			
 			TC_1000_VehicleIdentification.tearDownAfterClass();
-			
 			server = null;
 			
-			if (setup != null) {
-				setup.uninitialize();
-				setup = null;
-			}
-			
-		} catch (Throwable e) {
-			logger.fatal(TextBuilder.unexpectedException(e));
-			logger.catching(e);
 		} finally {
 			logger.trace(markerExit, "<<< public void tearDownAfterAll()");
 		}
@@ -130,10 +114,9 @@ public class ST_1000_VehicleIdentification {
 		} catch (AssertionFailedError e) {
 			desc.logFooter(TestResult.FAILED);
 			throw e;
-		} catch (Throwable e) {
-			String error = TextBuilder.unexpectedException(e);
+		} catch (TestExecutionError e) {
 			desc.logFooter(TestResult.ERROR);
-			throw logger.throwing(new TestExecutionError(error, e));
+			throw e;
 		} finally {
 			logger.trace(markerExit, "<<< public void testGoodCase()");
 		}

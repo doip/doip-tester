@@ -25,7 +25,7 @@ public class DoipTcpDiagnosticMessageNegAck extends DoipTcpDiagnosticMessageAck 
 		log(Level.INFO);
 	}
 	
-	public String getName () {
+	public String getMessageName () {
 		return getPayloadTypeAsString(0x8003);
 	}
 	

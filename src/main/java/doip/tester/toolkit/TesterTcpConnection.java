@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
+import doip.library.message.DoipMessage;
 import doip.library.message.DoipTcpDiagnosticMessage;
 import doip.library.message.DoipTcpDiagnosticMessagePosAck;
 import doip.library.message.DoipTcpRoutingActivationRequest;
@@ -61,9 +62,7 @@ public class TesterTcpConnection extends DoipTcpConnectionWithEventCollection {
 	 * Performs a routing activation.
 	 * @param activationType The activation type (see ISO 13400)
 	 * @param expectedResponseCode The expected response code in the response.
-	 *                             If the response code is different an AssertionError
-	 *                             will be thrown.
-	 * @return Returns true if routing activation was successful
+	 * @return Returns the DoipEventTcpRoutingActivationResponse
 	 * @throws InterruptedException
 	 * @throws RoutingActivationFailed
 	 */
@@ -86,17 +85,17 @@ public class TesterTcpConnection extends DoipTcpConnectionWithEventCollection {
 				throw e;
 			}
 			if (event == null) {
-				logger.error("No Routing Activation Response received");
+				logger.error("No valid DoIP routing activation response received");
 				throw new RoutingActivationFailed(
 						RoutingActivationFailed.NO_RESPONSE_RECEIVED,
-						"No routing activation response received");
+						"No valid DoIP routing activation response received");
 			}
 
 			if (!(event instanceof DoipEventTcpRoutingActivationResponse)) {
 				logger.error("Received event is not type of DoipEventTcpRoutingActivationResponse");
 				throw new RoutingActivationFailed(
 						RoutingActivationFailed.WRONG_RESPONSE_RECEIVED,
-						"No routing activation response received");
+						"No valid DoIP routing activation response received");
 			}
 
 			// Check the response code which shall match to the expected response code
@@ -120,35 +119,32 @@ public class TesterTcpConnection extends DoipTcpConnectionWithEventCollection {
 			logger.trace("<<< " + function);
 	}
 	
-	/*
-	public void checkEvent(int index iint <?>  clazz) {
-	xxx
-		DoipEvent event = getEvent(0);
-		if (clazz.isInstance(event)) {
-			
-		}
-	}*/
-
 	/**
-	 * Executes a diagnostic service
+	 * Executes a diagnostic service and check for correct result.
 	 * @param request
 	 * @param responseExpected
 	 * @return
 	 * @throws DiagnosticServiceExecutionFailed
 	 */
-
 	public byte[] executeDiagnosticService(byte[] request) throws DiagnosticServiceExecutionFailed {
 
 		try {
 			logger.trace(enter, ">>> public byte[] executeDiagnosticService(byte[] request)");
 			this.clearEvents();
+			
 			this.sendDiagnosticMessage(config.getTesterAddress(), config.getEcuAddressPhysical(), request);
+			
+			// TODO: The standard also allows neg. ack. This case should also be considered here
+			
+			// It is expected to receive a positive acknowledge on the diagnostic request message
 			DoipEvent event = this.waitForEvents(1, config.get_A_DoIP_Diagnostic_Message());
+			TestUtils.checkEvent(event, DoipEventTcpDiagnosticMessagePosAck.class);
+			
 			if (event == null) {
 				DiagnosticServiceExecutionFailed ex =
 						new DiagnosticServiceExecutionFailed(
 								DiagnosticServiceExecutionFailed.NO_DIAG_MESSAGE_POS_ACK_RECEIVED,
-								"No DoIP message received after sending diagnostic request");
+								"No message of type '" + DoipTcpDiagnosticMessagePosAck.getMessageNameOfClass() + "' has been received.");
 				throw logger.throwing(Level.INFO, ex);
 			}
 
@@ -156,7 +152,7 @@ public class TesterTcpConnection extends DoipTcpConnectionWithEventCollection {
 				DiagnosticServiceExecutionFailed ex =
 						new DiagnosticServiceExecutionFailed(
 								DiagnosticServiceExecutionFailed.NO_DIAG_MESSAGE_POS_ACK_RECEIVED,
-								"Received Event was not of type DoipEventTcpDiagnosticMessagePosAck");
+								"No message of type '" + DoipTcpDiagnosticMessagePosAck.getMessageNameOfClass() + "' has been received.");
 				throw logger.throwing(Level.INFO, ex);
 			}
 
@@ -164,6 +160,7 @@ public class TesterTcpConnection extends DoipTcpConnectionWithEventCollection {
 			DoipTcpDiagnosticMessagePosAck posAckMsg = (DoipTcpDiagnosticMessagePosAck) posAckEvent.getDoipMessage();
 
 			event = this.waitForEvents(2, config.get_A_DoIP_Diagnostic_Message());
+			TestUtils.checkEvent(event, DoipEventTcpDiagnosticMessage.class);
 			if (event == null) {
 				DiagnosticServiceExecutionFailed ex =
 						new DiagnosticServiceExecutionFailed(
@@ -204,5 +201,4 @@ public class TesterTcpConnection extends DoipTcpConnectionWithEventCollection {
 			logger.trace(exit, "<<< public void sendDiagnosticMessage(int sourceAddress, int targetAddress, byte[] message)");
 		}
 	}
-
 }

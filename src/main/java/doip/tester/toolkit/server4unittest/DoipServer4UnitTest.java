@@ -41,6 +41,7 @@ import doip.library.net.TcpServerListener;
 import doip.library.net.TcpServerThread;
 import doip.library.timer.NanoTimer;
 import doip.library.util.Helper;
+import doip.tester.toolkit.TextBuilder;
 
 /**
  * Implements a DoIP gateway which will be used for unit tests. The project "DoIP Simulation"
@@ -83,6 +84,10 @@ public class DoipServer4UnitTest implements TcpServerListener, DoipTcpConnection
 	public void setSilent(boolean value) {
 		this.isSilent = value;
 	}
+	
+	public int getConnectionCount() {
+		return tcpConnectionList.size();
+	}
 
 	public void start() throws IOException {
 		String function = "public void start()";
@@ -123,14 +128,49 @@ public class DoipServer4UnitTest implements TcpServerListener, DoipTcpConnection
 				tcpServerThread = null;
 			}
 			
+			closeAllConnections();
+		
+			
 			if (udpMessageHandler != null) {
 				logger.info("Stop UDP message handler");
 				udpMessageHandler.stop();
 				this.udpMessageHandler = null;
 			}
+
 		} finally {		
 			logger.trace("<<< public void stop()");
 		}
+	}
+	
+	public void closeAllConnections() {
+		try {
+			logger.trace(markerEnter, ">>> public void closeAllConnections()");
+			// We need to create a copy of this list, because when
+			// calling stop on a connection it will be automatically
+			// removed from the list, that means list will be modified
+			// while iterate over all connections
+			LinkedList<DoipTcpConnection4UnitTest> copy = new LinkedList<DoipTcpConnection4UnitTest>();
+			
+			for (DoipTcpConnection4UnitTest conn : tcpConnectionList) {
+				copy.add(conn);
+			}
+			
+			for (DoipTcpConnection4UnitTest conn : copy) {
+				conn.stop();
+			}
+			
+			Thread.sleep(10);
+			if (getConnectionCount() > 0) {
+				logger.fatal("It was not possible to close all connections in the DoipServer4UnitTest");
+			} else {
+				logger.debug("All connections have been closed, there are no connections any more in the list of connections in the DoIP server.");
+			}
+		} catch (InterruptedException e) {
+			logger.fatal(TextBuilder.unexpectedException(e), e);
+		} finally {
+			logger.trace(markerExit, "<<< public void closeAllConnections()");
+		}
+		
 	}
 	
 	public void setNextUdpResponse(byte[] msg) {
@@ -280,7 +320,7 @@ public class DoipServer4UnitTest implements TcpServerListener, DoipTcpConnection
 				} else if (doipMessage instanceof DoipUdpEntityStatusRequest) {
 					sendDoipUdpEntityStatusResponse(packet.getAddress(), packet.getPort());
 				} else {
-					logger.fatal("Received a unknown DoIP UDP messsage");
+					logger.fatal("Handling of this message has not yet been implemented");
 				}
 			}
 		} catch (IOException e) {

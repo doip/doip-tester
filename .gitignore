@@ -5,6 +5,10 @@
 build
 /bin/
 *.log
+# Files for Eclipse IDE
 .classpath
 .project
 .settings
+# Other stuff
+/tmp/
+reports.zip

@@ -20,6 +20,7 @@ import doip.junit.TestExecutionError;
 import doip.junit.TestResult;
 import doip.library.message.DoipMessage;
 import doip.library.message.DoipUdpEntityStatusRequest;
+import doip.library.util.StringConstants;
 import doip.tester.toolkit.TestConfig;
 import doip.tester.toolkit.TestSetup;
 import doip.tester.toolkit.TestUtils;
@@ -41,8 +42,9 @@ public class TC_1030_DoipEntityStatus {
 	
 	@BeforeAll
 	public static void setUpBeforeAll() throws InitializationError {
-		logger.trace(">>> public static void setUpBeforeAll()");
 		try {
+			logger.info(StringConstants.SINGLE_LINE);
+			logger.trace(">>> public static void setUpBeforeAll()");
 			setup = new TestSetup();
 			setup.initialize();
 			config = setup.getConfig();
@@ -62,6 +64,7 @@ public class TC_1030_DoipEntityStatus {
 			}
 		} finally {
 			logger.trace("<<< public static void tearDownAfterAll()");
+			logger.info(StringConstants.SINGLE_LINE);
 		}
 	}
 	
@@ -80,14 +83,14 @@ public class TC_1030_DoipEntityStatus {
 			comm.clearEvents();
 			comm.send(new DoipUdpEntityStatusRequest(), config.getTargetAddress(), config.getTargetPort());
 			DoipEvent event = comm.waitForEvents(1, config.get_A_DoIP_Ctrl());
-			assertNotNull(event, "A DoIP entity status request had been sent but no response " +
+			assertNotNull(event, "A DoIP entity status request had been sent but no valid DoIP response " +
 					"has been received within A_DoIP_Ctrl.");
 			if (!(event instanceof DoipEventUdpEntityStatusResponse)) {
 				if (event instanceof DoipEventMessage) {
 					DoipEventMessage messageEvent = (DoipEventMessage) event;
 					fail("A DoIP entity status request had been sent but a wrong response has been received. " +
 							"A \"" + DoipMessage.getPayloadTypeAsString(DoipMessage.TYPE_UDP_ENTITY_STATUS_RES) +
-							"\" was expected, but a \"" + messageEvent.getDoipMessage().getName()
+							"\" was expected, but a \"" + messageEvent.getDoipMessage().getMessageName()
 							+ "\" has been received.");
 				} else {
 					fail("A DoIP entity status request had been sent but a wrong event did occur."
