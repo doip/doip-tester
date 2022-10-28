@@ -11,23 +11,26 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.opentest4j.AssertionFailedError;
 
 import static doip.junit.Assertions.*;
 import doip.junit.InitializationError;
 import doip.junit.TestExecutionError;
-import doip.tester.testcases.TC_1010_VehicleIdentificationWithEid;
+import doip.tester.testcases.TC_2010_VehicleIdentificationWithEid;
 import doip.tester.toolkit.TextBuilder;
 import doip.tester.toolkit.server4unittest.DoipServer4UnitTest;
 
-public class ST_1010_VehicleIdentificationWithEid {
+public class ST_2010_VehicleIdentificationWithEid {
 	
-	private static Logger logger = LogManager.getLogger(ST_1010_VehicleIdentificationWithEid.class);
+	public static final String BASE_ID = "2010";
+	
+	private static Logger logger = LogManager.getLogger(ST_2010_VehicleIdentificationWithEid.class);
 	private static Marker markerEnter = MarkerManager.getMarker("ENTER");
 	private static Marker markerExit = MarkerManager.getMarker("EXIT");
 	
-	private TC_1010_VehicleIdentificationWithEid testcase = null;
+	private TC_2010_VehicleIdentificationWithEid testcase = null;
 	
 	private static DoipServer4UnitTest server = null;
 
@@ -39,7 +42,7 @@ public class ST_1010_VehicleIdentificationWithEid {
 			server = new DoipServer4UnitTest();
 			server.start();
 			
-			TC_1010_VehicleIdentificationWithEid.setUpBeforeAll();
+			TC_2010_VehicleIdentificationWithEid.setUpBeforeAll();
 			
 		} catch (IOException e) {
 			throw logger.throwing(Level.FATAL, new InitializationError(TextBuilder.unexpectedException(e), e));
@@ -66,7 +69,7 @@ public class ST_1010_VehicleIdentificationWithEid {
 		try {
 			logger.trace(markerEnter, ">>> public void setUp()");
 			
-			testcase = new TC_1010_VehicleIdentificationWithEid();
+			testcase = new TC_2010_VehicleIdentificationWithEid();
 			
 		} finally {
 			logger.trace(markerExit, "<<< public void setUp()");
@@ -86,6 +89,7 @@ public class ST_1010_VehicleIdentificationWithEid {
 	}
 	
 	@Test
+	@DisplayName("ST-" + BASE_ID + "-01-01")
 	public void testGoodCase() throws TestExecutionError {
 		try {
 			logger.trace(markerEnter, ">>> public void testGoodCase()");
@@ -101,6 +105,7 @@ public class ST_1010_VehicleIdentificationWithEid {
 	}
 	
 	@Test
+	@DisplayName("ST-" + BASE_ID + "-1-02")
 	public void testNoResponse() {
 		try {
 			logger.trace(markerEnter, ">>> public void testNoResponse()");

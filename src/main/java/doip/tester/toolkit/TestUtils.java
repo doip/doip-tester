@@ -20,79 +20,70 @@ public class TestUtils {
 	private static Logger logger = LogManager.getLogger(TestUtils.class);
 	private static Marker enter = MarkerManager.getMarker("ENTER");
 	private static Marker exit  = MarkerManager.getMarker("EXIT");
-	
 
-	public static CheckResult checkEvent(DoipEvent event, Class<? extends DoipEvent> clazz) {
+	public static CheckResult checkEvent(DoipEvent actualEvent, Class<? extends DoipEvent> expectedClass) {
 		try {
 			logger.trace(enter, ">>> public void checkEvent(DoipEvent event, Class<? extends DoipEvent> clazz)");
 		
-			if (event != null) {
-				return checkEventIsNotNull(event, clazz);
+			if (actualEvent != null) {
+				return checkEventIsNotNull(actualEvent, expectedClass);
 			} else {
-				return checkEventIsNull(clazz);
+				return checkEventIsNull(expectedClass);
 			}
-
 		} finally {
 			logger.trace(exit, "<<< public void checkEvent(DoipEvent event, Class<? extends DoipEvent> clazz)");
-			
 		}
 	}
 	
-	private static CheckResult checkEventIsNotNull(DoipEvent event, Class<? extends DoipEvent> clazz) {
+	private static CheckResult checkEventIsNotNull(DoipEvent actualEvent, Class<? extends DoipEvent> clazz) {
 		try {
 			logger.trace(enter, ">>> private static int checkEventIsNotNull(DoipEvent event, Class<? extends DoipEvent> clazz)");
 			if (clazz != null) {
-				return checkEventIsNotNullAndClassIsNotNull(event, clazz);
+				return checkEventIsNotNullAndClassIsNotNull(actualEvent, clazz);
 			} else {
-				return checkEventIsNotNullAndClassIsNull(event);
+				return checkEventIsNotNullAndClassIsNull(actualEvent);
 			}
 		} finally {
 			logger.trace(exit, "<<< private static int checkEventIsNotNull(DoipEvent event, Class<? extends DoipEvent> clazz)");
 		}
 	}
 	
-	private static CheckResult checkEventIsNotNullAndClassIsNotNull(DoipEvent event, Class<? extends DoipEvent> clazz) {
-		if (clazz.isInstance(event)) {
-			String text = "A event of type '" + event.getClass().getSimpleName() + "' has been receive which was the expected event"; 
-			logger.info(text);
+	private static CheckResult checkEventIsNotNullAndClassIsNotNull(DoipEvent actualEvent, Class<? extends DoipEvent> clazz) {
+		if (clazz.isInstance(actualEvent)) {
+			String text = "A event of type '" + actualEvent.getClass().getSimpleName() + "' has been receive which was the expected event"; 
 			return new CheckResult(CheckResult.NO_ERROR, text);
 		} else {
-			String text = "It was expected to receive a event of type '" + clazz.getSimpleName()+ "', but a event of type '" + event.getClass().getSimpleName() + "' has been received";
-			logger.error(text);
+			// TODO: Distinguish between different event types and expected class
+			String text = "It was expected to receive a event of type '" + clazz.getSimpleName()+ "', but a event of type '" + actualEvent.getClass().getSimpleName() + "' has been received";
 			return new CheckResult(CheckResult.WRONG_EVENT, text);
 		}		
 	}
 	
-	private static CheckResult checkEventIsNotNullAndClassIsNull(DoipEvent event) {
-		if (event instanceof DoipEventMessage) {
-			DoipEventMessage eventMessage = (DoipEventMessage) event;
+	private static CheckResult checkEventIsNotNullAndClassIsNull(DoipEvent actualEvent) {
+		if (actualEvent instanceof DoipEventMessage) {
+			DoipEventMessage eventMessage = (DoipEventMessage) actualEvent;
 			String text = "It was expected to receive no response, but instead a '" + eventMessage.getDoipMessage().getMessageName() + "' has been received"; 
-			logger.error(text);
 			return new CheckResult(CheckResult.UNEXPECTED_DOIP_MESSAGE, text);
-		} else if (event instanceof DoipEventConnectionClosed) {
+		} else if (actualEvent instanceof DoipEventConnectionClosed) {
 			String text = "It was expected to receive no response, but instead the socket has been closed";
-			logger.error(text);
 			return new CheckResult(CheckResult.UNEXPECTED_SOCKET_CLOSED, text);
 		} else {
-			String text = "A unknown event did occur, class = " + event.getClass().getName();
+			String text = "A unknown event did occur, class = " + actualEvent.getClass().getName();
 			throw logger.throwing(Level.FATAL, new IllegalArgumentException(text));
 		}		
 	}
 	
-	private static CheckResult checkEventIsNull(Class<? extends DoipEvent> clazz) {
-		if (clazz != null) {
+	private static CheckResult checkEventIsNull(Class<? extends DoipEvent> expectedClass) {
+		if (expectedClass != null) {
 			// 	Check if it a DoipEventMessage was expected
-			if (DoipEventUdpMessage.class.isAssignableFrom(clazz)) {
+			if (DoipEventUdpMessage.class.isAssignableFrom(expectedClass)) {
 				String text = "It was expected to receive a valid DoIP UDP message, but no valid DoIP UDP message has been received"; 
-				logger.info(text);
 				return new CheckResult(CheckResult.NO_UDP_RESPONSE_RECEIVED, text);
-			} else if (DoipEventTcpMessage.class.isAssignableFrom(clazz)) {
+			} else if (DoipEventTcpMessage.class.isAssignableFrom(expectedClass)) {
 				String text = "It was expected to receive a valid DoIP TCP message, but no valid DoIP TCP message has been received"; 
-				logger.error(text);
 				return new CheckResult(CheckResult.NO_TCP_RESPONSE_RECEIVED, text);
-			} else if (DoipEventConnectionClosed.class.isAssignableFrom(clazz)) {
+			} else if (DoipEventConnectionClosed.class.isAssignableFrom(expectedClass)) {
 				String text = "It was expected that the socket has been closed, but it hasn't been closed"; 
-				logger.error(text);
 				return new CheckResult(CheckResult.SOCKET_NOT_CLOSED, text);
 			} else {
 				String text = "An unknown event class has been passed"; 
@@ -100,7 +91,6 @@ public class TestUtils {
 			}
 		} else {
 			String text = "No event did occur which is the expected result"; 
-			logger.info(text);
 			return new CheckResult(CheckResult.NO_ERROR, text);
 		}
 	}

@@ -19,8 +19,10 @@ import doip.junit.InitializationError;
 import doip.junit.TestCaseDescription;
 import doip.junit.TestExecutionError;
 import doip.junit.TestResult;
+import doip.library.message.DoipUdpVehicleAnnouncementMessage;
 import doip.library.util.Helper;
 import doip.library.util.StringConstants;
+import doip.tester.toolkit.CheckResult;
 import doip.tester.toolkit.TestConfig;
 import doip.tester.toolkit.TestSetup;
 import doip.tester.toolkit.TestUtils;
@@ -29,9 +31,11 @@ import doip.tester.toolkit.TextBuilder;
 import doip.tester.toolkit.event.DoipEvent;
 import doip.tester.toolkit.event.DoipEventUdpVehicleAnnouncementMessage;
 
-public class TC_1000_VehicleIdentification {
+public class TC_2000_VehicleIdentification {
 	
-	private static Logger logger = LogManager.getLogger(TC_1000_VehicleIdentification.class);
+	public static final String BASE_ID = "2000";
+	
+	private static Logger logger = LogManager.getLogger(TC_2000_VehicleIdentification.class);
 	
 	private static TestSetup testSetup = null;
 
@@ -71,7 +75,7 @@ public class TC_1000_VehicleIdentification {
 	 * @throws IOException
 	 */
 	@Test
-	@DisplayName("TC-1000-01")
+	@DisplayName("TC-" + BASE_ID + "-01")
 	public void testUnicast() throws TestExecutionError {
 		String function = "public void testUnicast()";
 		TestCaseDescription desc = null;
@@ -79,7 +83,7 @@ public class TC_1000_VehicleIdentification {
 			logger.trace(">>> " + function);
 		
 			desc = new TestCaseDescription(
-					"TC-1000-01", 
+					"TC-" + BASE_ID + "-01", 
 					"Testing vehicle identification with unicast address.",
 					"Send a vehicle identification request message to the "
 					+ "unicast address of the DoIP server.",
@@ -103,14 +107,14 @@ public class TC_1000_VehicleIdentification {
 	
 	
 	@Test
-	@DisplayName("TC-1000-02")
+	@DisplayName("TC-" + BASE_ID + "-02")
 	public void testBroadcast() throws TestExecutionError {
 		String function = "public void testBroadcast()";
 		TestCaseDescription desc = null;
 		try {
 			logger.trace(">>> " + function);
 			desc = new TestCaseDescription(
-					"TC-1000-02", 
+					"TC-" + BASE_ID + "-02", 
 					"Testing vehicle identification with broadcast address.",
 					"Send a vehicle identification request message to the "
 					+ "unicast address of the DoIP server.",
@@ -143,11 +147,20 @@ public class TC_1000_VehicleIdentification {
 			logger.info("Send valid vehicle identification request");
 			testerUdpCommModule.sendDoipUdpVehicleIdentRequest(address);
 			
-			logger.info("Wait for incoming response");
 			DoipEvent event = testerUdpCommModule.waitForEvents(1, config.get_A_DoIP_Ctrl());
-			assertNotNull(event, "Did not receive a valid DoIP response on DoIP vehicle identification request");
+			CheckResult result = TestUtils.checkEvent(event, DoipEventUdpVehicleAnnouncementMessage.class);
+			if (result.getCode() != CheckResult.NO_ERROR) {
+				logger.error(result.getText());
+			}
+			assertNotNull(event, TextBuilder.noValidDoipMessageReceived(
+					DoipUdpVehicleAnnouncementMessage.getMessageNameOfClass()));
+			
+			String expected = DoipUdpVehicleAnnouncementMessage.getMessageNameOfClass();
+			
 			assertTrue(event instanceof DoipEventUdpVehicleAnnouncementMessage,
-					"Did not receive a valid DoIP vehicle identification response message");
+					"Did not receive a valid '" + expected + "'");
+			
+			
 			logger.info("Received a valid DoIP vehicle identification response message as expected");
 		} catch (IOException e) {
 			logger.error("Unexpected " + e.getClass().getName() + " in testValidVir()");

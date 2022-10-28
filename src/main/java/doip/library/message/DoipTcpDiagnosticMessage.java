@@ -29,18 +29,22 @@ public class DoipTcpDiagnosticMessage extends DoipTcpMessage {
 	}
 	
 	public String getMessageName() {
-		return getPayloadTypeAsString(0x8001); 
+		return getPayloadTypeAsString(DoipMessage.TYPE_TCP_DIAG_MESSAGE); 
 	}
 
+	public static String getMessageNameOfClass() {
+		return getPayloadTypeAsString(DoipMessage.TYPE_TCP_DIAG_MESSAGE);
+	}
+	
 	public void log(Level level) {
 		logger.log(level, "----------------------------------------");
 		logger.log(level, "DoIP diagnostic message:");
 		logger.log(level, "    Source address = " + this.sourceAddress);
-		logger.log(level, "    Target address = " + this.targetAddress);
+		logger.log(level, "    Source address = " + String.format("0x%04X", this.sourceAddress));
+		logger.log(level, "    Target address = " + String.format("0x%04X", this.targetAddress));
 		logger.log(level,
 				"    Message        = " + Conversion.byteArrayToHexStringShortDotted(this.diagnosticMessage, 64));
 		logger.log(level, "----------------------------------------");
-
 	}
 
 	@Override

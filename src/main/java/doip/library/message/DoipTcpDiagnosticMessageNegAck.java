@@ -26,9 +26,13 @@ public class DoipTcpDiagnosticMessageNegAck extends DoipTcpDiagnosticMessageAck 
 	}
 	
 	public String getMessageName () {
-		return getPayloadTypeAsString(0x8003);
+		return getPayloadTypeAsString(DoipMessage.TYPE_TCP_DIAG_MESSAGE_NEG_ACK);
 	}
 	
+	public static String getMessageNameOfClass() {
+		return getPayloadTypeAsString(DoipMessage.TYPE_TCP_DIAG_MESSAGE_NEG_ACK);
+	}
+
 	public String getNackCodeAsString(int code) {
 		switch (code) {
 		case 0x02:
@@ -66,5 +70,6 @@ public class DoipTcpDiagnosticMessageNegAck extends DoipTcpDiagnosticMessageAck 
 		doipTcpDiagnosticMessageNegAck.log(Level.INFO);
 		return doipTcpDiagnosticMessageNegAck;
 	}
+
 }
 

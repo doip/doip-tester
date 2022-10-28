@@ -50,6 +50,7 @@ public class TesterUdpCommModule extends DoipUdpMessageHandlerWithEventCollectio
 	public void sendDoipUdpVehicleIdentRequest(InetAddress address) throws IOException {
 		logger.trace(">>> public void sendDoipUdpVehicleIdentRequest(InetAddress address) throws IOException");
 		DoipUdpVehicleIdentRequest request = new DoipUdpVehicleIdentRequest();
+		logger.info(TextBuilder.sendMessage(request.getMessageName()));
 		this.send(request, address,
 				config.getTargetPort());
 		logger.trace("<<< public void sendDoipUdpVehicleIdentRequest(InetAddress address) throws IOException");
