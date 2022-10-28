@@ -78,11 +78,10 @@ public class TesterTcpConnection extends DoipTcpConnectionWithEventCollection {
 
 			// Wait for incoming TCP message
 			DoipEvent event = null;
-			try {
-				event = this.waitForEvents(1, config.getRoutingActivationTimeout());
-			} catch (InterruptedException e) {
-				logger.error(Helper.getExceptionAsString(e));
-				throw e;
+			event = this.waitForEvents(1, config.getRoutingActivationTimeout());
+			CheckResult result = TestUtils.checkEvent(event, DoipEventTcpRoutingActivationResponse.class);
+			if (result.getCode() != CheckResult.NO_ERROR) {
+				logger.error(result.getText());
 			}
 			if (event == null) {
 				logger.error("No valid DoIP routing activation response received");
@@ -126,7 +125,7 @@ public class TesterTcpConnection extends DoipTcpConnectionWithEventCollection {
 	 * @return
 	 * @throws DiagnosticServiceExecutionFailed
 	 */
-	public byte[] executeDiagnosticServicePosAck(byte[] request) throws DiagnosticServiceExecutionFailed {
+	public DoipEventTcpDiagnosticMessage executeDiagnosticServicePosAck(byte[] request) throws DiagnosticServiceExecutionFailed {
 
 		try {
 			logger.trace(enter, ">>> public byte[] executeDiagnosticService(byte[] request)");
@@ -134,12 +133,12 @@ public class TesterTcpConnection extends DoipTcpConnectionWithEventCollection {
 			
 			this.sendDiagnosticMessage(config.getTesterAddress(), config.getEcuAddressPhysical(), request);
 			
-			// TODO: The standard also allows neg. ack. This case should also be considered here
-			
 			// It is expected to receive a positive acknowledge on the diagnostic request message
 			DoipEvent event = this.waitForEvents(1, config.get_A_DoIP_Diagnostic_Message());
-			TestUtils.checkEvent(event, DoipEventTcpDiagnosticMessagePosAck.class);
-			
+			CheckResult result = TestUtils.checkEvent(event, DoipEventTcpDiagnosticMessagePosAck.class);
+			if (result.getCode() != CheckResult.NO_ERROR ) {
+				logger.error(result.getText());
+			}
 			if (event == null) {
 				DiagnosticServiceExecutionFailed ex =
 						new DiagnosticServiceExecutionFailed(
@@ -161,6 +160,9 @@ public class TesterTcpConnection extends DoipTcpConnectionWithEventCollection {
 
 			event = this.waitForEvents(2, config.get_A_DoIP_Diagnostic_Message());
 			TestUtils.checkEvent(event, DoipEventTcpDiagnosticMessage.class);
+			if (result.getCode() != CheckResult.NO_ERROR ) {
+				logger.error(result.getText());
+			}
 			if (event == null) {
 				DiagnosticServiceExecutionFailed ex =
 						new DiagnosticServiceExecutionFailed(
@@ -178,8 +180,7 @@ public class TesterTcpConnection extends DoipTcpConnectionWithEventCollection {
 			}
 
 			DoipEventTcpDiagnosticMessage doipEventTcpDiagnosticMessage = (DoipEventTcpDiagnosticMessage) event;
-			DoipTcpDiagnosticMessage doipTcpDiagnosticMessage = (DoipTcpDiagnosticMessage) doipEventTcpDiagnosticMessage.getDoipMessage();
-			return doipTcpDiagnosticMessage.getDiagnosticMessage();
+			return doipEventTcpDiagnosticMessage;
 
 		} catch (InterruptedException e) {
 			DiagnosticServiceExecutionFailed ex =

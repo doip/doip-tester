@@ -19,18 +19,20 @@ import doip.junit.TestCaseDescription;
 import doip.junit.TestExecutionError;
 import doip.junit.TestResult;
 import doip.library.util.StringConstants;
-import doip.tester.testcases.TC_1030_DoipEntityStatus;
+import doip.tester.testcases.TC_2030_DoipEntityStatus;
 import doip.tester.toolkit.server4unittest.DoipServer4UnitTest;
 
-public class ST_1030_DoipEntityStatus {
+public class ST_2030_DoipEntityStatus {
+	
+	public static final String BASE_ID = "2030";
 
-	private static Logger logger = LogManager.getLogger(ST_1030_DoipEntityStatus.class);
+	private static Logger logger = LogManager.getLogger(ST_2030_DoipEntityStatus.class);
 	private static Marker markerEnter = MarkerManager.getMarker("ENTER");
 	private static Marker markerExit = MarkerManager.getMarker("EXIT");
 	
 	private static DoipServer4UnitTest server = null;
 	
-	private TC_1030_DoipEntityStatus testcase = null;
+	private TC_2030_DoipEntityStatus testcase = null;
 	
 	@BeforeAll
 	public static void setUpBeforeAll() throws InitializationError {
@@ -38,7 +40,7 @@ public class ST_1030_DoipEntityStatus {
 			logger.info(StringConstants.SINGLE_LINE);
 			logger.trace(markerEnter, ">>> public static void setUpBeforeAll()");
 			server = new DoipServer4UnitTest();
-			TC_1030_DoipEntityStatus.setUpBeforeAll();
+			TC_2030_DoipEntityStatus.setUpBeforeAll();
 		} finally {
 			logger.trace(markerExit, "<<< public static void setUpBeforeAll()");
 		}
@@ -49,7 +51,7 @@ public class ST_1030_DoipEntityStatus {
 	public static void tearDownAfterAll() {
 		try {
 			logger.trace(markerEnter, ">>> public static void tearDownAfterAll()");
-			TC_1030_DoipEntityStatus.tearDownAfterAll();
+			TC_2030_DoipEntityStatus.tearDownAfterAll();
 			server = null;
 		} finally {
 			logger.trace(markerExit, "<<< public static void tearDownAfterAll()");
@@ -63,7 +65,7 @@ public class ST_1030_DoipEntityStatus {
 			logger.info(StringConstants.SINGLE_LINE);
 			logger.trace(markerEnter, ">>> public void setUp()");
 			server.start();
-			testcase = new TC_1030_DoipEntityStatus();
+			testcase = new TC_2030_DoipEntityStatus();
 			
 		} catch (IOException e) {
 			throw logger.throwing(new InitializationError(
@@ -86,16 +88,16 @@ public class ST_1030_DoipEntityStatus {
 	}
 	
 	@Test
-	@DisplayName("ST_1030-01-01")
+	@DisplayName("ST-" + BASE_ID + "-01-01")
 	public void testGoodCase() throws TestExecutionError {
 		logger.trace(markerEnter, ">>> public void testGoodCase()");
 		TestCaseDescription desc = null;
 		try {
 			
 			desc = new TestCaseDescription(
-					"ST-1030-01-01",
-					"Test test case TC-1030-01",
-					"Execute test case TC-1030-01",
+					"ST-" + BASE_ID + "-01-01",
+					"Test test case TC-" + BASE_ID + "-01",
+					"Execute test case TC-" + BASE_ID + "-01",
 					"Test case succeeds");
 			desc.emphasize().logHeader();
 		
@@ -117,7 +119,7 @@ public class ST_1030_DoipEntityStatus {
 	}
 	
 	@Test
-	@DisplayName("ST_1030-01-02")
+	@DisplayName("ST-" + BASE_ID + "-01-02")
 	public void testNoResponse() {
 		try {
 			logger.trace(markerEnter, ">>> public void testNoResponse()");

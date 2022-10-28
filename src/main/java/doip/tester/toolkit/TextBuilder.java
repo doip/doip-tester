@@ -14,4 +14,8 @@ public class TextBuilder {
 		return "Unexpected " + e.getClass().getName() + ": " + e.getMessage();
 	}
 
+	public static String sendMessage(String messageName) {
+		return "Send a '" + messageName + "'";
+	}
+
 }

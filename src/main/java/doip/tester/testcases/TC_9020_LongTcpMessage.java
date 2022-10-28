@@ -26,6 +26,7 @@ import doip.tester.toolkit.TestConfig;
 import doip.tester.toolkit.TestSetup;
 import doip.tester.toolkit.TesterTcpConnection;
 import doip.tester.toolkit.TextBuilder;
+import doip.tester.toolkit.event.DoipEventTcpDiagnosticMessage;
 import doip.tester.toolkit.exception.DiagnosticServiceExecutionFailed;
 import doip.tester.toolkit.exception.RoutingActivationFailed;
 
@@ -133,15 +134,16 @@ public class TC_9020_LongTcpMessage {
 		byte[] largeMessage = new byte[10000000];
 		largeMessage[0] = 0x22;
 		
-		// Follow linge is wrong because we expect a neg. ack.
 		assertThrows(DiagnosticServiceExecutionFailed.class, () -> conn.executeDiagnosticServicePosAck(largeMessage));
 
+		DoipEventTcpDiagnosticMessage event = null;
 		try {
-			response = conn.executeDiagnosticServicePosAck(new byte[] {0x10, 0x03});
-			
+			event = conn.executeDiagnosticServicePosAck(new byte[] {0x10, 0x03});
 		} catch (DiagnosticServiceExecutionFailed e) {
 			throw logger.throwing(new AssertionFailedError("Didn't receive a valid response from ECU on diagnostic request message 0x10 03.", e));
-		}
+		} 
+		
+		response = event.getDoipMessage().getMessage();
 		
 		assertNotNull(response, "The response was null.");
 		assertTrue(response.length >= 2, "The response was too short. There should be at least two bytes.");

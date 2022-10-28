@@ -29,7 +29,11 @@ public class DoipUdpVehicleAnnouncementMessage extends DoipUdpMessage {
 	}
 	
 	public String getMessageName() {
-		return getPayloadTypeAsString(0x0004);
+		return getPayloadTypeAsString(DoipMessage.TYPE_UDP_VAM);
+	}
+
+	public static String getMessageNameOfClass() {
+		return getPayloadTypeAsString(DoipMessage.TYPE_UDP_VAM);
 	}
 
 	public void log(Level level) {

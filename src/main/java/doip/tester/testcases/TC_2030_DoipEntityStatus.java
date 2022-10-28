@@ -30,9 +30,11 @@ import doip.tester.toolkit.event.DoipEvent;
 import doip.tester.toolkit.event.DoipEventMessage;
 import doip.tester.toolkit.event.DoipEventUdpEntityStatusResponse;
 
-public class TC_1030_DoipEntityStatus {
+public class TC_2030_DoipEntityStatus {
 	
-	private static Logger logger = LogManager.getLogger(TC_1030_DoipEntityStatus.class);
+	public static final String BASE_ID = "2030";
+	
+	private static Logger logger = LogManager.getLogger(TC_2030_DoipEntityStatus.class);
 	
 	private static TestSetup setup = null;
 	
@@ -69,13 +71,13 @@ public class TC_1030_DoipEntityStatus {
 	}
 	
 	@Test
-	@DisplayName("TC-1030-01")
+	@DisplayName("TC-" + BASE_ID + "-01")
 	public void test() throws TestExecutionError {
 		logger.trace(">>> public void test()");
 		TestCaseDescription desc = null;
 		try {
 			desc = new TestCaseDescription(
-					"TC-1030-01",
+					"TC-" + BASE_ID + "-01",
 					"Send DoIP entity status request and check response",
 					"---", "---");
 			desc.logHeader();

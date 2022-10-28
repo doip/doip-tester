@@ -21,29 +21,33 @@ import doip.junit.TestCaseDescription;
 import doip.junit.TestExecutionError;
 import doip.junit.TestResult;
 import doip.library.message.DoipUdpEntityStatusResponse;
-import doip.tester.testcases.TC_1000_VehicleIdentification;
+import doip.library.util.StringConstants;
+import doip.tester.testcases.TC_2000_VehicleIdentification;
 import doip.tester.toolkit.TestConfig;
 import doip.tester.toolkit.TestSetup;
 import doip.tester.toolkit.TestUtils;
 import doip.tester.toolkit.TextBuilder;
 import doip.tester.toolkit.server4unittest.DoipServer4UnitTest;
 
-public class ST_1000_VehicleIdentification {
+public class ST_2000_VehicleIdentification {
+	
+	public static final String BASE_ID = "2000";
 
-	public static Logger logger = LogManager.getLogger(ST_1000_VehicleIdentification.class);
+	public static Logger logger = LogManager.getLogger(ST_2000_VehicleIdentification.class);
 	public static Marker markerEnter = MarkerManager.getMarker("ENTER");
 	public static Marker markerExit  = MarkerManager.getMarker("EXIT");
 	
 	private static DoipServer4UnitTest server = null;
-	private TC_1000_VehicleIdentification testcase = null;
+	private TC_2000_VehicleIdentification testcase = null;
 	
 	@BeforeAll
 	public static void setUpBeforeAll() throws InitializationError {
 		try {
+			logger.info(StringConstants.HASH_LINE);
 			logger.trace(markerEnter, ">>> public void setUpBeforeAll()");
 			server = new DoipServer4UnitTest();
 			
-			TC_1000_VehicleIdentification.setUpBeforeClass();
+			TC_2000_VehicleIdentification.setUpBeforeClass();
 			
 		} catch (InitializationError e) {
 			throw e;
@@ -60,21 +64,23 @@ public class ST_1000_VehicleIdentification {
 		try {
 			logger.trace(markerEnter, ">>> public void tearDownAfterAll()");
 			
-			TC_1000_VehicleIdentification.tearDownAfterClass();
+			TC_2000_VehicleIdentification.tearDownAfterClass();
 			server = null;
 			
 		} finally {
 			logger.trace(markerExit, "<<< public void tearDownAfterAll()");
+			logger.info(StringConstants.HASH_LINE);
 		}
 	}
 	
 	@BeforeEach
 	public void setUp() throws InitializationError {
 		try {
+			logger.info(StringConstants.HASH_LINE);
 			logger.trace(markerEnter, ">>> public void setUp()");
 			
 			server.start();
-			testcase = new TC_1000_VehicleIdentification();
+			testcase = new TC_2000_VehicleIdentification();
 			
 		} catch (Throwable e) {
 			logger.fatal(TextBuilder.unexpectedException(e));
@@ -92,22 +98,23 @@ public class ST_1000_VehicleIdentification {
 		} finally {
 			logger.trace(markerExit, "<<< public void tearDown()");
 			
+			logger.info(StringConstants.HASH_LINE);
 		}
 	}
 	
 	@Test
 	// @Disabled
-	@DisplayName("ST-1000-01-01")
+	@DisplayName("ST-"+BASE_ID+"-01-01")
 	public void testUnicastGoodCase() throws TestExecutionError {
 		TestCaseDescription desc = null;
 		try {
 			logger.trace(markerEnter, ">>> public void testGoodCase()");
 			desc = new TestCaseDescription(
-					"ST-1000-01-01",
-					"Execute test case TC-1000-01 in case a valid vehicle "
+					"ST-"+BASE_ID+"-01-01",
+					"Execute test case TC-" + BASE_ID + "-01 in case a valid vehicle "
 					+ "identification response is received.",
-					"Execute test case TC-1000-01.",
-					"Test case TC-1000-01 will pass.");
+					"Execute test case TC-"+BASE_ID+"-01.",
+					"Test case TC-"+BASE_ID+"-01 will pass.");
 			desc.emphasize().logHeader();
 			testcase.testUnicast();
 			desc.logFooter(TestResult.PASSED);
@@ -124,18 +131,18 @@ public class ST_1000_VehicleIdentification {
 	
 	@Test
 	// @Disabled
-	@DisplayName("ST-1000-01-02")
+	@DisplayName("ST-" + BASE_ID + "-01-02")
 	public void testUnicastNoResponse() throws TestExecutionError {
 		TestCaseDescription desc = null;
 		try {
 			logger.trace(markerEnter, ">>> public void testUnicastNoResponse()");
 			server.setSilent(true);
 			desc = new TestCaseDescription(
-					"ST-1000-01-01",
-					"Execute test case TC-1000-01 in case "
+					"ST-" + BASE_ID + "-01-01",
+					"Execute test case TC-" + BASE_ID + "-01 in case "
 					+ "no response has been received.",
-					"Execute test case TC-1000-01.",
-					"Test case TC-1000-01 will fail.");
+					"Execute test case TC-" + BASE_ID + "-01.",
+					"Test case TC-" + BASE_ID + "-01 will fail.");
 			desc.emphasize().logHeader();
 			assertThrows(AssertionFailedError.class, () -> testcase.testUnicast());
 			desc.logFooter(TestResult.PASSED);
@@ -152,7 +159,7 @@ public class ST_1000_VehicleIdentification {
 
 	@Test
 	// @Disabled
-	@DisplayName("ST-1000-01-03")
+	@DisplayName("ST-" + BASE_ID + "-01-03")
 	public void testUnicastWrongResponse() throws TestExecutionError {
 		TestCaseDescription desc = null;
 		try {
@@ -160,13 +167,13 @@ public class ST_1000_VehicleIdentification {
 			server.setNextUdpResponse(new DoipUdpEntityStatusResponse(0, 1, 0, 0x10000 ).getMessage());
 			
 			desc = new TestCaseDescription(
-					"ST-1000-01-03",
-					"Run test case TC-1000-01 in case of valid but wrong response.",
-					"Run test case TC-1000-01 and let server send a wrong but valid response.",
+					"ST-" + BASE_ID + "-01-03",
+					"Run test case TC-" + BASE_ID + "-01 in case of valid but wrong response.",
+					"Run test case TC-" + BASE_ID + "-01 and let server send a wrong but valid response.",
 					"Test case will fail");
 			desc.emphasize().logHeader();
 			assertThrows(AssertionFailedError.class, () -> testcase.testUnicast());
-			logger.info("Test case TC-1000-01 failed which is the correct and expected result.");
+			logger.info("Test case TC-" + BASE_ID + "-01 failed which is the correct and expected result.");
 			TestCaseDescription.logFooter(TestResult.PASSED, true);
 		} catch (AssertionFailedError e) {
 			TestCaseDescription.logFooter(TestResult.FAILED, true);

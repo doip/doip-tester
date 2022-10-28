@@ -40,7 +40,7 @@ public class Wait {
 			NanoTimer timer = new NanoTimer();
 			long targetTime = timeoutms * 1000000;
 			timer.reset();
-			logger.debug("Wait for incoming events until " + numberOfEvents + " are in event queue, timeout is " + timeoutms + " ms");
+			logger.info("Wait for incoming events until " + numberOfEvents + " are in event queue, timeout is " + timeoutms + " ms");
 			while (timer.getElapsedTime() < targetTime && events.size() < numberOfEvents) {
 				Thread.sleep(0, 1000);
 			}

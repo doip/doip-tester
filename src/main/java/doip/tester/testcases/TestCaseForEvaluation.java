@@ -21,11 +21,11 @@ public class TestCaseForEvaluation  {
 	public static Marker markerExit  = MarkerManager.getMarker("EXIT");
 
 	@BeforeAll
-	public static void setUpBeforeClass() {
+	public static void setUpBeforeAll() {
 		
 		try {
-			logger.trace(markerEnter, ">>> public static void setUpBeforeClass()");
 			logger.info(StringConstants.SINGLE_LINE);
+			logger.trace(markerEnter, ">>> public static void setUpBeforeClass()");
 
 			// --- SET UP BEFORE CLASS BEGIN --------------------------------
 			
@@ -37,25 +37,25 @@ public class TestCaseForEvaluation  {
 	}
 
 	@AfterAll
-	public static void tearDownAfterClass() {
+	public static void tearDownAfterAll() {
 		try {
 			logger.trace(markerEnter, ">>> public static void tearDownAfterClass()");
-			logger.info(StringConstants.SINGLE_LINE);
 			
 			// --- TEAR DOWN AFTER CLASS BEGIN ------------------------------
 			
 			// --- TEAR DOWN AFTER CLASS END --------------------------------
 			
 		} finally {
-			logger.info(markerExit, "<<< public static void tearDownAfterClass()");
+			logger.trace(markerExit, "<<< public static void tearDownAfterClass()");
+			logger.info(StringConstants.SINGLE_LINE);
 		}
 	}
 
 	@BeforeEach
 	public void setUp() throws Exception {
 		try {
-			logger.trace(markerEnter, ">>> public void setUp()");
 			logger.info(StringConstants.SINGLE_LINE);
+			logger.trace(markerEnter, ">>> public void setUp()");
 
 			// --- SET UP CODE BEGIN ----------------------------------------
 
@@ -67,27 +67,22 @@ public class TestCaseForEvaluation  {
 			logger.error(Helper.getExceptionAsString(e));
 			throw e;
 		} finally {
-			logger.trace("<<< public void setUp()");
+			logger.trace(markerExit, "<<< public void setUp()");
 		}
 	}
 
 	@AfterEach
 	public void tearDown() {
 		try {
-			if (logger.isInfoEnabled()) {
-				logger.info(StringConstants.SINGLE_LINE);
-				logger.info(">>> public void tearDown()");
-			}
+			logger.trace(markerEnter, ">>> public void tearDown()");
 			
 			// --- TEAR DOWN CODE BEGIN --------------------------------------
 			
 			// --- TEAR DOWN CODE END ----------------------------------------
 			
 		} finally {
-			if (logger.isInfoEnabled()) {
-				logger.info("<<< public void tearDown()");
-				logger.info(StringConstants.SINGLE_LINE);
-			}
+			logger.trace(markerExit, "<<< public void tearDown()");
+			logger.info(StringConstants.SINGLE_LINE);
 		}
 	}
 
@@ -96,20 +91,16 @@ public class TestCaseForEvaluation  {
 	public void test() {
 		String function = "public void test()";
 		try {
-			if (logger.isInfoEnabled()) {
-				logger.info(StringConstants.DOUBLE_LINE);
-				logger.info(">>> " + function);
-			}
+			logger.info(StringConstants.DOUBLE_LINE);
+			logger.trace(markerEnter, ">>> " + function);
 			
 			// --- TEST CODE BEGIN --------------------------------------------
 			
 			// --- TEST CODE END ----------------------------------------------
 			
 		} finally {
-			if (logger.isInfoEnabled()) {
-				logger.info("<<< " + function);
-				logger.info(StringConstants.DOUBLE_LINE);
-			}
+			logger.info(markerExit, "<<< " + function);
+			logger.info(StringConstants.DOUBLE_LINE);
 		}
 	}
 }
