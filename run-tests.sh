@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 function printerror {
 	echo "############################################################################"
 	echo "ERROR: Call \"$1\" failed, exit code = $2"
@@ -25,7 +24,25 @@ function runcommand {
 
 if [ ! -d "./logs" ]; then
 	mkdir ./logs
+else
+	rm -f ./logs/*.log
 fi
+
+# Log some information about the Git repository
+echo '------------------------------------------------------------------------------' >> ./logs/git.log
+echo 'Output of command "git log HEAD^..HEAD"' >> ./logs/git.log
+echo '------------------------------------------------------------------------------' >> ./logs/git.log
+runcommand 'git log HEAD^..HEAD >> logs/git.log' false
+
+echo '------------------------------------------------------------------------------' >> ./logs/git.log
+echo 'Output of command "git status"' >> ./logs/git.log
+echo '------------------------------------------------------------------------------' >> ./logs/git.log
+runcommand 'git status >> logs/git.log' false
+
+echo '------------------------------------------------------------------------------' >> ./logs/git.log
+echo 'Output of command "git diff"' >> ./logs/git.log
+echo '------------------------------------------------------------------------------' >> ./logs/git.log
+runcommand 'git diff >> logs/git.log' false
 
 if [ -z "$1" ]; then
 	testselection='*TR_*'
