@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.opentest4j.AssertionFailedError;
 
@@ -31,9 +32,11 @@ import doip.tester.toolkit.event.DoipEvent;
 import doip.tester.toolkit.event.DoipEventMessage;
 import doip.tester.toolkit.event.DoipEventUdpVehicleAnnouncementMessage;
 
-public class TC_1010_VehicleIdentificationWithEid {
+public class TC_2010_VehicleIdentificationWithEid {
 	
-	private static Logger logger = LogManager.getLogger(TC_1010_VehicleIdentificationWithEid.class);
+	public static final String BASE_ID = "2010";
+	
+	private static Logger logger = LogManager.getLogger(TC_2010_VehicleIdentificationWithEid.class);
 	private static Marker markerEnter = MarkerManager.getMarker("ENTER");
 	private static Marker markerExit  = MarkerManager.getMarker("EXIT");
 	
@@ -76,12 +79,13 @@ public class TC_1010_VehicleIdentificationWithEid {
 	
 	@Test
 	@Disabled
+	@DisplayName("TC-" + BASE_ID + "-01")
 	public void test() throws TestExecutionError {
 		TestCaseDescription desc = null;
 		try {
 			logger.trace(markerEnter, ">>> public void testGoodCase()");
 			desc = new TestCaseDescription(
-					"TC-1010-01-01",
+					"TC-" + BASE_ID + "-01",
 					"Test vehicle identification with EID",
 					"Send a vehicle identification with EID message",
 					"A vehicle identification response message will be sent");

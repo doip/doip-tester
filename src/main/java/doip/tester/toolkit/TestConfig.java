@@ -166,6 +166,13 @@ public class TestConfig {
 		return 3;
 	}
 	
+	/**
+	 * This is the time between receipt of the last byte of a DoIP
+	 * diagnostic message and the transmission of the confirmation ACK or NACK.
+	 * After the timeout has elapsed, the request or the response shall be
+	 * considered lost and the request may be repeated.
+	 * @return
+	 */
 	public int get_A_DoIP_Diagnostic_Message() {
 		return 2000;
 	}

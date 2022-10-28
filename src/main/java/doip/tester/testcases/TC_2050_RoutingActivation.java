@@ -26,9 +26,11 @@ import doip.tester.toolkit.TesterTcpConnection;
 import doip.tester.toolkit.TextBuilder;
 import doip.tester.toolkit.exception.RoutingActivationFailed;
 
-public class TC_1050_RoutingActivation {
+public class TC_2050_RoutingActivation {
 	
-	private static Logger logger = LogManager.getLogger(TC_1050_RoutingActivation.class);
+	public static final String BSE_ID = "1050";
+	
+	private static Logger logger = LogManager.getLogger(TC_2050_RoutingActivation.class);
 	
 	private static TestSetup testSetup = null;
 	private static TestConfig config = null;
