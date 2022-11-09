@@ -17,6 +17,8 @@ dependencies {
 	// We want to use directly from Log4j 2, so we declare a dependency here
 	implementation group: 'org.apache.logging.log4j', name: 'log4j-api',  version: '2.19.0'
 	implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.19.0'
+	
+	implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
 
 	// implementation 'com.github.doip:doip-library:1.2.1'
 	// During development it might be more convenient to link to doip-library
@@ -34,6 +36,7 @@ dependencies {
 	// implementation ':doip-junit'
 
 	implementation 'org.junit.jupiter:junit-jupiter:5.7.1'
+	implementation 'org.junit.jupiter:junit-jupiter-params:5.7.1'
 }
 
 jar {
@@ -42,6 +45,14 @@ jar {
 			'Class-Path' : configurations.runtimeClasspath.collect { it.getName() }.join(' ')
 		)
 	}
+}
+
+task testFast(type: Test) {
+	useJUnitPlatform {
+		excludeTags 'slow'
+	}
+	systemProperty 'log4j.configurationFile', 'src/test/resources/log4j2.xml'
+	systemProperty 'tester.config', 'src/test/resources/tester.properties'
 }
 
 test {
