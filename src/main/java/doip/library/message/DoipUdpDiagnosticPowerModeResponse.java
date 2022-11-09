@@ -1,8 +1,8 @@
 package doip.library.message;
 
-import doip.logging.LogManager;
-import doip.logging.Logger;
-import doip.logging.Level;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class DoipUdpDiagnosticPowerModeResponse extends DoipUdpMessage {
 
