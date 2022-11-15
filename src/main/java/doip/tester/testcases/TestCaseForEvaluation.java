@@ -1,5 +1,8 @@
 package doip.tester.testcases;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -86,7 +89,6 @@ public class TestCaseForEvaluation  {
 		}
 	}
 
-	// TODO: remove back slashes in next line 
 	@Test
 	public void test() {
 		String function = "public void test()";
@@ -95,6 +97,8 @@ public class TestCaseForEvaluation  {
 			logger.trace(markerEnter, ">>> " + function);
 			
 			// --- TEST CODE BEGIN --------------------------------------------
+			
+			
 			
 			// --- TEST CODE END ----------------------------------------------
 			

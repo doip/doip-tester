@@ -71,23 +71,7 @@ public class DoipTcpConnectionWithEventCollection extends DoipTcpConnection impl
 	public DoipEvent waitForEvents(int numberOfEvents, long timeoutms) throws InterruptedException {
 		return  Wait.waitForEvents(events, numberOfEvents, timeoutms);
 	}
-	
-	
-	
-	/*
-	public void sendDiagnosticMessagePosAck(int sourceAddress, int targetAddress, byte[] message) {
-		if (logger.isTraceEnabled()) {
-			logger.trace(">>> public void sendDiagnosticMessagePosAck(int sourceAddress, int targetAddress, byte[] message)");
-		}
-		
-		DoipTcpDiagnosticMessagePosAck msg = new DoipTcpDiagnosticMessagePosAck(sourceAddress, targetAddress, 0x00, message);
-		doipTcpConnection.send(msg);
-	
-		if (logger.isTraceEnabled()) {
-			logger.trace("<<< public void sendDiagnosticMessagePosAck(int sourceAddress, int targetAddress, byte[] message)");
-		}
-	}*/
-	
+
 //-----------------------------------------------------------------------------
 // Callback functions
 //-----------------------------------------------------------------------------

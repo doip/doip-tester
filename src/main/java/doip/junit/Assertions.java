@@ -5,12 +5,21 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.function.Executable;
 import org.opentest4j.AssertionFailedError;
+import org.opentest4j.MultipleFailuresError;
 
 public class Assertions {
 
 	private static Logger logger = LogManager.getLogger(Assertions.class);
 	public static Level assertionFailed = Level.getLevel("ASSERTION_FAILED");
 
+	public static void assertAll(Executable... executables) {
+		try {
+			org.junit.jupiter.api.Assertions.assertAll(executables);
+		} catch (MultipleFailuresError e) {
+			throw logger.throwing(e);
+		}
+	}
+	
 	public static void assertTrue(boolean condition) {
 		try {
 			org.junit.jupiter.api.Assertions.assertTrue(condition);
@@ -179,6 +188,7 @@ public class Assertions {
 	 * @param e The exception
 	 * @return The exception as string
 	 */
+	/*
 	private static String getExceptionAsString(Throwable e) {
 		StringBuilder s = new StringBuilder(4096);
 		String message = e.getMessage();
@@ -197,5 +207,5 @@ public class Assertions {
 		}
 
 		return s.toString();
-	}
+	}*/
 }

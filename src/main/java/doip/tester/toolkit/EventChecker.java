@@ -9,15 +9,19 @@ import org.apache.logging.log4j.MarkerManager;
 import doip.junit.TestCaseDescription;
 import doip.junit.TestExecutionError;
 import doip.junit.TestResult;
+import doip.library.message.DoipTcpDiagnosticMessagePosAck;
+import doip.library.message.DoipUdpDiagnosticPowerModeResponse;
 import doip.tester.toolkit.event.DoipEvent;
 import doip.tester.toolkit.event.DoipEventConnectionClosed;
 import doip.tester.toolkit.event.DoipEventMessage;
+import doip.tester.toolkit.event.DoipEventTcpDiagnosticMessagePosAck;
 import doip.tester.toolkit.event.DoipEventTcpMessage;
+import doip.tester.toolkit.event.DoipEventUdpDiagnosticPowerModeResponse;
 import doip.tester.toolkit.event.DoipEventUdpMessage;
 
-public class TestUtils {
+public class EventChecker {
 
-	private static Logger logger = LogManager.getLogger(TestUtils.class);
+	private static Logger logger = LogManager.getLogger(EventChecker.class);
 	private static Marker enter = MarkerManager.getMarker("ENTER");
 	private static Marker exit  = MarkerManager.getMarker("EXIT");
 
@@ -48,13 +52,18 @@ public class TestUtils {
 		}
 	}
 	
-	private static CheckResult checkEventIsNotNullAndClassIsNotNull(DoipEvent actualEvent, Class<? extends DoipEvent> clazz) {
-		if (clazz.isInstance(actualEvent)) {
+	private static CheckResult checkEventIsNotNullAndClassIsNotNull(DoipEvent actualEvent, Class<? extends DoipEvent> expectedClass) {
+		if (expectedClass.isInstance(actualEvent)) {
 			String text = "A event of type '" + actualEvent.getClass().getSimpleName() + "' has been receive which was the expected event"; 
 			return new CheckResult(CheckResult.NO_ERROR, text);
 		} else {
 			// TODO: Distinguish between different event types and expected class
-			String text = "It was expected to receive a event of type '" + clazz.getSimpleName()+ "', but a event of type '" + actualEvent.getClass().getSimpleName() + "' has been received";
+			String text = "It was expected to receive a event of type '" + expectedClass.getSimpleName()+ "', but a event of type '" + actualEvent.getClass().getSimpleName() + "' has been received";
+
+			String text1 = "";
+			if (DoipEventTcpDiagnosticMessagePosAck.class.isAssignableFrom(expectedClass)) {
+				text1 = "It was expected to receive a '" + DoipTcpDiagnosticMessagePosAck.getMessageNameOfClass() + "' message, ";
+			}
 			return new CheckResult(CheckResult.WRONG_EVENT, text);
 		}		
 	}
@@ -92,6 +101,18 @@ public class TestUtils {
 		} else {
 			String text = "No event did occur which is the expected result"; 
 			return new CheckResult(CheckResult.NO_ERROR, text);
+		}
+	}
+	
+	private static String getTextForExpectedResult(DoipEvent event) {
+		try { 
+			String ret = null;
+			if (event instanceof DoipEventUdpDiagnosticPowerModeResponse) {
+				
+			}
+			return ret;
+		} finally {
+			
 		}
 	}
 }

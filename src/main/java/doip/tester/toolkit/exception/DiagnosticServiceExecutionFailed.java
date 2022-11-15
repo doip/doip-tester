@@ -21,8 +21,10 @@ public class DiagnosticServiceExecutionFailed extends DoipException {
 		this.errorCode = code;
 	}
 
+	/*
 	public DiagnosticServiceExecutionFailed(int code, String string, Throwable e) {
 		super(string, e);
 		this.errorCode = code;
 	}
+	*/
 }

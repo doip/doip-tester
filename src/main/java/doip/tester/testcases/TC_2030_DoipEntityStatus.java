@@ -23,7 +23,7 @@ import doip.library.message.DoipUdpEntityStatusRequest;
 import doip.library.util.StringConstants;
 import doip.tester.toolkit.TestConfig;
 import doip.tester.toolkit.TestSetup;
-import doip.tester.toolkit.TestUtils;
+import doip.tester.toolkit.EventChecker;
 import doip.tester.toolkit.TesterUdpCommModule;
 import doip.tester.toolkit.TextBuilder;
 import doip.tester.toolkit.event.DoipEvent;

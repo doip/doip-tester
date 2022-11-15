@@ -4,6 +4,7 @@ import static doip.junit.Assertions.*;
 
 import java.io.IOException;
 
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -16,10 +17,15 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.opentest4j.AssertionFailedError;
 
+import doip.tester.toolkit.CheckResult;
+import doip.tester.toolkit.EventChecker;
 import doip.tester.toolkit.TestConfig;
 import doip.tester.toolkit.TestSetup;
 import doip.tester.toolkit.TesterTcpConnection;
 import doip.tester.toolkit.TextBuilder;
+import doip.tester.toolkit.event.DoipEvent;
+import doip.tester.toolkit.event.DoipEventTcpDiagnosticMessageNegAck;
+import doip.tester.toolkit.event.DoipEventTcpDiagnosticMessagePosAck;
 import doip.tester.toolkit.exception.DiagnosticServiceExecutionFailed;
 import doip.tester.toolkit.exception.RoutingActivationFailed;
 import doip.junit.Assertions;
@@ -27,6 +33,7 @@ import doip.junit.InitializationError;
 import doip.junit.TestCaseDescription;
 import doip.junit.TestExecutionError;
 import doip.junit.TestResult;
+import doip.library.message.DoipMessage;
 import doip.library.message.DoipTcpDiagnosticMessage;
 import doip.library.message.DoipTcpDiagnosticMessageNegAck;
 import doip.library.message.DoipTcpRoutingActivationRequest;
@@ -107,19 +114,28 @@ public class TC_2070_DiagnosticMessage {
 	}
 	
 	public void testDiagnosticMessageImpl() throws TestExecutionError {
-		TesterTcpConnection conn;
+		TesterTcpConnection conn = null;
 		try {
+			logger.trace(enter, ">>> public void testDiagnosticMessageImpl()");
+			int sourceAddress = config.getTesterAddress();
+			int targetAddress = config.getEcuAddressPhysical();
+			
 			conn = testSetup.createTesterTcpConnection();
-			conn.performRoutingActivation(config.getTesterAddress(), 0);
-			conn.executeDiagnosticServicePosAck(new byte[] {0x10, 0x03});
+			conn.performRoutingActivation(sourceAddress, 0);
+			
+			TestFunctions.executeDiagnosticServiceAndCheckForPosAckWithDiagResponse(conn, config, new byte[] {0x10, 0x03 });
+			
+			
 		} catch (RoutingActivationFailed e) {
 			fail("It was expected that routing activation will succeed, but it seems that it wasn't successfull");
-		} catch (DiagnosticServiceExecutionFailed e) {
-			fail("It was expected that execution of a diagnostic message will succeed, but it seems that it wasn't successful");
 		} catch (IOException | InterruptedException e) {
 			throw logger.throwing(new TestExecutionError(TextBuilder.unexpectedException(e), e));
+		} finally {
+			if (conn != null) {
+				testSetup.removeDoipTcpConnectionTest(conn);
+			}
+			logger.trace(exit, ">>> public void testDiagnosticMessageImpl()");
 		}
-		
 	}
 	
 	@Test
@@ -136,7 +152,7 @@ public class TC_2070_DiagnosticMessage {
 				
 				"Open a TCP connection to the DoIP server and send a '" 
 				+ DoipTcpDiagnosticMessage.getMessageNameOfClass() 
-				+ "' (so we skip sending the " 
+				+ "' (so we skip sending the '" 
 				+ DoipTcpRoutingActivationRequest.getMessageNameOfClass() + "')",
 				
 				"The DoIP server sends a '" 
@@ -147,9 +163,27 @@ public class TC_2070_DiagnosticMessage {
 			
 			TesterTcpConnection conn = testSetup.createTesterTcpConnection();
 			
-			Assertions.assertThrows(DiagnosticServiceExecutionFailed.class, () -> {
-				conn.executeDiagnosticServicePosAck(new byte[] {0x10, 0x03});
-			});
+			int testerAddress = config.getTesterAddress();
+			int ecuAdress = config.getEcuAddressPhysical();
+			byte[] diagRequest = new byte[] {0x10, 0x30};
+			
+			conn.sendDiagnosticMessage(testerAddress, ecuAdress, diagRequest);
+			DoipEvent event = conn.waitForEvents(1, config.get_A_DoIP_Diagnostic_Message());
+			CheckResult checkResult = EventChecker.checkEvent(event, DoipEventTcpDiagnosticMessageNegAck.class);
+			if (checkResult.getCode() != CheckResult.NO_ERROR) {
+				fail(checkResult.getText());
+			}
+			DoipEventTcpDiagnosticMessageNegAck negAckEvent =
+					(DoipEventTcpDiagnosticMessageNegAck) event;
+			DoipMessage doipMsg = negAckEvent.getDoipMessage();
+			DoipTcpDiagnosticMessageNegAck doipMsgNegAck = (DoipTcpDiagnosticMessageNegAck) doipMsg;
+			assertEquals(0x02, doipMsgNegAck.getAckCode(), 
+					"The NACK code in the '" + DoipTcpDiagnosticMessageNegAck.getMessageNameOfClass() 
+					+ "' is wrong. It was expected that the NACK code is "
+					+ "0x02 (invalid source address), but the actual NACK code is "
+					+ String.format("0x%02X", doipMsgNegAck.getAckCode()) + ".");
+			
+			// TODO: Check data of repeated request message in the neg. ack. message
 			
 			desc.logFooter(TestResult.PASSED);
 		} catch (AssertionFailedError e) {
@@ -158,6 +192,9 @@ public class TC_2070_DiagnosticMessage {
 		} catch (IOException e) {
 			desc.logFooter(TestResult.ERROR);
 			throw logger.throwing(new TestExecutionError(TextBuilder.unexpectedException(e), e));
+		} catch (InterruptedException e) {
+			desc.logFooter(TestResult.ERROR);
+			throw logger.throwing(Level.FATAL, new TestExecutionError(TextBuilder.unexpectedException(e), e));
 		} finally { 
 			logger.trace(exit, "<<< " + function);
 		}
