@@ -79,7 +79,7 @@ public class TesterTcpConnection extends DoipTcpConnectionWithEventCollection {
 			// Wait for incoming TCP message
 			DoipEvent event = null;
 			event = this.waitForEvents(1, config.getRoutingActivationTimeout());
-			CheckResult result = TestUtils.checkEvent(event, DoipEventTcpRoutingActivationResponse.class);
+			CheckResult result = EventChecker.checkEvent(event, DoipEventTcpRoutingActivationResponse.class);
 			if (result.getCode() != CheckResult.NO_ERROR) {
 				logger.error(result.getText());
 			}
@@ -125,7 +125,7 @@ public class TesterTcpConnection extends DoipTcpConnectionWithEventCollection {
 	 * @return
 	 * @throws DiagnosticServiceExecutionFailed
 	 */
-	public DoipEventTcpDiagnosticMessage executeDiagnosticServicePosAck(byte[] request) throws DiagnosticServiceExecutionFailed {
+	public DoipEventTcpDiagnosticMessage executeDiagnosticServicePosAckx(byte[] request) throws DiagnosticServiceExecutionFailed {
 
 		try {
 			logger.trace(enter, ">>> public byte[] executeDiagnosticService(byte[] request)");
@@ -135,7 +135,7 @@ public class TesterTcpConnection extends DoipTcpConnectionWithEventCollection {
 			
 			// It is expected to receive a positive acknowledge on the diagnostic request message
 			DoipEvent event = this.waitForEvents(1, config.get_A_DoIP_Diagnostic_Message());
-			CheckResult result = TestUtils.checkEvent(event, DoipEventTcpDiagnosticMessagePosAck.class);
+			CheckResult result = EventChecker.checkEvent(event, DoipEventTcpDiagnosticMessagePosAck.class);
 			if (result.getCode() != CheckResult.NO_ERROR ) {
 				logger.error(result.getText());
 			}
@@ -159,7 +159,7 @@ public class TesterTcpConnection extends DoipTcpConnectionWithEventCollection {
 			DoipTcpDiagnosticMessagePosAck posAckMsg = (DoipTcpDiagnosticMessagePosAck) posAckEvent.getDoipMessage();
 
 			event = this.waitForEvents(2, config.get_A_DoIP_Diagnostic_Message());
-			TestUtils.checkEvent(event, DoipEventTcpDiagnosticMessage.class);
+			EventChecker.checkEvent(event, DoipEventTcpDiagnosticMessage.class);
 			if (result.getCode() != CheckResult.NO_ERROR ) {
 				logger.error(result.getText());
 			}
@@ -186,7 +186,7 @@ public class TesterTcpConnection extends DoipTcpConnectionWithEventCollection {
 			DiagnosticServiceExecutionFailed ex =
 					new DiagnosticServiceExecutionFailed(
 							DiagnosticServiceExecutionFailed.GENERAL_ERROR,
-							TextBuilder.unexpectedException(e), e);
+							TextBuilder.unexpectedException(e));
 			throw logger.throwing(Level.FATAL, ex);
 		} finally {
 			logger.trace(exit, "<<< public byte[] executeDiagnosticService(byte[] request, boolean responseExpected)");

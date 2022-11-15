@@ -214,28 +214,38 @@ public class DoipServer4UnitTest implements TcpServerListener, DoipTcpConnection
 
 	@Override
 	public void onDoipTcpDiagnosticMessage(DoipTcpConnection doipTcpConnection, DoipTcpDiagnosticMessage doipMessage) {
-		int sourceAddress = doipMessage.getSourceAddress();
-		int targetAddress = doipMessage.getTargetAddress();
-		DoipTcpDiagnosticMessagePosAck posAck =
-				new DoipTcpDiagnosticMessagePosAck(targetAddress, sourceAddress, 0, new byte[0]);
-		doipTcpConnection.send(posAck);
-		
-		byte[] request = doipMessage.getDiagnosticMessage();
-		byte[] response = null;
-		switch (request[0]) {
-		case 0x10:
-			response = new byte[] {0x50, 0x03, 0x00, 0x32, 0x01, (byte) 0xF4};
-			break;
-		default:
-			response = new byte[] {0x7F, request[0], 0x10};
-			break;
+		try {
+			logger.trace(markerEnter, ">>> public void onDoipTcpDiagnosticMessage(DoipTcpConnection doipTcpConnection, DoipTcpDiagnosticMessage doipMessage)");
+			if (isSilent) {
+				logger.debug("Gateway has been set to silent, therefore no response will be send.");
+				return;
+			}
+			int sourceAddress = doipMessage.getSourceAddress();
+			int targetAddress = doipMessage.getTargetAddress();
+			byte[] request = doipMessage.getDiagnosticMessage();
+			
+			DoipTcpDiagnosticMessagePosAck posAck =
+					new DoipTcpDiagnosticMessagePosAck(targetAddress, sourceAddress, 0, request);
+			doipTcpConnection.send(posAck);
+			
+			byte[] response = null;
+			switch (request[0]) {
+			case 0x10:
+				response = new byte[] {0x50, 0x03, 0x00, 0x32, 0x01, (byte) 0xF4};
+				break;
+			default:
+				response = new byte[] {0x7F, request[0], 0x10};
+				break;
+			}
+			
+			DoipTcpDiagnosticMessage doipResponse = 
+					new DoipTcpDiagnosticMessage(
+							targetAddress, sourceAddress, response);
+			
+			doipTcpConnection.send(doipResponse);
+		} finally {
+			logger.trace(markerExit, "<<< public void onDoipTcpDiagnosticMessage(DoipTcpConnection doipTcpConnection, DoipTcpDiagnosticMessage doipMessage)");
 		}
-		
-		DoipTcpDiagnosticMessage doipResponse = 
-				new DoipTcpDiagnosticMessage(
-						targetAddress, sourceAddress, response);
-		
-		doipTcpConnection.send(doipResponse);
 	}
 
 	@Override
@@ -256,12 +266,14 @@ public class DoipServer4UnitTest implements TcpServerListener, DoipTcpConnection
 		String funcion = "public void onDoipTcpRoutingActivationRequest(DoipTcpConnection doipTcpConnection, DoipTcpRoutingActivationRequest doipMessage)";
 		try {
 			logger.trace(">>> " + funcion);
-			if (!isSilent) {
-				int testerAddress = doipMessage.getSourceAddress();
-			
-				DoipTcpRoutingActivationResponse resp = new DoipTcpRoutingActivationResponse(testerAddress, entityAddress, 0x10, -1);
-				doipTcpConnection.send(resp);
+			if (isSilent) {
+				logger.debug("Gateway has been set to silent, therefore no response will be send.");
+				return;
 			}
+			int testerAddress = doipMessage.getSourceAddress();
+		
+			DoipTcpRoutingActivationResponse resp = new DoipTcpRoutingActivationResponse(testerAddress, entityAddress, 0x10, -1);
+			doipTcpConnection.send(resp);
 		} finally {
 			logger.trace("<<< " + funcion);
 			 
@@ -422,7 +434,6 @@ public class DoipServer4UnitTest implements TcpServerListener, DoipTcpConnection
 			logger.trace("<<< public void onDoipUdpEntityStatusRequest(DoipUdpEntityStatusRequest doipMessage, DatagramPacket packet)");
 		}
 	}
-	
 
 	@Override
 	public void onDoipUdpEntityStatusResponse(DoipUdpEntityStatusResponse doipMessage, DatagramPacket packet) {

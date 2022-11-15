@@ -14,6 +14,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.opentest4j.AssertionFailedError;
+import org.opentest4j.MultipleFailuresError;
 
 import doip.junit.InitializationError;
 import doip.junit.TestCaseDescription;
@@ -25,7 +26,7 @@ import doip.library.util.StringConstants;
 import doip.tester.toolkit.CheckResult;
 import doip.tester.toolkit.TestConfig;
 import doip.tester.toolkit.TestSetup;
-import doip.tester.toolkit.TestUtils;
+import doip.tester.toolkit.EventChecker;
 import doip.tester.toolkit.TesterUdpCommModule;
 import doip.tester.toolkit.TextBuilder;
 import doip.tester.toolkit.event.DoipEvent;
@@ -148,7 +149,7 @@ public class TC_2000_VehicleIdentification {
 			testerUdpCommModule.sendDoipUdpVehicleIdentRequest(address);
 			
 			DoipEvent event = testerUdpCommModule.waitForEvents(1, config.get_A_DoIP_Ctrl());
-			CheckResult result = TestUtils.checkEvent(event, DoipEventUdpVehicleAnnouncementMessage.class);
+			CheckResult result = EventChecker.checkEvent(event, DoipEventUdpVehicleAnnouncementMessage.class);
 			if (result.getCode() != CheckResult.NO_ERROR) {
 				logger.error(result.getText());
 			}

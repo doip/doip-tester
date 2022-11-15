@@ -22,6 +22,8 @@ import doip.junit.InitializationError;
 import doip.junit.TestCaseDescription;
 import doip.junit.TestExecutionError;
 import doip.junit.TestResult;
+import doip.library.message.DoipTcpDiagnosticMessage;
+import doip.library.message.DoipTcpHeaderNegAck;
 import doip.tester.toolkit.TestConfig;
 import doip.tester.toolkit.TestSetup;
 import doip.tester.toolkit.TesterTcpConnection;
@@ -131,19 +133,17 @@ public class TC_9020_LongTcpMessage {
 		} catch (InterruptedException e) {
 			throw logger.throwing(new TestExecutionError(TextBuilder.unexpectedException(e), e));
 		}
-		byte[] largeMessage = new byte[10000000];
-		largeMessage[0] = 0x22;
+		byte[] largeDiagMessage = new byte[10000000];
+		largeDiagMessage[0] = 0x22;
 		
-		assertThrows(DiagnosticServiceExecutionFailed.class, () -> conn.executeDiagnosticServicePosAck(largeMessage));
-
-		DoipEventTcpDiagnosticMessage event = null;
-		try {
-			event = conn.executeDiagnosticServicePosAck(new byte[] {0x10, 0x03});
-		} catch (DiagnosticServiceExecutionFailed e) {
-			throw logger.throwing(new AssertionFailedError("Didn't receive a valid response from ECU on diagnostic request message 0x10 03.", e));
-		} 
+		DoipTcpDiagnosticMessage doipMsg = new DoipTcpDiagnosticMessage(config.getTesterAddress(), config.getEcuAddressPhysical(), largeDiagMessage);
 		
-		response = event.getDoipMessage().getMessage();
+		int timeout = config.get_A_DoIP_Diagnostic_Message();
+		DoipTcpHeaderNegAck negAck = TestFunctions.sendDataAndCheckForGenericDoipHeaderNegAck(conn, doipMsg.getMessage(), timeout);
+		assertEquals(DoipTcpHeaderNegAck.NACK_MESSAGE_TOO_LARGE, negAck.getCode(), "It was expected that the NACK code in the '" + DoipTcpHeaderNegAck.getMessageNameOfClass() + "' is 0x02, but it is " + String.format("0x%02X", negAck.getCode()) + ".");
+		
+		doipMsg = TestFunctions.executeDiagnosticServiceAndCheckForPosAckWithDiagResponse(conn, config, new byte[] {0x10, 0x03});
+		response = doipMsg.getDiagnosticMessage();
 		
 		assertNotNull(response, "The response was null.");
 		assertTrue(response.length >= 2, "The response was too short. There should be at least two bytes.");

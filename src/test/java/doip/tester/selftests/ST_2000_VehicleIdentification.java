@@ -25,7 +25,7 @@ import doip.library.util.StringConstants;
 import doip.tester.testcases.TC_2000_VehicleIdentification;
 import doip.tester.toolkit.TestConfig;
 import doip.tester.toolkit.TestSetup;
-import doip.tester.toolkit.TestUtils;
+import doip.tester.toolkit.EventChecker;
 import doip.tester.toolkit.TextBuilder;
 import doip.tester.toolkit.server4unittest.DoipServer4UnitTest;
 

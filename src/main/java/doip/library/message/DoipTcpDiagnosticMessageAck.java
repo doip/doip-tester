@@ -13,12 +13,12 @@ public abstract class DoipTcpDiagnosticMessageAck extends DoipTcpMessage {
 	protected DoipTcpDiagnosticMessageAck() {
 	}
 
-	public DoipTcpDiagnosticMessageAck(int sourceAddress, int targetAddress, int ackCode, byte[] message) {
+	public DoipTcpDiagnosticMessageAck(int sourceAddress, int targetAddress, int ackCode, byte[] diagnosticMessage) {
 		this.sourceAddress = sourceAddress;
 		this.targetAddress = targetAddress;
 		this.ackCode = ackCode;
-		if (message != null) {
-			this.diagnosticMessage = message;
+		if (diagnosticMessage != null) {
+			this.diagnosticMessage = diagnosticMessage;
 		}
 	}
 
@@ -32,7 +32,7 @@ public abstract class DoipTcpDiagnosticMessageAck extends DoipTcpMessage {
 		this.targetAddress = (high << 8) | low;
 		this.ackCode = payload[4] & 0xFF;
 		if (payload.length > 5) {
-			this.diagnosticMessage = Arrays.copyOfRange(payload, 5, payload.length - 5);
+			this.diagnosticMessage = Arrays.copyOfRange(payload, 5, payload.length);
 		} else {
 			this.diagnosticMessage = new byte[] {};
 		}

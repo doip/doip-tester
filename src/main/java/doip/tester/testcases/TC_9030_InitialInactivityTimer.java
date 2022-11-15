@@ -22,7 +22,7 @@ import doip.junit.TestResult;
 import doip.library.util.StringConstants;
 import doip.tester.toolkit.CheckResult;
 import doip.tester.toolkit.TestSetup;
-import doip.tester.toolkit.TestUtils;
+import doip.tester.toolkit.EventChecker;
 import doip.tester.toolkit.TesterTcpConnection;
 import doip.tester.toolkit.TextBuilder;
 import doip.tester.toolkit.event.DoipEvent;
@@ -147,7 +147,7 @@ public class TC_9030_InitialInactivityTimer {
 			logger.info("No event did occurwhich is the expected behavior.");
 			logger.info("Now we wait for 200 ms.Within these 200 ms the DoIP server must close the TCP connection");
 			DoipEvent event = conn.waitForEvents(1, 200);
-			CheckResult result = TestUtils.checkEvent(event, DoipEventConnectionClosed.class);
+			CheckResult result = EventChecker.checkEvent(event, DoipEventConnectionClosed.class);
 			assertEquals(CheckResult.NO_ERROR, result.getCode(), "It was expected that the connection will be closed by the DoIP server within 200 ms, but the connecton hasn't been closed.");
 			
 		} catch (IOException e) {
