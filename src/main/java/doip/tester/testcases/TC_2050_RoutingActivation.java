@@ -28,7 +28,7 @@ import doip.tester.toolkit.exception.RoutingActivationFailed;
 
 public class TC_2050_RoutingActivation {
 	
-	public static final String BSE_ID = "1050";
+	public static final String BASE_ID = "2050";
 	
 	private static Logger logger = LogManager.getLogger(TC_2050_RoutingActivation.class);
 	
@@ -41,8 +41,8 @@ public class TC_2050_RoutingActivation {
 	public static void setUpBeforeClass() throws InitializationError {
 		
 		try {
-				logger.info(StringConstants.SINGLE_LINE);
-				logger.trace(">>> public static void setUpBeforeClass()");
+			logger.info(StringConstants.SINGLE_LINE);
+			logger.trace(">>> public static void setUpBeforeClass()");
 
 			// --- SET UP BEFORE CLASS BEGIN --------------------------------
 			testSetup = new TestSetup();
@@ -109,7 +109,7 @@ public class TC_2050_RoutingActivation {
 	}
 
 	@Test
-	@DisplayName("TC-1050-01")
+	@DisplayName("TC-" + BASE_ID + "-01")
 	public void testRoutingActivation() throws TestExecutionError {
 		String function = "public void testRoutingActivation()";
 		TestCaseDescription desc = null;
@@ -123,18 +123,12 @@ public class TC_2050_RoutingActivation {
 					"Send a routing activation request",
 					"ECU sends a routing activation response");
 			desc.logHeader();
-			conn.performRoutingActivation(config.getTesterAddress(), 0);
+			TestFunctions.performRoutingActivation(conn, config, 0, -1);
 			desc.logFooter(TestResult.PASSED);
 			// --- TEST CODE END ----------------------------------------------
-		} catch (AssertionFailedError e) {
+		} catch (AssertionError e) {
 			desc.logFooter(TestResult.FAILED);
 			throw e;
-		} catch (RoutingActivationFailed e) {
-			desc.logFooter(TestResult.FAILED);
-			fail(e.getMessage());
-		} catch (InterruptedException e) {
-			desc.logFooter(TestResult.ERROR);
-			throw logger.throwing(new TestExecutionError(TextBuilder.unexpectedException(e), e));
 		} finally {
 			logger.info("<<< " + function);
 		}

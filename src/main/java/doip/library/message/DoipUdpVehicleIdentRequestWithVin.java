@@ -25,7 +25,11 @@ public class DoipUdpVehicleIdentRequestWithVin extends DoipUdpMessage {
 	}
 	
 	public String getMessageName() {
-		return getPayloadTypeAsString(0x0003);
+		return getPayloadTypeAsString(DoipMessage.TYPE_UDP_VIR_VIN);
+	}
+	
+	public static String getMessageNameOfClass() {
+		return getPayloadTypeAsString(DoipMessage.TYPE_UDP_VIR_VIN);
 	}
 
 	@Override

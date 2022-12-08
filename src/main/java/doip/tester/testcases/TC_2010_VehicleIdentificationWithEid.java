@@ -1,7 +1,6 @@
 package doip.tester.testcases;
 
-import static doip.junit.Assertions.assertNotNull;
-import static doip.junit.Assertions.assertTrue;
+import static doip.junit.Assertions.*;
 
 import java.io.IOException;
 
@@ -25,6 +24,7 @@ import doip.library.message.DoipUdpVehicleIdentRequestWithEid;
 import doip.library.util.StringConstants;
 import doip.tester.toolkit.TestConfig;
 import doip.tester.toolkit.TestSetup;
+import doip.tester.toolkit.CheckResult;
 import doip.tester.toolkit.EventChecker;
 import doip.tester.toolkit.TesterUdpCommModule;
 import doip.tester.toolkit.TextBuilder;
@@ -50,6 +50,8 @@ public class TC_2010_VehicleIdentificationWithEid {
 		try {
 			logger.info(StringConstants.SINGLE_LINE);
 			logger.trace(markerEnter, ">>> public static void setUpBeforeAll()");
+			
+			// --- SET UP BEFORE ALL BEGIN --------------------------------
 			setup = new TestSetup();
 			setup.initialize();
 			config = setup.getConfig();
@@ -59,15 +61,16 @@ public class TC_2010_VehicleIdentificationWithEid {
 			comm.clearEvents();
 			comm.sendDoipUdpVehicleIdentRequest(config.getTargetAddress());
 			DoipEvent event = comm.waitForEvents(1, config.get_A_DoIP_Ctrl());
+			CheckResult result = EventChecker.checkEvent(event, DoipEventUdpVehicleAnnouncementMessage.class);
+			if (result.getCode() != CheckResult.NO_ERROR) {
+				fail(result.getText());
+			}
 			
-			assertNotNull(event, "Did not receive a response on DoIP vehicle identification request");
-			assertTrue(event instanceof DoipEventUdpVehicleAnnouncementMessage, 
-					"The received response is not of type DoIP vehicle identification response message");
-			
-			DoipUdpVehicleAnnouncementMessage vam = 
-					(DoipUdpVehicleAnnouncementMessage)((DoipEventMessage) event).getDoipMessage();
-			
+			DoipUdpVehicleAnnouncementMessage vam = (DoipUdpVehicleAnnouncementMessage) ((DoipEventUdpVehicleAnnouncementMessage)  event).getDoipMessage();
 			eid = vam.getEid();
+			
+			// --- SET UP BEFORE ALL END ----------------------------------
+			
 		} catch (InitializationError e) {
 			throw e;
 		} catch (IOException | InterruptedException e) {
@@ -80,7 +83,7 @@ public class TC_2010_VehicleIdentificationWithEid {
 	@Test
 	@Disabled
 	@DisplayName("TC-" + BASE_ID + "-01")
-	public void test() throws TestExecutionError {
+	public void test_01_VehicleIdentWithEid() throws TestExecutionError {
 		TestCaseDescription desc = null;
 		try {
 			logger.trace(markerEnter, ">>> public void testGoodCase()");
@@ -94,11 +97,10 @@ public class TC_2010_VehicleIdentificationWithEid {
 			comm.clearEvents();
 			comm.sendDoipUdpVehicleIdentRequestWithEid(eid, config.getTargetAddress());
 			DoipEvent event = comm.waitForEvents(1, config.get_A_DoIP_Ctrl());
-			
-			assertNotNull(event, "Did not receive a response on DoIP vehicle identification request with EID");
-			assertTrue(event instanceof DoipEventUdpVehicleAnnouncementMessage, 
-					"The received response is not of type DoIP vehicle identification response message");
-			
+			CheckResult result = EventChecker.checkEvent(event, DoipEventUdpVehicleAnnouncementMessage.class);
+			if (result.getCode() != CheckResult.NO_ERROR) {
+				fail(result.getText());
+			}
 			desc.logFooter(TestResult.PASSED);
 		} catch (AssertionFailedError e) {
 			desc.logFooter(TestResult.FAILED);

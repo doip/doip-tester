@@ -26,9 +26,13 @@ public class DoipUdpEntityStatusResponse extends DoipUdpMessage {
 	}
 	
 	public String getMessageName() {
-		return getPayloadTypeAsString(0x4002);
+		return getPayloadTypeAsString(DoipMessage.TYPE_UDP_ENTITY_STATUS_RES);
 	}
 	
+	public static String getMessageNameOfClass() {
+		return getPayloadTypeAsString(DoipMessage.TYPE_UDP_ENTITY_STATUS_RES);
+	}
+
 	public void log(Level level) {
 		logger.log(level, "----------------------------------------");
 		logger.log(level, "DoIP entity status response:");

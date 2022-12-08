@@ -117,18 +117,13 @@ public class TC_2070_DiagnosticMessage {
 		TesterTcpConnection conn = null;
 		try {
 			logger.trace(enter, ">>> public void testDiagnosticMessageImpl()");
-			int sourceAddress = config.getTesterAddress();
-			int targetAddress = config.getEcuAddressPhysical();
 			
 			conn = testSetup.createTesterTcpConnection();
-			conn.performRoutingActivation(sourceAddress, 0);
 			
+			TestFunctions.performRoutingActivation(conn, config, 0, -1);
 			TestFunctions.executeDiagnosticServiceAndCheckForPosAckWithDiagResponse(conn, config, new byte[] {0x10, 0x03 });
 			
-			
-		} catch (RoutingActivationFailed e) {
-			fail("It was expected that routing activation will succeed, but it seems that it wasn't successfull");
-		} catch (IOException | InterruptedException e) {
+		} catch (IOException e) {
 			throw logger.throwing(new TestExecutionError(TextBuilder.unexpectedException(e), e));
 		} finally {
 			if (conn != null) {

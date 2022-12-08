@@ -19,7 +19,11 @@ public class DoipUdpEntityStatusRequest extends DoipUdpMessage {
 	}
 	
 	public String getMessageName() {
-		return getPayloadTypeAsString(0x4001);
+		return getPayloadTypeAsString(DoipMessage.TYPE_UDP_ENTITY_STATUS_REQ);
+	}
+
+	public static String getMessageNameOfClass() {
+		return getPayloadTypeAsString(DoipMessage.TYPE_UDP_ENTITY_STATUS_REQ);
 	}
 
 	@Override

@@ -24,9 +24,13 @@ public class DoipTcpRoutingActivationResponse extends DoipTcpMessage {
 	}
 	
 	public String getMessageName() {
-		return getPayloadTypeAsString(0x0006);
+		return getPayloadTypeAsString(DoipMessage.TYPE_TCP_ROUTING_RES);
 	}
 
+	public static String getMessageNameOfClass() {
+		return getPayloadTypeAsString(DoipMessage.TYPE_TCP_ROUTING_RES);
+	}
+	
 	public String getResponseCodeAsString(int code) {
 		switch (code) {
 		case 0x00:

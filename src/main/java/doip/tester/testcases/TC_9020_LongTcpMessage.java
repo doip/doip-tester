@@ -125,14 +125,10 @@ public class TC_9020_LongTcpMessage {
 	}
 	
 	public void testImpl() throws TestExecutionError {
+		
+		TestFunctions.performRoutingActivation(conn, config, 0, -1);
+		
 		byte[] response = null;
-		try {
-			conn.performRoutingActivation(config.getTesterAddress(), 0);
-		} catch (RoutingActivationFailed e) {
-			throw logger.throwing(new TestExecutionError("Routing activation failed", e));
-		} catch (InterruptedException e) {
-			throw logger.throwing(new TestExecutionError(TextBuilder.unexpectedException(e), e));
-		}
 		byte[] largeDiagMessage = new byte[10000000];
 		largeDiagMessage[0] = 0x22;
 		

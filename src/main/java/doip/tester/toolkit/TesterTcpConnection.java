@@ -66,7 +66,7 @@ public class TesterTcpConnection extends DoipTcpConnectionWithEventCollection {
 	 * @throws InterruptedException
 	 * @throws RoutingActivationFailed
 	 */
-	public DoipEventTcpRoutingActivationResponse performRoutingActivation(int address, int activationType) throws InterruptedException, RoutingActivationFailed {
+	public DoipEventTcpRoutingActivationResponse performRoutingActivationx(int address, int activationType) throws InterruptedException, RoutingActivationFailed {
 		String function = "public DoipEventTcpRoutingActivationResponse performRoutingActivation(int activationType, int expectedResponseCode)";
 		try {
 			logger.trace(enter, ">>> " + function);

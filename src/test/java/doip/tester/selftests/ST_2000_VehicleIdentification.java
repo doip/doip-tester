@@ -82,9 +82,9 @@ public class ST_2000_VehicleIdentification {
 			server.start();
 			testcase = new TC_2000_VehicleIdentification();
 			
-		} catch (Throwable e) {
-			logger.fatal(TextBuilder.unexpectedException(e));
-			throw logger.throwing(new InitializationError(e));
+		} catch (Exception e) {
+			throw logger.throwing(Level.FATAL,
+					new InitializationError(TextBuilder.unexpectedException(e), e));
 		} finally {
 			logger.trace(markerExit, "<<< public void setUp()");
 		}
@@ -103,8 +103,7 @@ public class ST_2000_VehicleIdentification {
 	}
 	
 	@Test
-	// @Disabled
-	@DisplayName("ST-"+BASE_ID+"-01-01")
+	@DisplayName("ST-" + BASE_ID + "-01-01")
 	public void testUnicastGoodCase() throws TestExecutionError {
 		TestCaseDescription desc = null;
 		try {
@@ -136,7 +135,6 @@ public class ST_2000_VehicleIdentification {
 		TestCaseDescription desc = null;
 		try {
 			logger.trace(markerEnter, ">>> public void testUnicastNoResponse()");
-			server.setSilent(true);
 			desc = new TestCaseDescription(
 					"ST-" + BASE_ID + "-01-01",
 					"Execute test case TC-" + BASE_ID + "-01 in case "
@@ -144,6 +142,7 @@ public class ST_2000_VehicleIdentification {
 					"Execute test case TC-" + BASE_ID + "-01.",
 					"Test case TC-" + BASE_ID + "-01 will fail.");
 			desc.emphasize().logHeader();
+			server.setSilent(true);
 			assertThrows(AssertionFailedError.class, () -> testcase.testUnicast());
 			desc.logFooter(TestResult.PASSED);
 		} catch (Exception e) {
@@ -158,13 +157,11 @@ public class ST_2000_VehicleIdentification {
 	
 
 	@Test
-	// @Disabled
 	@DisplayName("ST-" + BASE_ID + "-01-03")
 	public void testUnicastWrongResponse() throws TestExecutionError {
 		TestCaseDescription desc = null;
 		try {
 			logger.trace(markerEnter, ">>> public void testUnicastWrongResponse()");
-			server.setNextUdpResponse(new DoipUdpEntityStatusResponse(0, 1, 0, 0x10000 ).getMessage());
 			
 			desc = new TestCaseDescription(
 					"ST-" + BASE_ID + "-01-03",
@@ -172,14 +169,15 @@ public class ST_2000_VehicleIdentification {
 					"Run test case TC-" + BASE_ID + "-01 and let server send a wrong but valid response.",
 					"Test case will fail");
 			desc.emphasize().logHeader();
+			server.setNextUdpResponse(new DoipUdpEntityStatusResponse(0, 1, 0, 0x10000 ).getMessage());
 			assertThrows(AssertionFailedError.class, () -> testcase.testUnicast());
 			logger.info("Test case TC-" + BASE_ID + "-01 failed which is the correct and expected result.");
-			TestCaseDescription.logFooter(TestResult.PASSED, true);
+			desc.logFooter(TestResult.PASSED);
 		} catch (AssertionFailedError e) {
-			TestCaseDescription.logFooter(TestResult.FAILED, true);
+			desc.logFooter(TestResult.FAILED);
 			throw e;
 		} catch (Exception e) {
-			TestCaseDescription.logFooter(TestResult.ERROR, true);
+			desc.logFooter(TestResult.ERROR);
 			throw logger.throwing(Level.FATAL,
 					new TestExecutionError(TextBuilder.unexpectedException(e), e));
 		} finally {

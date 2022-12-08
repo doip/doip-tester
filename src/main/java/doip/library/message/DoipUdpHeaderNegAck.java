@@ -14,8 +14,20 @@ public class DoipUdpHeaderNegAck extends DoipUdpMessage implements DoipHeaderNeg
 		this.log(Level.INFO);
 	}
 	
+	public int getCode() {
+		return code;
+	}
+
+	public void setCode(int code) {
+		this.code = code;
+	}
+
 	public String getMessageName() {
-		return getPayloadTypeAsString(0x0000);
+		return getPayloadTypeAsString(DoipMessage.TYPE_HEADER_NACK);
+	}
+
+	public static String getMessageNameOfClass() {
+		return getPayloadTypeAsString(DoipMessage.TYPE_HEADER_NACK);
 	}
 
 	public void log(Level level) {

@@ -21,9 +21,13 @@ public class DoipTcpAliveCheckRequest extends DoipTcpMessage {
 	}
 	
 	public String getMessageName() {
-		return getPayloadTypeAsString(0x0007);
+		return getPayloadTypeAsString(DoipMessage.TYPE_TCP_ALIVE_REQ);
 	}
 
+	public static String getMessageNameOfClass() {
+		return getPayloadTypeAsString(DoipMessage.TYPE_TCP_ALIVE_REQ);
+	}
+	
 	@Override
 	public void parsePayload(byte[] payload) {
 		// Nothing to parse because there is no payload

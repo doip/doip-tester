@@ -41,6 +41,7 @@ import doip.library.net.TcpServerListener;
 import doip.library.net.TcpServerThread;
 import doip.library.timer.NanoTimer;
 import doip.library.util.Helper;
+import doip.library.util.LookupTable;
 import doip.tester.toolkit.TextBuilder;
 
 /**
@@ -79,6 +80,10 @@ public class DoipServer4UnitTest implements TcpServerListener, DoipTcpConnection
 	
 	private boolean isSilent = false;
 	
+	public boolean isSilent() {
+		return isSilent;
+	}
+	
 	private byte[] nextUdpResponse = null;
 	
 	public void setSilent(boolean value) {
@@ -88,17 +93,20 @@ public class DoipServer4UnitTest implements TcpServerListener, DoipTcpConnection
 	public int getConnectionCount() {
 		return tcpConnectionList.size();
 	}
+	
+	public DoipUdpMessageHandler createDoipUdpMessageHandler(String udpReceiverThreadName, LookupTable lookupTable) {
+		return new DoipUdpMessageHandler(udpReceiverThreadName, lookupTable);
+	}
 
 	public void start() throws IOException {
 		String function = "public void start()";
 		logger.trace(">>> " + function);
 		
 		try {
-			logger.debug("Address of DoipServer4UnitTest: " + this.toString());
 			this.isSilent = false;
 			logger.info("Create UDP socket");
 			this.udpSocket = Helper.createUdpSocket(null, 13400, null); 
-			udpMessageHandler = new DoipUdpMessageHandler("GW-UDP", null);
+			udpMessageHandler = createDoipUdpMessageHandler("GW-UDP", null);
 			this.udpMessageHandler.addListener(this);
 			logger.info("Start UDP message handler");
 			udpMessageHandler.start(this.udpSocket);
@@ -216,7 +224,7 @@ public class DoipServer4UnitTest implements TcpServerListener, DoipTcpConnection
 	public void onDoipTcpDiagnosticMessage(DoipTcpConnection doipTcpConnection, DoipTcpDiagnosticMessage doipMessage) {
 		try {
 			logger.trace(markerEnter, ">>> public void onDoipTcpDiagnosticMessage(DoipTcpConnection doipTcpConnection, DoipTcpDiagnosticMessage doipMessage)");
-			if (isSilent) {
+			if (isSilent()) {
 				logger.debug("Gateway has been set to silent, therefore no response will be send.");
 				return;
 			}
@@ -252,12 +260,14 @@ public class DoipServer4UnitTest implements TcpServerListener, DoipTcpConnection
 	public void onDoipTcpDiagnosticMessageNegAck(DoipTcpConnection doipTcpConnection,
 			DoipTcpDiagnosticMessageNegAck doipMessage) {
 		
+		logger.fatal("Function 'public void onDoipTcpDiagnosticMessageNegAck(DoipTcpConnection doipTcpConnection,DoipTcpDiagnosticMessageNegAck doipMessage)'.");
 	}
 
 	@Override
 	public void onDoipTcpDiagnosticMessagePosAck(DoipTcpConnection doipTcpConnection,
 			DoipTcpDiagnosticMessagePosAck doipMessage) {
 		
+		logger.fatal("Function 'public void onDoipTcpDiagnosticMessagePosAck(DoipTcpConnection doipTcpConnection,DoipTcpDiagnosticMessageNegAck doipMessage)'.");
 	}
 
 	@Override
