@@ -1,5 +1,10 @@
 package doip.tester.testcases;
 
+import static doip.junit.Assertions.*;
+
+import java.io.IOException;
+
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -18,14 +23,16 @@ import doip.junit.TestCaseDescription;
 import doip.junit.TestExecutionError;
 import doip.junit.TestResult;
 import doip.library.util.StringConstants;
+import doip.tester.toolkit.TestConfig;
 import doip.tester.toolkit.TestSetup;
+import doip.tester.toolkit.TesterTcpConnection;
 import doip.tester.toolkit.TextBuilder;
 
-public class TestTemplate {
+public class TC_2110_UnknownTargetAddress {
 	
-	public static final String BASE_ID = "Enter here the 4 digit test case base id";
+	public static final String BASE_ID = "2110";
 	
-	private static Logger logger = LogManager.getLogger(TestTemplate.class);
+	private static Logger logger = LogManager.getLogger(TC_2110_UnknownTargetAddress.class);
 	private static Marker enter = MarkerManager.getMarker("ENTER");
 	private static Marker exit = MarkerManager.getMarker("EXIT)");
 	
@@ -98,10 +105,9 @@ public class TestTemplate {
 		}
 	}
 
-	// TODO: remove back slashes in next line 
-	//@Test
+	@Test
 	@DisplayName("TC-" + BASE_ID + "-01")
-	public void test_01_TestTemplate() throws TestExecutionError {
+	public void test_01_UnknownTargetAddress() throws TestExecutionError {
 		String function = "public void test()";
 		TestCaseDescription desc = null;
 		try {
@@ -114,7 +120,7 @@ public class TestTemplate {
 					"",
 					"");
 			desc.logHeader();
-			testImpl_01_TestTemplate();
+			testImpl_01_UnknownTargetAddress();
 			desc.logFooter(TestResult.PASSED);
 			// --- TEST CODE END ----------------------------------------------
 		} catch (AssertionError e) {
@@ -131,7 +137,23 @@ public class TestTemplate {
 		}
 	}
 	
-	public void testImpl_01_TestTemplate() throws TestExecutionError {
-		// TODO: Implement the test case
+	public void testImpl_01_UnknownTargetAddress() throws TestExecutionError {
+		TesterTcpConnection conn = null;
+		try {
+			TestConfig config = setup.getConfig();
+			conn = setup.createTesterTcpConnection();
+			TestFunctions.performRoutingActivation(conn, config, 0, -1);
+			TestFunctions.executeDiagnosticServiceAndCheckforNegAck(
+					conn,
+					config.getTesterAddress(),
+					0x0000,
+					new byte[] {0x10, 0x03},
+					config.get_A_DoIP_Diagnostic_Message()
+					);
+		} catch (IOException e) {
+			throw logger.throwing(Level.FATAL, new TestExecutionError(TextBuilder.unexpectedException(e), e));
+		} finally {
+			
+		}
 	}
 }

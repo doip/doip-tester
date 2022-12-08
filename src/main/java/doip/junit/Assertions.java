@@ -15,15 +15,16 @@ public class Assertions {
 	public static void assertAll(Executable... executables) {
 		try {
 			org.junit.jupiter.api.Assertions.assertAll(executables);
-		} catch (MultipleFailuresError e) {
+		} catch (AssertionError e) {
 			throw logger.throwing(e);
+			//throw e;
 		}
 	}
 	
 	public static void assertTrue(boolean condition) {
 		try {
 			org.junit.jupiter.api.Assertions.assertTrue(condition);
-		}  catch (AssertionFailedError e) {
+		}  catch (AssertionError e) {
 			throw logger.throwing(assertionFailed, e);
 		}
 	}
@@ -31,7 +32,7 @@ public class Assertions {
 	public static void assertTrue(boolean condition, String message) {
 		try {
 			org.junit.jupiter.api.Assertions.assertTrue(condition, message);
-		}  catch (AssertionFailedError e) {
+		}  catch (AssertionError e) {
 			throw logger.throwing(assertionFailed, e);
 		}
 	}
@@ -39,7 +40,7 @@ public class Assertions {
 	public static void assertFalse(boolean condition) {
 		try {
 			org.junit.jupiter.api.Assertions.assertFalse(condition);
-		}  catch (AssertionFailedError e) {
+		}  catch (AssertionError e) {
 			throw logger.throwing(assertionFailed, e);
 		}
 	}
@@ -47,7 +48,23 @@ public class Assertions {
 	public static void assertFalse(boolean condition, String message) {
 		try {
 			org.junit.jupiter.api.Assertions.assertFalse(condition, message);
-		}  catch (AssertionFailedError e) {
+		}  catch (AssertionError e) {
+			throw logger.throwing(assertionFailed, e);
+		}
+	}
+	
+	public static void assertEquals(int expected, int actual) {
+		try {
+			org.junit.jupiter.api.Assertions.assertEquals(expected, actual);
+		}  catch (AssertionError e) {
+			throw logger.throwing(assertionFailed, e);
+		}
+	}
+
+	public static void assertEquals(int expected, int actual, String message) {
+		try {
+			org.junit.jupiter.api.Assertions.assertEquals(expected, actual, message);
+		} catch (AssertionFailedError e) {
 			throw logger.throwing(assertionFailed, e);
 		}
 	}
@@ -55,7 +72,7 @@ public class Assertions {
 	public static void assertEquals(String expected, String actual) {
 		try {
 			org.junit.jupiter.api.Assertions.assertEquals(expected, actual);
-		} catch (AssertionFailedError e) {
+		} catch (AssertionError e) {
 			throw logger.throwing(assertionFailed, e);
 		}
 	}
@@ -63,7 +80,7 @@ public class Assertions {
 	public static void assertEquals(String expected, String actual, String message) {
 		try {
 			org.junit.jupiter.api.Assertions.assertEquals(expected, actual, message);
-		} catch (AssertionFailedError e) {
+		} catch (AssertionError e) {
 			throw logger.throwing(assertionFailed, e);
 		}
 	}
@@ -79,23 +96,7 @@ public class Assertions {
 	public static void assertArrayEquals(byte[] expecteds, byte[] actuals, String message) {
 		try {
 			org.junit.jupiter.api.Assertions.assertArrayEquals(expecteds, actuals, message);
-		} catch (AssertionFailedError e) {
-			throw logger.throwing(assertionFailed, e);
-		}
-	}
-
-	public static void assertEquals(int expected, int actual, String message) {
-		try {
-			org.junit.jupiter.api.Assertions.assertEquals(expected, actual, message);
-		} catch (AssertionFailedError e) {
-			throw logger.throwing(assertionFailed, e);
-		}
-	}
-
-	public static void assertEquals(int expected, int actual) {
-		try {
-			org.junit.jupiter.api.Assertions.assertEquals(expected, actual);
-		} catch (AssertionFailedError e) {
+		} catch (AssertionError e) {
 			throw logger.throwing(assertionFailed, e);
 		}
 	}
@@ -103,7 +104,7 @@ public class Assertions {
 	public static void assertNotNull(Object obj) {
 		try {
 			org.junit.jupiter.api.Assertions.assertNotNull(obj);
-		} catch (AssertionFailedError e) {
+		} catch (AssertionError e) {
 			throw logger.throwing(assertionFailed, e);
 		}
 	}
@@ -111,7 +112,7 @@ public class Assertions {
 	public static void assertNotNull(Object obj, String message) {
 		try {
 			org.junit.jupiter.api.Assertions.assertNotNull(obj, message);
-		} catch (AssertionFailedError e) {
+		} catch (AssertionError e) {
 			throw logger.throwing(assertionFailed, e);
 		}
 	}
@@ -119,7 +120,7 @@ public class Assertions {
 	public static void assertNull(Object obj) {
 		try {
 			org.junit.jupiter.api.Assertions.assertNull(obj);
-		} catch (AssertionFailedError e) {
+		} catch (AssertionError e) {
 			throw logger.throwing(assertionFailed, e);
 		}
 	}
@@ -127,7 +128,7 @@ public class Assertions {
 	public static void assertNull(Object obj, String message) {
 		try {
 			org.junit.jupiter.api.Assertions.assertNull(obj, message);
-		} catch (AssertionFailedError e) {
+		} catch (AssertionError e) {
 			throw logger.throwing(assertionFailed, e);
 		}
 	}
@@ -135,7 +136,7 @@ public class Assertions {
 	public static void assertEquals(boolean expected, boolean actual) {
 		try {
 			org.junit.jupiter.api.Assertions.assertEquals(expected, actual);
-		} catch (AssertionFailedError e) {
+		} catch (AssertionError e) {
 			throw logger.throwing(assertionFailed, e);
 		}
 	}
@@ -143,7 +144,7 @@ public class Assertions {
 	public static void assertEquals(boolean expected, boolean actual, String message) {
 		try {
 			org.junit.jupiter.api.Assertions.assertEquals(expected, actual, message);
-		} catch (AssertionFailedError e) {
+		} catch (AssertionError e) {
 			throw logger.throwing(assertionFailed, e);
 		}
 	}
@@ -151,25 +152,23 @@ public class Assertions {
 	public static <T extends Throwable> T assertThrows(Class<T> expectedType, Executable executable) {
 		try {
 			return org.junit.jupiter.api.Assertions.assertThrows(expectedType, executable);
-		} catch (AssertionFailedError e) {
+		} catch (AssertionError e) {
 			throw logger.throwing(assertionFailed, e);
 		}
 	}
-	
 	
 	public static <T extends Throwable> T assertThrows(Class<T> expectedType, Executable executable, String message) {
 		try {
 			return org.junit.jupiter.api.Assertions.assertThrows(expectedType, executable, message);
-		} catch (AssertionFailedError e) {
+		} catch (AssertionError e) {
 			throw logger.throwing(assertionFailed, e);
 		}
 	}
-	
 
 	public static <V> V fail() {
 		try {
 			return org.junit.jupiter.api.Assertions.fail();
-		} catch (AssertionFailedError e) {
+		} catch (AssertionError e) {
 			throw logger.throwing(assertionFailed, e);
 		}
 	}
@@ -178,7 +177,7 @@ public class Assertions {
 		try {
 			return org.junit.jupiter.api.Assertions.fail(message);
 		}
-		 catch (AssertionFailedError e) {
+		 catch (AssertionError e) {
 			throw logger.throwing(assertionFailed, e);
 		}
 	}

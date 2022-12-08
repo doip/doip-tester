@@ -15,7 +15,11 @@ public class DoipUdpDiagnosticPowerModeResponse extends DoipUdpMessage {
 	}
 	
 	public String getMessageName() {
-		return getPayloadTypeAsString(0x4004);
+		return getPayloadTypeAsString(DoipMessage.TYPE_UDP_DIAG_POWER_MODE_RES);
+	}
+
+	public static String getMessageNameOfClass() {
+		return getPayloadTypeAsString(DoipMessage.TYPE_UDP_DIAG_POWER_MODE_RES);
 	}
 
 	public void log(Level level) {

@@ -141,15 +141,22 @@ public class ST_2050_RoutingActivation {
 		} catch (AssertionFailedError e) {
 			desc.logFooter(TestResult.FAILED);
 			throw e;
+		} catch (TestExecutionError e) {
+			desc.logFooter(TestResult.ERROR);
+			throw e;
 		} catch (Exception e) {
 			desc.logFooter(TestResult.ERROR);
-			throw logger.throwing(new TestExecutionError(TextBuilder.unexpectedException(e), e));
+			throw logger.throwing(Level.FATAL, new TestExecutionError(TextBuilder.unexpectedException(e), e));
 		} finally {
 			logger.trace(exit, "<<< " + function);
 		}
 	}
 	
 	public void testImpl_01_goodCase() throws TestExecutionError {
-		testcase.testRoutingActivation();
+		try {
+			testcase.testRoutingActivation();
+		} finally {
+			
+		}
 	}
 }

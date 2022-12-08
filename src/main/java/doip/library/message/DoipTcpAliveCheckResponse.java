@@ -21,7 +21,11 @@ public class DoipTcpAliveCheckResponse extends DoipTcpMessage {
 	}
 	
 	public String getMessageName() {
-		return getPayloadTypeAsString(0x0008);
+		return getPayloadTypeAsString(DoipMessage.TYPE_TCP_ALIVE_RES);
+	}
+	
+	public static String getMessageNameOfClass() {
+		return getPayloadTypeAsString(DoipMessage.TYPE_TCP_ALIVE_RES);
 	}
 
 	public void log(Level level) {

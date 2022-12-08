@@ -47,13 +47,13 @@
 		</Socket>
 	</Appenders>
 	<Loggers>
-		<Root level="TRACE">
+		<Root level="TRACE"> <!-- The root logger must have level trace -->
 			<AppenderRef ref="console" level="INFO"/>
-			<AppenderRef ref="doip" level="INFO"/>
-			<AppenderRef ref="trace" level="TRACE"/>
-			<AppenderRef ref="info" level="INFO"/>
-			<AppenderRef ref="error" level="ERROR"/>
-	 		<AppenderRef ref="socket" level="INFO"/>
+			<AppenderRef ref="doip"    level="INFO"/>
+			<AppenderRef ref="trace"   level="TRACE"/>
+			<AppenderRef ref="info"    level="INFO"/>
+			<AppenderRef ref="error"   level="ERROR"/>
+	 		<AppenderRef ref="socket"  level="INFO"/>
 		</Root>
 
 		<!-- Following two classes are very verbose, we wet them to level "WARN" -->

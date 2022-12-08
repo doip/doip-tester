@@ -21,17 +21,24 @@ import doip.junit.TestCaseDescription;
 import doip.junit.TestExecutionError;
 import doip.junit.TestResult;
 import doip.library.message.DoipTcpDiagnosticMessage;
+import doip.library.message.DoipTcpDiagnosticMessagePosAck;
 import doip.library.util.Conversion;
 import doip.library.util.Helper;
 import doip.library.util.StringConstants;
+import doip.tester.toolkit.CheckResult;
+import doip.tester.toolkit.EventChecker;
 import doip.tester.toolkit.TestConfig;
 import doip.tester.toolkit.TestSetup;
 import doip.tester.toolkit.TesterTcpConnection;
 import doip.tester.toolkit.TextBuilder;
 import doip.tester.toolkit.event.DoipEvent;
+import doip.tester.toolkit.event.DoipEventTcpDiagnosticMessage;
+import doip.tester.toolkit.event.DoipEventTcpDiagnosticMessagePosAck;
 import doip.tester.toolkit.exception.RoutingActivationFailed;
 
 public class TC_9010_SplitMessages {
+	
+	public static final String BASE_ID = "9010";
 	
 	private static Logger logger = LogManager.getLogger(TC_9010_SplitMessages.class);
 	private static Marker markerEnter = MarkerManager.getMarker("ENTER");
@@ -87,14 +94,10 @@ public class TC_9010_SplitMessages {
 			
 			// --- SET UP CODE BEGIN ----------------------------------------
 			conn = this.testSetup.createTesterTcpConnection();
-			conn.performRoutingActivation(config.getTesterAddress(), 0);
 			// --- SET UP CODE END ------------------------------------------
 			
-		} catch (IOException | RoutingActivationFailed | InterruptedException e) {
-			String error = TextBuilder.unexpectedException(e);
-			logger.error(error);
-			logger.error(Helper.getExceptionAsString(e));
-			throw logger.throwing(new InitializationError(error, e));
+		} catch (IOException e) {
+			throw logger.throwing(new InitializationError(TextBuilder.unexpectedException(e), e));
 		} finally {
 			logger.trace(markerExit, "<<< public void setUp()");
 		}
@@ -119,15 +122,15 @@ public class TC_9010_SplitMessages {
 	}
 
 	@Test
-	@DisplayName("TC-9000-01")
-	public void test() throws TestExecutionError {
+	@DisplayName("TC-" + BASE_ID + "-01")
+	public void test_01_SplitMessage() throws TestExecutionError {
 		String function = "public void test()";
 		TestCaseDescription desc = null;
 		try {
 			logger.trace(markerEnter, ">>> " + function);
 			
 			desc = new TestCaseDescription(
-					"TC-9000-01",
+					"TC-" + BASE_ID + "-01",
 					"Send diagnostic message splitted into two messages",
 					"Send a diagnostic message, but don't transmit all data at once. "
 					+ "First send the header and then send the payload in a second message.",
@@ -137,7 +140,8 @@ public class TC_9010_SplitMessages {
 			
 			// --- TEST CODE BEGIN --------------------------------------------
 			
-			conn.clearEvents();
+			TestFunctions.performRoutingActivation(conn, config, 0, -1);
+			
 			logger.info("Create a message object for sending a diagnostic message");
 			DoipTcpDiagnosticMessage msg = new DoipTcpDiagnosticMessage(
 					config.getTesterAddress(), config.getEcuAddressPhysical(),
@@ -148,10 +152,10 @@ public class TC_9010_SplitMessages {
 			// --- TEST CODE END ----------------------------------------------
 			
 			desc.logFooter(TestResult.PASSED);
-		} catch (AssertionFailedError e) {
+		} catch (AssertionError e) {
 			desc.logFooter(TestResult.FAILED);
 			throw e;
-		} catch (InterruptedException e) {
+		} catch (Exception e) {
 			desc.logFooter(TestResult.ERROR);
 			throw logger.throwing(new TestExecutionError(TextBuilder.unexpectedException(e), e));
 		} finally {
@@ -159,7 +163,7 @@ public class TC_9010_SplitMessages {
 		}
 	}
 	
-	public void testSplitMessage(byte[] message, int splitIndex) throws InterruptedException {
+	private void testSplitMessage(byte[] message, int splitIndex) throws InterruptedException {
 		String function = "public void testSplitMessage(byte[] message, int splitIndex)";
 		try {
 			logger.info(markerEnter, ">>> " + function);
@@ -167,18 +171,31 @@ public class TC_9010_SplitMessages {
 			byte[] first = new byte[splitIndex];
 			byte[] second = new byte[totalSize - splitIndex];
 			System.arraycopy(message, 0, first, 0, splitIndex);
-			System.arraycopy(message, splitIndex, second, 0, totalSize - splitIndex);
+	 		System.arraycopy(message, splitIndex, second, 0, totalSize - splitIndex);
 			logger.info("Sending diagnostic message in two parts");
 			logger.info("First part: " + Conversion.byteArrayToHexString(first));
 			logger.info("Second part: " + Conversion.byteArrayToHexString(second));
+			
+			conn.clearEvents();
 			conn.send(first);
-			DoipEvent event = conn.waitForEvents(1, 10);
+			DoipEvent event = conn.waitForEvents(1, config.get_A_DoIP_Diagnostic_Message());
+			CheckResult result = EventChecker.checkEvent(event, null);
+			if (result.getCode() != CheckResult.NO_ERROR) {
+				fail(result.getText());
+			}
 
-			// TODO: Make better analyis of error and implement self test for this test case
-			assertNull(event, "Did receive a event, but no event was expected");
 			conn.send(second);
-			event = conn.waitForEvents(2, 10);
-			assertNotNull(event, "Didn't receive two events on sending a diagnostic message splitted in two parts");
+			event = conn.waitForEvents(1, 2000);
+			result = EventChecker.checkEvent(event, DoipEventTcpDiagnosticMessagePosAck.class);
+			if (result.getCode() != CheckResult.NO_ERROR) {
+				fail(result.getText());
+			}
+			
+			event = conn.waitForEvents(2, 2000);
+			result = EventChecker.checkEvent(event, DoipEventTcpDiagnosticMessage.class);
+			if (result.getCode() != CheckResult.NO_ERROR) {
+				fail(result.getText());
+			}
 
 		} finally {
 			logger.info(markerExit, "<<< " + function);

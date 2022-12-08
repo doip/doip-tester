@@ -1,8 +1,5 @@
 package doip.tester.testcases;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -13,13 +10,13 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import doip.junit.Assertions;
+import static doip.junit.Assertions.*;
 import doip.library.util.Helper;
 import doip.library.util.StringConstants;
 
-public class TestCaseForEvaluation  {
+public class TC_9999_TestCaseForEvaluation  {
 	
-	private static Logger logger = LogManager.getLogger(TestCaseForEvaluation .class);
+	private static Logger logger = LogManager.getLogger(TC_9999_TestCaseForEvaluation .class);
 	public static Marker markerEnter = MarkerManager.getMarker("ENTER");
 	public static Marker markerExit  = MarkerManager.getMarker("EXIT");
 
@@ -28,41 +25,40 @@ public class TestCaseForEvaluation  {
 		
 		try {
 			logger.info(StringConstants.SINGLE_LINE);
-			logger.trace(markerEnter, ">>> public static void setUpBeforeClass()");
+			logger.trace(markerEnter, ">>> public static void setUpBeforeAll()");
 
 			// --- SET UP BEFORE CLASS BEGIN --------------------------------
 			
 			// --- SET UP BEFORE CLASS END ----------------------------------
 			
 		} finally {
-			logger.trace("<<< public static void setUpBeforeClass()");
+			logger.trace("<<< public static void setUpBeforeAll()");
 		}
 	}
 
 	@AfterAll
 	public static void tearDownAfterAll() {
 		try {
-			logger.trace(markerEnter, ">>> public static void tearDownAfterClass()");
+			logger.trace(markerEnter, ">>> public static void tearDownAfterAll()");
 			
 			// --- TEAR DOWN AFTER CLASS BEGIN ------------------------------
 			
 			// --- TEAR DOWN AFTER CLASS END --------------------------------
 			
 		} finally {
-			logger.trace(markerExit, "<<< public static void tearDownAfterClass()");
+			logger.trace(markerExit, "<<< public static void tearDownAfterAll()");
 			logger.info(StringConstants.SINGLE_LINE);
 		}
 	}
 
 	@BeforeEach
-	public void setUp() throws Exception {
+	public void setUp() {
 		try {
 			logger.info(StringConstants.SINGLE_LINE);
 			logger.trace(markerEnter, ">>> public void setUp()");
 
 			// --- SET UP CODE BEGIN ----------------------------------------
 
-			throw new Exception("Hello Exception");
 
 			// --- SET UP CODE END ------------------------------------------
 			
@@ -89,7 +85,7 @@ public class TestCaseForEvaluation  {
 		}
 	}
 
-	@Test
+	//@Test
 	public void test() {
 		String function = "public void test()";
 		try {
@@ -98,7 +94,10 @@ public class TestCaseForEvaluation  {
 			
 			// --- TEST CODE BEGIN --------------------------------------------
 			
-			
+			assertAll(
+					() -> fail("First message which will fail"),
+					() -> fail("Second message which will fail")
+					);
 			
 			// --- TEST CODE END ----------------------------------------------
 			

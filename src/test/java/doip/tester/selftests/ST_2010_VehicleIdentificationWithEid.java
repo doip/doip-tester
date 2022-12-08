@@ -17,7 +17,10 @@ import org.opentest4j.AssertionFailedError;
 
 import static doip.junit.Assertions.*;
 import doip.junit.InitializationError;
+import doip.junit.TestCaseDescription;
 import doip.junit.TestExecutionError;
+import doip.junit.TestResult;
+import doip.library.util.StringConstants;
 import doip.tester.testcases.TC_2010_VehicleIdentificationWithEid;
 import doip.tester.toolkit.TextBuilder;
 import doip.tester.toolkit.server4unittest.DoipServer4UnitTest;
@@ -37,6 +40,7 @@ public class ST_2010_VehicleIdentificationWithEid {
 	@BeforeAll
 	public static void setUpBeforeAll() throws InitializationError {
 		try {
+			logger.info(StringConstants.HASH_LINE);
 			logger.trace(markerEnter, ">>> public static void setUpBeforeAll()");
 			
 			server = new DoipServer4UnitTest();
@@ -61,12 +65,14 @@ public class ST_2010_VehicleIdentificationWithEid {
 			}
 		} finally {
 			logger.trace(markerExit, "<<< public static void tearDownAfterAll()");
+			logger.info(StringConstants.HASH_LINE);
 		}
 	}
 	
 	@BeforeEach
 	public void setUp() {
 		try {
+			logger.info(StringConstants.HASH_LINE);
 			logger.trace(markerEnter, ">>> public void setUp()");
 			
 			testcase = new TC_2010_VehicleIdentificationWithEid();
@@ -85,34 +91,53 @@ public class ST_2010_VehicleIdentificationWithEid {
 			
 		} finally {
 			logger.trace(markerExit, "<<< public void tearDown()");
+			logger.info(StringConstants.HASH_LINE);
 		}
 	}
 	
 	@Test
 	@DisplayName("ST-" + BASE_ID + "-01-01")
-	public void testGoodCase() throws TestExecutionError {
+	public void test_01_VehicleIdentWithEid_01_GoodCase() throws TestExecutionError {
+		TestCaseDescription desc = null;
 		try {
-			logger.trace(markerEnter, ">>> public void testGoodCase()");
+			logger.trace(markerEnter, ">>> public void test_01_VehicleIdentWithEid_01_GoodCase()");
+			
+			desc = new TestCaseDescription("ST-" + BASE_ID + "-01-01",
+					"Test test case TC-" + BASE_ID + "-01-01",
+					"Run test case TC-" + BASE_ID + "-01",
+					"Test reports that it passed.");
+			desc.emphasize().logHeader();
 			
 			server.setSilent(false);
-			testcase.test();
-			
+			testcase.test_01_VehicleIdentWithEid();
+			desc.logFooter(TestResult.PASSED); 
 		} catch (TestExecutionError e) {
+			desc.logFooter(TestResult.FAILED);
 			throw e;
 		} finally {
-			logger.trace(markerExit, "<<< public void testGoodCase()");
+			logger.trace(markerExit, "<<< public void test_01_VehicleIdentWithEid_01_GoodCase()");
 		}
 	}
 	
 	@Test
-	@DisplayName("ST-" + BASE_ID + "-1-02")
-	public void testNoResponse() {
+	@DisplayName("ST-" + BASE_ID + "-01-02")
+	public void test_01_VehicleIdentWithEid_02_NoResponse() {
+		TestCaseDescription desc = null;
+		String function = "public void test_01_VehicleIdentWithEid_02_NoResponse()";
 		try {
-			logger.trace(markerEnter, ">>> public void testNoResponse()");
+			logger.trace(markerEnter, ">>> " + function);
+			desc = new TestCaseDescription("ST-" + BASE_ID + "-01-01",
+					"Test test case TC-" + BASE_ID + "-01-01",
+					"Run test case TC-" + BASE_ID + "-01 where server does not answer",
+					"Test reports that it failed.");
+			desc.emphasize().logHeader();
+			
 			server.setSilent(true);
-			assertThrows(AssertionFailedError.class, () -> testcase.test());
+			assertThrows(AssertionFailedError.class, () -> testcase.test_01_VehicleIdentWithEid());
+			
+			desc.logFooter(TestResult.PASSED);
 		} finally {
-			logger.trace(markerExit, "<<< public void testNoResponse()");
+			logger.trace(markerExit, "<<< " + function);
 		}
 	}
 }

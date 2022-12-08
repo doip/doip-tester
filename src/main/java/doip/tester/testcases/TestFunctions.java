@@ -12,6 +12,8 @@ import doip.library.message.DoipTcpDiagnosticMessage;
 import doip.library.message.DoipTcpDiagnosticMessageNegAck;
 import doip.library.message.DoipTcpDiagnosticMessagePosAck;
 import doip.library.message.DoipTcpHeaderNegAck;
+import doip.library.message.DoipTcpRoutingActivationRequest;
+import doip.library.message.DoipTcpRoutingActivationResponse;
 import doip.tester.toolkit.CheckResult;
 import doip.tester.toolkit.DoipTcpConnectionWithEventCollection;
 import doip.tester.toolkit.EventChecker;
@@ -22,6 +24,7 @@ import doip.tester.toolkit.event.DoipEventTcpDiagnosticMessage;
 import doip.tester.toolkit.event.DoipEventTcpDiagnosticMessageNegAck;
 import doip.tester.toolkit.event.DoipEventTcpDiagnosticMessagePosAck;
 import doip.tester.toolkit.event.DoipEventTcpHeaderNegAck;
+import doip.tester.toolkit.event.DoipEventTcpRoutingActivationResponse;
 
 public class TestFunctions {
 	
@@ -29,8 +32,46 @@ public class TestFunctions {
 	private static Marker enter = MarkerManager.getMarker("ENTER");
 	private static Marker exit = MarkerManager.getMarker("EXIT");
 	
-	public static DoipTcpHeaderNegAck sendDataAndCheckForGenericDoipHeaderNegAck(DoipTcpConnectionWithEventCollection conn, byte[] message, int timeout) throws TestExecutionError {
+	public static DoipTcpRoutingActivationResponse 
+			performRoutingActivation(
+					DoipTcpConnectionWithEventCollection conn,
+					TestConfig config,
+					int activationType,
+					long oemData) 
+							throws TestExecutionError {
 		try {
+			logger.trace(enter, ">>> public static DoipTcpRoutingActivationResponse performRoutingActivation(DoipTcpConnectionWithEventCollection conn, TestConfig config, int activationType, long oemData)");
+			conn.clearEvents();
+			
+			int sourceAddress = config.getTesterAddress();
+			DoipTcpRoutingActivationRequest requestMsg = new DoipTcpRoutingActivationRequest(sourceAddress, activationType, oemData);
+			conn.send(requestMsg);
+			DoipEvent event = conn.waitForEvents(1, 2000);
+			CheckResult result = EventChecker.checkEvent(event, DoipEventTcpRoutingActivationResponse.class);
+			if (result.getCode() != CheckResult.NO_ERROR) {
+				fail(result.getText());
+			}
+			DoipEventTcpRoutingActivationResponse eventRoutingActivationResponse =
+					(DoipEventTcpRoutingActivationResponse) event;
+			DoipTcpRoutingActivationResponse response = 
+					(DoipTcpRoutingActivationResponse) 
+					eventRoutingActivationResponse.getDoipMessage();
+			return response;
+		} catch (InterruptedException e) {
+			throw logger.throwing(new TestExecutionError(TextBuilder.unexpectedException(e), e));		
+		} finally {
+			logger.trace(exit, "<<< public static DoipTcpRoutingActivationResponse performRoutingActivation(DoipTcpConnectionWithEventCollection conn, TestConfig config, int activationType, long oemData)");
+		}
+	}
+	
+	public static DoipTcpHeaderNegAck 
+			sendDataAndCheckForGenericDoipHeaderNegAck(
+					DoipTcpConnectionWithEventCollection conn,
+					byte[] message,
+					int timeout) 
+							throws TestExecutionError {
+		try {
+			logger.trace(enter, ">>> public static DoipTcpHeaderNegAck sendDataAndCheckForGenericDoipHeaderNegAck(DoipTcpConnectionWithEventCollection conn, byte[] message, int timeout)");
 			conn.clearEvents();
 			conn.send(message);
 			DoipEvent event = conn.waitForEvents(1, timeout);
@@ -44,7 +85,7 @@ public class TestFunctions {
 		} catch (InterruptedException e) {
 			throw logger.throwing(new TestExecutionError(TextBuilder.unexpectedException(e), e));		
 		} finally {
-			
+			logger.trace(exit, "<<< public static DoipTcpHeaderNegAck sendDataAndCheckForGenericDoipHeaderNegAck(DoipTcpConnectionWithEventCollection conn, byte[] message, int timeout)");
 		}
 	}
 	
@@ -80,7 +121,16 @@ public class TestFunctions {
 			byte[] diagRequestMessage,
 			int timeoutPosAck,
 			int timeoutDiagResponse) throws TestExecutionError {
+		
+		String function = "public static DoipTcpDiagnosticMessage executeDiagnosticServiceAndCheckForPosAckWithDiagResponse("
+				+ "DoipTcpConnectionWithEventCollection conn,"
+				+ "	int sourceAddress,"
+				+ "	int targetAddress,"
+				+ "	byte[] diagRequestMessage,"
+				+ "	int timeoutPosAck,"
+				+ "	int timeoutDiagResponse)";
 		try {
+			logger.trace(enter, ">>> " + function);
 			conn.clearEvents();
 			DoipTcpDiagnosticMessage doipMessage = new DoipTcpDiagnosticMessage(sourceAddress, targetAddress, diagRequestMessage);
 			conn.send(doipMessage);
@@ -94,15 +144,29 @@ public class TestFunctions {
 			int ackCode = msgPosAck.getAckCode();
 			assertEquals(0x00, ackCode, "The ACK code in the message '" + DoipTcpDiagnosticMessagePosAck.getMessageNameOfClass() + "' isn't 0x00, which was expected to be 0x00. Instead it is " + String.format("0x%02X", ackCode) + ".");
 			
-			event = conn.waitForEvents(2, timeoutDiagResponse);
-			result = EventChecker.checkEvent(event, DoipEventTcpDiagnosticMessage.class);
+			DoipTcpDiagnosticMessage diagResponse = waitForTcpDiagnosticMessage(conn, 2, timeoutDiagResponse);
+			return diagResponse;		
+			
+			
+		} catch (InterruptedException e) {
+			throw logger.throwing(new TestExecutionError(TextBuilder.unexpectedException(e), e));
+		} finally {
+			logger.trace(exit, "<<< " + function);
+		}
+	}
+	
+	public static DoipTcpDiagnosticMessage waitForTcpDiagnosticMessage(
+			DoipTcpConnectionWithEventCollection conn,
+			int expectedNumberOfEventsInBuffer,
+			int timeout) throws TestExecutionError {
+		try {
+			DoipEvent event = conn.waitForEvents(expectedNumberOfEventsInBuffer, timeout);
+			CheckResult result = EventChecker.checkEvent(event, DoipEventTcpDiagnosticMessage.class);
 			if (result.getCode() != CheckResult.NO_ERROR) {
 				fail(result.getText());
 			}
 			DoipTcpDiagnosticMessage diagResponse = (DoipTcpDiagnosticMessage) ((DoipEventTcpDiagnosticMessage) event).getDoipMessage();
 			return diagResponse;		
-			
-			
 		} catch (InterruptedException e) {
 			throw logger.throwing(new TestExecutionError(TextBuilder.unexpectedException(e), e));
 		} finally {
@@ -131,7 +195,6 @@ public class TestFunctions {
 						+ "DoipTcpConnectionWithEventCollection conn,"
 						+ "	TestConfig config,"
 						+ " byte[] diagRequestMessage");
-				
 			}
 	}	
 	
@@ -141,7 +204,15 @@ public class TestFunctions {
 			int targetAddress,
 			byte[] diagRequestMessage,
 			int timeoutNegAck) throws TestExecutionError {
+		
+		String function = "public static DoipTcpDiagnosticMessageNegAck executeDiagnosticServiceAndCheckforNegAck("
+				+ "DoipTcpConnectionWithEventCollection conn,"
+				+ "	int sourceAddress,"
+				+ "	int targetAddress,"
+				+ "	byte[] diagRequestMessage,"
+				+ "	int timeoutNegAck)";
 		try {
+			logger.trace(enter, ">>> " + function);
 			conn.clearEvents();
 			DoipTcpDiagnosticMessage doipMessage = new DoipTcpDiagnosticMessage(sourceAddress, targetAddress, diagRequestMessage);
 			conn.send(doipMessage);
@@ -156,12 +227,8 @@ public class TestFunctions {
 		} catch (InterruptedException e) {
 			throw logger.throwing(new TestExecutionError(TextBuilder.unexpectedException(e), e));
 		} finally {
-			
+			logger.trace(exit, "<<< " + function);
 		}
-	}
-	
-	public static void performRoutingActivationAndCheckResponseCode() {
-		
 	}
 }
   

@@ -1,7 +1,6 @@
 package doip.tester.testcases;
 
-import static doip.junit.Assertions.assertNotNull;
-import static doip.junit.Assertions.assertTrue;
+import static doip.junit.Assertions.*;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -14,7 +13,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.opentest4j.AssertionFailedError;
-import org.opentest4j.MultipleFailuresError;
 
 import doip.junit.InitializationError;
 import doip.junit.TestCaseDescription;
@@ -151,7 +149,7 @@ public class TC_2000_VehicleIdentification {
 			DoipEvent event = testerUdpCommModule.waitForEvents(1, config.get_A_DoIP_Ctrl());
 			CheckResult result = EventChecker.checkEvent(event, DoipEventUdpVehicleAnnouncementMessage.class);
 			if (result.getCode() != CheckResult.NO_ERROR) {
-				logger.error(result.getText());
+				fail(result.getText());
 			}
 			assertNotNull(event, TextBuilder.noValidDoipMessageReceived(
 					DoipUdpVehicleAnnouncementMessage.getMessageNameOfClass()));

@@ -53,7 +53,7 @@ public class TestCaseDescription {
 	public String toString() {
 		String string;
 		string =     separator +
-				   "\nTest case ID:    " + id +
+				   "\nTEST CASE ID: " + id +
 				   "\n" + separator +
 				   "\nDescription:\n    " + formatSection(description, maxLength - 4, "    ") +
 				   "\nAction:\n    " + formatSection(action, maxLength - 4, "    ") +
@@ -81,19 +81,20 @@ public class TestCaseDescription {
 		logger.info(getSeparator());
 		switch (result) {
 		case PASSED:
-			logger.info("TEST " + result);
+			logger.info("TEST " + this.id + " " + result);
 			break;
 		case FAILED:
-		case ERROR:
-			logger.error("TEST " + result);
+			logger.error("TEST " + this.id + " " + result);
 			break;
+		case ERROR:
 		default:
-			logger.fatal("TEST " + result);
+			logger.fatal("TEST " + this.id + " " + result);
 			break;
 		}
 		logger.info(getSeparator());
 	}
 	
+	/*
 	public static void logFooter(TestResult result, boolean emphasize) {
 		
 		if (emphasize) {
@@ -107,9 +108,9 @@ public class TestCaseDescription {
 			logger.info("TEST " + result);
 			break;
 		case FAILED:
-		case ERROR:
 			logger.error("TEST " + result);
 			break;
+		case ERROR:
 		default:
 			logger.fatal("TEST " + result);
 			break;
@@ -121,7 +122,7 @@ public class TestCaseDescription {
 			logger.info(DOUBLE_LINE);
 		}
 	}
-	
+	*/
 	
 	public TestCaseDescription emphasize() {
 		this.separator = HASH_LINE;
