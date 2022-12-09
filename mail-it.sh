@@ -6,5 +6,5 @@ then
 	exit 1
 fi
 
-mutt -s "DoIP Test Reports" $1 -a ./reports.zip < mail.txt
+mutt -s "DoIP Test Reports" $1 -a ./reports.tar.gz < mail.txt
 
