@@ -42,7 +42,7 @@
 		<File name="error" fileName="./logs/error.log" append="false">
 			<PatternLayout pattern="${layout}" />
 		</File>
-		<Socket name="socket" host="localhost" port="13500" protocol="UDP">
+		<Socket name="socket" host="192.168.178.1" port="13500" protocol="UDP">
 			<PatternLayout pattern="%d{HH:mm:ss.SSS} %-16level - %msg%ex{10}%n"/>
 		</Socket>
 	</Appenders>

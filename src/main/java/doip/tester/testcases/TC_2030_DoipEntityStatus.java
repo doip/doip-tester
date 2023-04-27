@@ -7,6 +7,8 @@ import java.net.InetAddress;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.lookup.SystemPropertiesLookup;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -35,6 +37,8 @@ public class TC_2030_DoipEntityStatus {
 	public static final String BASE_ID = "2030";
 	
 	private static Logger logger = LogManager.getLogger(TC_2030_DoipEntityStatus.class);
+	private static Marker enter = MarkerManager.getMarker("ENTER");
+	private static Marker exit = MarkerManager.getMarker("EXIT");
 	
 	private static TestSetup setup = null;
 	
@@ -46,26 +50,26 @@ public class TC_2030_DoipEntityStatus {
 	public static void setUpBeforeAll() throws InitializationError {
 		try {
 			logger.info(StringConstants.SINGLE_LINE);
-			logger.trace(">>> public static void setUpBeforeAll()");
+			logger.trace(enter, ">>> public static void setUpBeforeAll()");
 			setup = new TestSetup();
 			setup.initialize();
 			config = setup.getConfig();
 			comm = setup.getTesterUdpCommModule();
 		} finally {
-			logger.trace("<<< public static void setUpBeforeAll()");
+			logger.trace(exit, "<<< public static void setUpBeforeAll()");
 		}
 	}
 	
 	@AfterAll
 	public static void tearDownAfterAll() {
-		logger.trace(">>> public static void tearDownAfterAll()");
+		logger.trace(enter, ">>> public static void tearDownAfterAll()");
 		try {
 			if (setup != null) {
 				setup.uninitialize();
 				setup = null;
 			}
 		} finally {
-			logger.trace("<<< public static void tearDownAfterAll()");
+			logger.trace(exit, "<<< public static void tearDownAfterAll()");
 			logger.info(StringConstants.SINGLE_LINE);
 		}
 	}
@@ -73,7 +77,7 @@ public class TC_2030_DoipEntityStatus {
 	@Test
 	@DisplayName("TC-" + BASE_ID + "-01")
 	public void test() throws TestExecutionError {
-		logger.trace(">>> public void test()");
+		logger.trace(enter, ">>> public void test()");
 		TestCaseDescription desc = null;
 		try {
 			desc = new TestCaseDescription(
@@ -110,7 +114,7 @@ public class TC_2030_DoipEntityStatus {
 			throw logger.throwing(Level.FATAL, 
 					new TestExecutionError(TextBuilder.unexpectedException(e), e));
 		} finally {
-			logger.trace("<<< public void test()");
+			logger.trace(exit, "<<< public void test()");
 		}
 	}
 
