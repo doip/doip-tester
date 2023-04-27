@@ -205,8 +205,8 @@ public class ST_2110_UnknownTargetAddress {
 	public DoipServer4UnitTest createSpecialServer() {
 		return new DoipServer4UnitTest() {
 			
-			private static Marker enter = MarkerManager.getMarker("ENTER");
-			private static Marker exit = MarkerManager.getMarker("EXIT");
+			private Marker enter = MarkerManager.getMarker("ENTER");
+			private Marker exit = MarkerManager.getMarker("EXIT");
 			
 			@Override
 			public void onDoipTcpDiagnosticMessage(DoipTcpConnection doipTcpConnection, DoipTcpDiagnosticMessage doipMessage) {
