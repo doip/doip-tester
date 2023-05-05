@@ -53,7 +53,7 @@ public class TestCaseDescription {
 	public String toString() {
 		String string;
 		string =     separator +
-				   "\nTEST CASE ID: " + id +
+				   "\nTEST CASE " + id +
 				   "\n" + separator +
 				   "\nDescription:\n    " + formatSection(description, maxLength - 4, "    ") +
 				   "\nAction:\n    " + formatSection(action, maxLength - 4, "    ") +
@@ -81,15 +81,14 @@ public class TestCaseDescription {
 		logger.info(getSeparator());
 		switch (result) {
 		case PASSED:
-			logger.info("TEST " + this.id + " " + result);
+			logger.info("TEST CASE " + this.id + " " + result);
 			break;
 		case FAILED:
-			logger.error("TEST " + this.id + " " + result);
-			break;
 		case ERROR:
-		default:
-			logger.fatal("TEST " + this.id + " " + result);
+			logger.error("TEST CASE " + this.id + " " + result);
 			break;
+		default:
+			logger.fatal("TEST CASE " + this.id + " " + result);
 		}
 		logger.info(getSeparator());
 	}
