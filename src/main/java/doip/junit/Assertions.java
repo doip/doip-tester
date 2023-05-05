@@ -10,7 +10,7 @@ import org.opentest4j.MultipleFailuresError;
 public class Assertions {
 
 	private static Logger logger = LogManager.getLogger(Assertions.class);
-	public static Level assertionFailed = Level.getLevel("ASSERTION_FAILED");
+	public static Level logLevelAssertionFailed = Level.getLevel("ASSERTION_FAILED");
 
 	public static void assertAll(Executable... executables) {
 		try {
@@ -25,7 +25,7 @@ public class Assertions {
 		try {
 			org.junit.jupiter.api.Assertions.assertTrue(condition);
 		}  catch (AssertionError e) {
-			throw logger.throwing(assertionFailed, e);
+			throw logger.throwing(logLevelAssertionFailed, e);
 		}
 	}
 
@@ -33,7 +33,7 @@ public class Assertions {
 		try {
 			org.junit.jupiter.api.Assertions.assertTrue(condition, message);
 		}  catch (AssertionError e) {
-			throw logger.throwing(assertionFailed, e);
+			throw logger.throwing(logLevelAssertionFailed, e);
 		}
 	}
 
@@ -41,7 +41,7 @@ public class Assertions {
 		try {
 			org.junit.jupiter.api.Assertions.assertFalse(condition);
 		}  catch (AssertionError e) {
-			throw logger.throwing(assertionFailed, e);
+			throw logger.throwing(logLevelAssertionFailed, e);
 		}
 	}
 
@@ -49,7 +49,7 @@ public class Assertions {
 		try {
 			org.junit.jupiter.api.Assertions.assertFalse(condition, message);
 		}  catch (AssertionError e) {
-			throw logger.throwing(assertionFailed, e);
+			throw logger.throwing(logLevelAssertionFailed, e);
 		}
 	}
 	
@@ -57,7 +57,7 @@ public class Assertions {
 		try {
 			org.junit.jupiter.api.Assertions.assertEquals(expected, actual);
 		}  catch (AssertionError e) {
-			throw logger.throwing(assertionFailed, e);
+			throw logger.throwing(logLevelAssertionFailed, e);
 		}
 	}
 
@@ -65,7 +65,7 @@ public class Assertions {
 		try {
 			org.junit.jupiter.api.Assertions.assertEquals(expected, actual, message);
 		} catch (AssertionFailedError e) {
-			throw logger.throwing(assertionFailed, e);
+			throw logger.throwing(logLevelAssertionFailed, e);
 		}
 	}
 
@@ -73,7 +73,7 @@ public class Assertions {
 		try {
 			org.junit.jupiter.api.Assertions.assertEquals(expected, actual);
 		} catch (AssertionError e) {
-			throw logger.throwing(assertionFailed, e);
+			throw logger.throwing(logLevelAssertionFailed, e);
 		}
 	}
 
@@ -81,7 +81,7 @@ public class Assertions {
 		try {
 			org.junit.jupiter.api.Assertions.assertEquals(expected, actual, message);
 		} catch (AssertionError e) {
-			throw logger.throwing(assertionFailed, e);
+			throw logger.throwing(logLevelAssertionFailed, e);
 		}
 	}
 
@@ -89,7 +89,7 @@ public class Assertions {
 		try {
 			org.junit.jupiter.api.Assertions.assertArrayEquals(expecteds, actuals);
 		} catch (AssertionFailedError e) {
-			throw logger.throwing(assertionFailed, e);
+			throw logger.throwing(logLevelAssertionFailed, e);
 		}
 	}
 
@@ -97,7 +97,7 @@ public class Assertions {
 		try {
 			org.junit.jupiter.api.Assertions.assertArrayEquals(expecteds, actuals, message);
 		} catch (AssertionError e) {
-			throw logger.throwing(assertionFailed, e);
+			throw logger.throwing(logLevelAssertionFailed, e);
 		}
 	}
 
@@ -105,7 +105,7 @@ public class Assertions {
 		try {
 			org.junit.jupiter.api.Assertions.assertNotNull(obj);
 		} catch (AssertionError e) {
-			throw logger.throwing(assertionFailed, e);
+			throw logger.throwing(logLevelAssertionFailed, e);
 		}
 	}
 
@@ -113,7 +113,7 @@ public class Assertions {
 		try {
 			org.junit.jupiter.api.Assertions.assertNotNull(obj, message);
 		} catch (AssertionError e) {
-			throw logger.throwing(assertionFailed, e);
+			throw logger.throwing(logLevelAssertionFailed, e);
 		}
 	}
 
@@ -121,7 +121,7 @@ public class Assertions {
 		try {
 			org.junit.jupiter.api.Assertions.assertNull(obj);
 		} catch (AssertionError e) {
-			throw logger.throwing(assertionFailed, e);
+			throw logger.throwing(logLevelAssertionFailed, e);
 		}
 	}
 
@@ -129,7 +129,7 @@ public class Assertions {
 		try {
 			org.junit.jupiter.api.Assertions.assertNull(obj, message);
 		} catch (AssertionError e) {
-			throw logger.throwing(assertionFailed, e);
+			throw logger.throwing(logLevelAssertionFailed, e);
 		}
 	}
 
@@ -137,7 +137,7 @@ public class Assertions {
 		try {
 			org.junit.jupiter.api.Assertions.assertEquals(expected, actual);
 		} catch (AssertionError e) {
-			throw logger.throwing(assertionFailed, e);
+			throw logger.throwing(logLevelAssertionFailed, e);
 		}
 	}
 
@@ -145,7 +145,7 @@ public class Assertions {
 		try {
 			org.junit.jupiter.api.Assertions.assertEquals(expected, actual, message);
 		} catch (AssertionError e) {
-			throw logger.throwing(assertionFailed, e);
+			throw logger.throwing(logLevelAssertionFailed, e);
 		}
 	}
 	
@@ -153,7 +153,7 @@ public class Assertions {
 		try {
 			return org.junit.jupiter.api.Assertions.assertThrows(expectedType, executable);
 		} catch (AssertionError e) {
-			throw logger.throwing(assertionFailed, e);
+			throw logger.throwing(logLevelAssertionFailed, e);
 		}
 	}
 	
@@ -161,7 +161,7 @@ public class Assertions {
 		try {
 			return org.junit.jupiter.api.Assertions.assertThrows(expectedType, executable, message);
 		} catch (AssertionError e) {
-			throw logger.throwing(assertionFailed, e);
+			throw logger.throwing(logLevelAssertionFailed, e);
 		}
 	}
 
@@ -169,7 +169,7 @@ public class Assertions {
 		try {
 			return org.junit.jupiter.api.Assertions.fail();
 		} catch (AssertionError e) {
-			throw logger.throwing(assertionFailed, e);
+			throw logger.throwing(logLevelAssertionFailed, e);
 		}
 	}
 
@@ -178,7 +178,7 @@ public class Assertions {
 			return org.junit.jupiter.api.Assertions.fail(message);
 		}
 		 catch (AssertionError e) {
-			throw logger.throwing(assertionFailed, e);
+			throw logger.throwing(logLevelAssertionFailed, e);
 		}
 	}
 
