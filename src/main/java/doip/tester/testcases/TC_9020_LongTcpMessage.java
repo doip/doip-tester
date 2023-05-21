@@ -24,6 +24,9 @@ import doip.junit.TestExecutionError;
 import doip.junit.TestResult;
 import doip.library.message.DoipTcpDiagnosticMessage;
 import doip.library.message.DoipTcpHeaderNegAck;
+import doip.library.properties.EmptyPropertyValue;
+import doip.library.properties.MissingProperty;
+import doip.library.properties.MissingSystemProperty;
 import doip.tester.toolkit.TestConfig;
 import doip.tester.toolkit.TestSetup;
 import doip.tester.toolkit.TesterTcpConnection;
@@ -49,6 +52,8 @@ public class TC_9020_LongTcpMessage {
 			setup = new TestSetup();
 			setup.initialize();
 			config = setup.getConfig();
+		} catch (IOException | EmptyPropertyValue | MissingProperty | MissingSystemProperty e) {
+			throw logger.throwing(new InitializationError(TextBuilder.unexpectedException(e), e));
 		} finally {
 			logger.trace(exit, "<<< public void setUpBeforeAll()");
 		}

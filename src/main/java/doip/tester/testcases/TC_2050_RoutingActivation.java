@@ -19,6 +19,9 @@ import doip.junit.InitializationError;
 import doip.junit.TestCaseDescription;
 import doip.junit.TestExecutionError;
 import doip.junit.TestResult;
+import doip.library.properties.EmptyPropertyValue;
+import doip.library.properties.MissingProperty;
+import doip.library.properties.MissingSystemProperty;
 import doip.library.util.StringConstants;
 import doip.tester.toolkit.TestConfig;
 import doip.tester.toolkit.TestSetup;
@@ -49,7 +52,8 @@ public class TC_2050_RoutingActivation {
 			testSetup.initialize();
 			config = testSetup.getConfig();
 			// --- SET UP BEFORE CLASS END ----------------------------------
-			
+		} catch (IOException | EmptyPropertyValue | MissingProperty | MissingSystemProperty e) {
+			throw logger.throwing(new InitializationError(TextBuilder.unexpectedException(e), e));
 		} finally {
 			logger.trace("<<< public static void setUpBeforeClass()");
 		}

@@ -22,6 +22,9 @@ import doip.junit.TestExecutionError;
 import doip.junit.TestResult;
 import doip.library.message.DoipMessage;
 import doip.library.message.DoipUdpEntityStatusRequest;
+import doip.library.properties.EmptyPropertyValue;
+import doip.library.properties.MissingProperty;
+import doip.library.properties.MissingSystemProperty;
 import doip.library.util.StringConstants;
 import doip.tester.toolkit.TestConfig;
 import doip.tester.toolkit.TestSetup;
@@ -55,6 +58,8 @@ public class TC_2030_DoipEntityStatus {
 			setup.initialize();
 			config = setup.getConfig();
 			comm = setup.getTesterUdpCommModule();
+		} catch (IOException | EmptyPropertyValue | MissingProperty | MissingSystemProperty e) {
+			throw logger.throwing(new InitializationError(TextBuilder.unexpectedException(e), e));
 		} finally {
 			logger.trace(exit, "<<< public static void setUpBeforeAll()");
 		}

@@ -57,7 +57,7 @@
 		</Root>
 
 		<!-- Following two classes are very verbose, we wet them to level "WARN" -->
-		<!-- Possible bug will require more detailed logging
+		<!-- Possible bug will require more detailed logging -->
 		<Logger name="doip.library.comm.DoipTcpStreamBuffer" level="WARN" additivity="false">
 			<AppenderRef ref="console" />
  			<AppenderRef ref="doip"/>
@@ -74,6 +74,5 @@
 			<AppenderRef ref="error" />
 	 		<AppenderRef ref="socket" level="INFO"/>
 		</Logger>
-		-->
 	</Loggers>
 </Configuration>

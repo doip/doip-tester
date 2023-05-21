@@ -22,6 +22,9 @@ import doip.junit.TestExecutionError;
 import doip.junit.TestResult;
 import doip.library.message.DoipTcpDiagnosticMessage;
 import doip.library.message.DoipTcpDiagnosticMessagePosAck;
+import doip.library.properties.EmptyPropertyValue;
+import doip.library.properties.MissingProperty;
+import doip.library.properties.MissingSystemProperty;
 import doip.library.util.Conversion;
 import doip.library.util.Helper;
 import doip.library.util.StringConstants;
@@ -63,6 +66,8 @@ public class TC_9010_SplitMessages {
 			config = testSetup.getConfig();
 			// --- SET UP BEFORE CLASS END ----------------------------------
 			
+		} catch (IOException | EmptyPropertyValue | MissingProperty | MissingSystemProperty e) {
+			throw logger.throwing(new InitializationError(TextBuilder.unexpectedException(e), e));
 		} finally {
 			logger.trace(markerExit, "<<< public static void setUpBeforeClass()");
 		}

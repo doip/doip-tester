@@ -21,6 +21,9 @@ import doip.junit.InitializationError;
 import doip.junit.TestCaseDescription;
 import doip.junit.TestExecutionError;
 import doip.junit.TestResult;
+import doip.library.properties.EmptyPropertyValue;
+import doip.library.properties.MissingProperty;
+import doip.library.properties.MissingSystemProperty;
 import doip.library.util.StringConstants;
 import doip.tester.testcases.TC_2070_DiagnosticMessage;
 import doip.tester.toolkit.TestSetup;
@@ -59,7 +62,7 @@ public class ST_2070_DiagnosticMessage {
 			TC_2070_DiagnosticMessage.setUpBeforeClass();
 			// --- SET UP BEFORE CLASS END ----------------------------------
 
-		} catch (IOException e) {
+		} catch (IOException | EmptyPropertyValue | MissingProperty | MissingSystemProperty e) {
 			throw logger.throwing(Level.FATAL, new InitializationError(TextBuilder.unexpectedException(e), e));
 		} finally {
 			logger.trace(exit, "<<< public static void setUpBeforeClass()");
