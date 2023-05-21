@@ -21,6 +21,9 @@ import doip.junit.TestExecutionError;
 import doip.junit.TestResult;
 import doip.library.message.DoipUdpVehicleAnnouncementMessage;
 import doip.library.message.DoipUdpVehicleIdentRequestWithEid;
+import doip.library.properties.EmptyPropertyValue;
+import doip.library.properties.MissingProperty;
+import doip.library.properties.MissingSystemProperty;
 import doip.library.util.StringConstants;
 import doip.tester.toolkit.TestConfig;
 import doip.tester.toolkit.TestSetup;
@@ -71,9 +74,7 @@ public class TC_2010_VehicleIdentificationWithEid {
 			
 			// --- SET UP BEFORE ALL END ----------------------------------
 			
-		} catch (InitializationError e) {
-			throw e;
-		} catch (IOException | InterruptedException e) {
+		} catch (IOException | InterruptedException | EmptyPropertyValue | MissingProperty | MissingSystemProperty e) {
 			throw logger.throwing(Level.FATAL, new InitializationError(e));
 		} finally {
 			logger.trace(markerEnter, "<<< public static void setUpBeforeAll()");

@@ -19,6 +19,9 @@ import doip.junit.InitializationError;
 import doip.junit.TestCaseDescription;
 import doip.junit.TestExecutionError;
 import doip.junit.TestResult;
+import doip.library.properties.EmptyPropertyValue;
+import doip.library.properties.MissingProperty;
+import doip.library.properties.MissingSystemProperty;
 import doip.library.util.StringConstants;
 import doip.tester.toolkit.CheckResult;
 import doip.tester.toolkit.TestSetup;
@@ -30,6 +33,8 @@ import doip.tester.toolkit.event.DoipEventConnectionClosed;
 
 public class TC_9030_InitialInactivityTimer {
 	
+	public static final String BASE_ID = "TC-9030";
+
 	private static Logger logger = LogManager.getLogger(TC_9030_InitialInactivityTimer.class);
 	private static Marker enter = MarkerManager.getMarker("ENTER");
 	private static Marker exit = MarkerManager.getMarker("EXIT)");
@@ -48,6 +53,8 @@ public class TC_9030_InitialInactivityTimer {
 			setup.initialize();
 			// --- SET UP BEFORE CLASS END ----------------------------------
 			
+		} catch (IOException | EmptyPropertyValue | MissingProperty | MissingSystemProperty e) {
+			throw logger.throwing(new InitializationError(TextBuilder.unexpectedException(e), e));
 		} finally {
 			logger.trace(exit, "<<< public static void setUpBeforeClass()");
 		}

@@ -1,5 +1,6 @@
 package doip.tester.unittests;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -20,8 +21,12 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import doip.junit.InitializationError;
+import doip.library.properties.EmptyPropertyValue;
+import doip.library.properties.MissingProperty;
+import doip.library.properties.MissingSystemProperty;
 import doip.library.util.StringConstants;
 import doip.tester.toolkit.TestSetup;
+import doip.tester.toolkit.TextBuilder;
 
 public class UT_4003_ParameterizedTest {
 	
@@ -45,6 +50,8 @@ public class UT_4003_ParameterizedTest {
 			
 			// --- SET UP BEFORE CLASS END ----------------------------------
 			
+		} catch (IOException | EmptyPropertyValue | MissingProperty | MissingSystemProperty e) {
+			throw logger.throwing(new InitializationError(TextBuilder.unexpectedException(e), e));
 		} finally {
 			logger.trace(exit, "<<< public static void setUpBeforeClass()");
 		}

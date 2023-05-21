@@ -23,6 +23,9 @@ import doip.junit.TestExecutionError;
 import doip.junit.TestResult;
 import doip.library.message.DoipUdpHeaderNegAck;
 import doip.library.message.DoipUdpVehicleIdentRequest;
+import doip.library.properties.EmptyPropertyValue;
+import doip.library.properties.MissingProperty;
+import doip.library.properties.MissingSystemProperty;
 import doip.library.util.Helper;
 import doip.library.util.StringConstants;
 import doip.tester.toolkit.CheckResult;
@@ -56,6 +59,8 @@ public class TC_2100_DoubleUdpMessage {
 			
 			// --- SET UP BEFORE CLASS END ----------------------------------
 			
+		} catch (IOException | EmptyPropertyValue | MissingProperty | MissingSystemProperty e) {
+			throw logger.throwing(new InitializationError(TextBuilder.unexpectedException(e), e));
 		} finally {
 			logger.trace(exit, "<<< public static void setUpBeforeClass()");
 		}

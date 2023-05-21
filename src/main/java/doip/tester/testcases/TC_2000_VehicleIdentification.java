@@ -19,6 +19,9 @@ import doip.junit.TestCaseDescription;
 import doip.junit.TestExecutionError;
 import doip.junit.TestResult;
 import doip.library.message.DoipUdpVehicleAnnouncementMessage;
+import doip.library.properties.EmptyPropertyValue;
+import doip.library.properties.MissingProperty;
+import doip.library.properties.MissingSystemProperty;
 import doip.library.util.Helper;
 import doip.library.util.StringConstants;
 import doip.tester.toolkit.CheckResult;
@@ -47,6 +50,8 @@ public class TC_2000_VehicleIdentification {
 			testSetup = new TestSetup();
 			testSetup.initialize();
 			
+		} catch (IOException | EmptyPropertyValue | MissingProperty | MissingSystemProperty e) {
+			throw logger.throwing(Level.FATAL, new InitializationError(TextBuilder.unexpectedException(e), e));
 		} finally {
 			logger.trace("<<< public static void setUpBeforeClass()");
 		}

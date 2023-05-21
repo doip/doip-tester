@@ -32,8 +32,7 @@ public class TestFunctions {
 	private static Marker enter = MarkerManager.getMarker("ENTER");
 	private static Marker exit = MarkerManager.getMarker("EXIT");
 	
-	public static DoipTcpRoutingActivationResponse 
-			performRoutingActivation(
+	public static DoipTcpRoutingActivationResponse performRoutingActivation(
 					DoipTcpConnectionWithEventCollection conn,
 					TestConfig config,
 					int activationType,

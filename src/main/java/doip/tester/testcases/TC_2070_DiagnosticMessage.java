@@ -37,6 +37,9 @@ import doip.library.message.DoipMessage;
 import doip.library.message.DoipTcpDiagnosticMessage;
 import doip.library.message.DoipTcpDiagnosticMessageNegAck;
 import doip.library.message.DoipTcpRoutingActivationRequest;
+import doip.library.properties.EmptyPropertyValue;
+import doip.library.properties.MissingProperty;
+import doip.library.properties.MissingSystemProperty;
 import doip.library.util.StringConstants;
 
 public class TC_2070_DiagnosticMessage {
@@ -59,6 +62,8 @@ public class TC_2070_DiagnosticMessage {
 			testSetup = new TestSetup();
 			testSetup.initialize();
 			config = testSetup.getConfig();
+		} catch (IOException | EmptyPropertyValue | MissingProperty | MissingSystemProperty e) {
+			throw logger.throwing(new InitializationError(TextBuilder.unexpectedException(e), e));
 		} finally {
 			logger.trace(exit, "<<< " + function);
 		}
@@ -97,7 +102,7 @@ public class TC_2070_DiagnosticMessage {
 			
 			desc = new TestCaseDescription(
 					"TC-" + BASE_ID + "-01", 
-					"Send diagnostic mesage after successful routing activation", 
+					"Send diagnostic message after successful routing activation", 
 					"1. Send routing activation 2. Send diagnostic message 0x10 0x03", 
 					"1. Routing activation was successful 2. Response from DoIP server is 0x50 0x03 ...");
 			desc.logHeader();

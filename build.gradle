@@ -13,27 +13,14 @@ repositories {
 }
 
 dependencies {
-
-	// We want to use directly from Log4j 2, so we declare a dependency here
 	implementation group: 'org.apache.logging.log4j', name: 'log4j-api',  version: '2.19.0'
 	implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.19.0'
 	
 	implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
 
-	// implementation 'com.github.doip:doip-library:1.2.1'
-	// During development it might be more convenient to link to doip-library
-	// in the local file system
-	// implementation files('../doip-library/build/libs/doip-library-1.2.0.jar')
-	// implementation ':doip-tester-toolkit'
-	// implementation 'com.github.doip:doip-tester-toolkit:0.0.2'
-
-	implementation 'com.github.doip:doip-logging:1.2.1'
-
-	// The production code contains the real tests, therefore
-	// the dependency is not "testImplementation", instead it
-	// is just "implementation".
-	// implementation 'com.github.doip:doip-junit:1.1.5'
-	// implementation ':doip-junit'
+	implementation 'com.github.doip:doip-library:1.3.0'
+	implementation 'com.github.doip:doip-tester-toolkit:0.0.3'
+	implementation 'com.github.doip:doip-junit:1.2.0'
 
 	implementation 'org.junit.jupiter:junit-jupiter:5.7.1'
 	implementation 'org.junit.jupiter:junit-jupiter-params:5.7.1'
