@@ -1,0 +1,33 @@
+==============================================================================
+
+                        DoIP - Diagnostics over IP
+                        Component: DoIP Tester
+
+==============================================================================
+
+INTRODUCTION
+============
+
+This software module implements test cases to test the doip-custom-simulation.
+
+The source code is hosted at GitHub
+https://github.com/doip/doip-tester.git
+
+The custom simulation which is a running application is hosted here:
+https://github.com/doip/doip-custom-simulation.git
+
+A documentation of the whole project is available at
+http://automotive-doip.com/downloads/DoIP-Software-Documentation.pdf
+
+==============================================================================
+
+                     Release Notes for Version: 1.0.0
+
+NEW FEATURES
+============
+
+
+FIXED BUGS
+==========
+
+
